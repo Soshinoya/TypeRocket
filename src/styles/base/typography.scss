@@ -1,0 +1,63 @@
+@use "./variables.scss";
+@use "sass:list";
+
+body {
+    background-color: variables.$primary-700;
+}
+
+// Main
+body,
+%body-default {
+    font-size: 17px;
+    @extend %epilogue-400;
+}
+
+// General body styles
+%body-small-regular,
+%body-small-medium {
+    font-size: 14px;
+}
+
+%body-default,
+%body-default-light,
+%body-default-action {
+    font-size: 17px;
+}
+
+// Body styles
+%body-default-light {
+    @extend %inter-100;
+}
+
+%body-default-action {
+    @extend %epilogue-400;
+    text-transform: uppercase;
+}
+
+%body-small-regular {
+    @extend %inter-400;
+}
+
+%body-small-medium {
+    @extend %epilogue-500;
+}
+
+// General heading styles
+h1,
+h2,
+h3 {
+    @extend %epilogue-500;
+}
+
+// Heading styles
+h1 {
+    font-size: 35px;
+}
+
+h2 {
+    font-size: 30px;
+}
+
+h3 {
+    font-size: 25px;
+}
