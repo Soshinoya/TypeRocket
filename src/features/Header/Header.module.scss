@@ -1,0 +1,20 @@
+@use "../../styles/base/typography.scss";
+@use "../../styles/base/variables.scss";
+
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.header-nav {
+    &__links {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    &__link {
+        @extend %body-default-action;
+        color: variables.$accent;
+    }
+}

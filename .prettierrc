@@ -3,9 +3,10 @@
 	"tabWidth": 4,
 	"useTabs": true,
 	"semi": false,
+	"singleQuote": true,
 	"jsxSingleQuote": true,
 	"arrowParens": "avoid",
-	"singleAttributePerLine": true,
+	"singleAttributePerLine": false,
 	"overrides": [
 		{
 			"files": "*.html",
@@ -14,7 +15,7 @@
 				"tabWidth": 4,
 				"useTabs": false,
 				"semi": true,
-				"jsxSingleQuote": false,
+				"jsxSingleQuote": true,
 				"arrowParens": "always",
 				"singleAttributePerLine": false
 			}

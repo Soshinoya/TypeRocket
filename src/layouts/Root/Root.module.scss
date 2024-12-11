@@ -1,0 +1,10 @@
+.root-layout {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 25px;
+}
+
+.main {
+    flex-grow: 1;
+}
