@@ -1,0 +1,81 @@
+@use "../../styles/base/typography.scss";
+@use "../../styles/base/variables.scss";
+
+.result {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 40px;
+    padding: 25px;
+    border: 1px solid rgba(variables.$white-color, 0.3);
+    border-radius: 40px;
+    background-color: variables.$primary-700;
+    z-index: 20;
+
+    &__wrapper {
+        display: none;
+
+        &--active {
+            display: block;
+        }
+    }
+}
+
+.blur {
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        backdrop-filter: blur(0px);
+        z-index: 10;
+        transition: backdrop-filter 0.3s variables.$transitionTimingFunc;
+    }
+
+    &--active::before {
+        backdrop-filter: blur(5px);
+    }
+}
+
+.result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+
+    &__title,
+    &__cross {
+        color: variables.$white-color;
+    }
+
+    &__title {
+        font-size: 32px;
+    }
+
+    &__cross {
+        cursor: pointer;
+    }
+}
+
+.result-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+
+    &__title,
+    &__subtitle {
+        color: variables.$white-color;
+    }
+
+    &__title {
+        font-size: 52px;
+    }
+}

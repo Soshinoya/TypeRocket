@@ -3,6 +3,7 @@ import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import { Paths } from './utils/paths.ts'
 
 import Root from './layouts/Root/Root'
+import Home from 'pages/Home/Home.tsx'
 import Settings from './pages/Settings/Settings'
 
 function App() {
@@ -11,6 +12,16 @@ function App() {
 			path: Paths.root,
 			element: <Root />,
 			errorElement: <Navigate to={Paths.root} />,
+			children: [
+				{
+					index: true,
+					element: <Home />,
+				},
+				// {
+				// 	path: 'about',
+				// 	element: <About />,
+				// },
+			],
 		},
 		{
 			path: Paths.settings,

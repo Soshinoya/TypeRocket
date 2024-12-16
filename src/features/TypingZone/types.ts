@@ -20,10 +20,10 @@ export interface I_ModeOption {
 
 export interface I_TypingZone {
 	language: Languages
-	punctuation: boolean
-	numbers: boolean
+	isPunctuation: boolean
+	isNumbers: boolean
 	playerMode: PlayerMode
 	mode: Mode
-	words: I_ModeOption[]
-	time: I_ModeOption[]
+	wordOptions: I_ModeOption[]
+	timeOptions: I_ModeOption[]
 }

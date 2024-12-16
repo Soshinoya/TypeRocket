@@ -6,19 +6,18 @@ import { I_ModeOption, Languages, Mode, PlayerMode, type I_TypingZone } from './
 
 const initialState: I_TypingZone = {
 	language: Languages['english-200'],
-	punctuation: false,
-	numbers: false,
+	isPunctuation: false,
+	isNumbers: false,
 	playerMode: PlayerMode['single'],
-	mode: Mode['words'],
-	words: [
-		{ count: 10, enabled: false },
-		{ count: 20, enabled: false },
+	mode: Mode['time'],
+	wordOptions: [
+		{ count: 20, enabled: true },
 		{ count: 40, enabled: false },
-		{ count: 80, enabled: true },
+		{ count: 80, enabled: false },
 		{ count: 160, enabled: false },
 	],
-	time: [
-		{ count: 15, enabled: false },
+	timeOptions: [
+		{ count: 15, enabled: true },
 		{ count: 30, enabled: false },
 		{ count: 60, enabled: false },
 		{ count: 120, enabled: false },
@@ -29,12 +28,12 @@ export const languageReducer: T_Reducer<I_TypingZone, Languages> = (state, actio
 	state.language = action.payload
 }
 
-export const punctuationReducer: T_Reducer<I_TypingZone, boolean> = (state, action) => {
-	state.punctuation = action.payload
+export const isPunctuationReducer: T_Reducer<I_TypingZone, boolean> = (state, action) => {
+	state.isPunctuation = action.payload
 }
 
-export const numbersReducer: T_Reducer<I_TypingZone, boolean> = (state, action) => {
-	state.numbers = action.payload
+export const isNumbersReducer: T_Reducer<I_TypingZone, boolean> = (state, action) => {
+	state.isNumbers = action.payload
 }
 
 export const playerModeReducer: T_Reducer<I_TypingZone, PlayerMode> = (state, action) => {
@@ -51,7 +50,7 @@ const updateItems = (items: I_ModeOption[], action: I_Action): I_ModeOption[] =>
 
 		updatedItem.enabled = false
 
-		if (action.payload.count === updatedItem.count && action.payload.enabled) {
+		if (action.payload.count === updatedItem.count) {
 			updatedItem.enabled = true
 		}
 
@@ -59,39 +58,37 @@ const updateItems = (items: I_ModeOption[], action: I_Action): I_ModeOption[] =>
 	})
 }
 
-// При использовании wordsReducer в компоненте сделать проверку на то, нажал ли пользователь на уже активное число
-export const wordsReducer: T_Reducer<I_TypingZone, I_ModeOption> = (state, action) => {
-	state.words = updateItems(state.words, action)
+export const wordOptionsReducer: T_Reducer<I_TypingZone, I_ModeOption> = (state, action) => {
+	state.wordOptions = updateItems(state.wordOptions, action)
 }
 
-// При использовании timeReducer в компоненте сделать проверку на то, нажал ли пользователь на уже активное число
-export const timeReducer: T_Reducer<I_TypingZone, I_ModeOption> = (state, action) => {
-	state.time = updateItems(state.time, action)
+export const timeOptionsReducer: T_Reducer<I_TypingZone, I_ModeOption> = (state, action) => {
+	state.timeOptions = updateItems(state.timeOptions, action)
 }
 
-const appSlice = createSlice({
+const TypingZoneSlice = createSlice({
 	name: 'APP',
 	initialState,
 	reducers: {
 		setLanguageAction: languageReducer,
-		setPunctuationAction: punctuationReducer,
-		setNumbersAction: numbersReducer,
+		setIsPunctuationAction: isPunctuationReducer,
+		setIsNumbersAction: isNumbersReducer,
 		setPlayerModeAction: playerModeReducer,
 		setModeAction: modeReducer,
-		setActiveWordsAction: wordsReducer,
-		setActiveTimeAction: timeReducer,
+		setWordOptionsAction: wordOptionsReducer,
+		setTimeOptionsAction: timeOptionsReducer,
 	},
 })
 
 export const {
 	setLanguageAction,
-	setPunctuationAction,
-	setNumbersAction,
+	setIsPunctuationAction,
+	setIsNumbersAction,
 	setPlayerModeAction,
 	setModeAction,
-	setActiveWordsAction,
-	setActiveTimeAction,
-} = appSlice.actions
+	setWordOptionsAction,
+	setTimeOptionsAction,
+} = TypingZoneSlice.actions
 
 // prettier-ignore
 // Пример для асинхронных действий
@@ -99,4 +96,4 @@ export const {
 // 	dispatch(setLanguageAction(language))
 // }
 
-export default appSlice.reducer
+export default TypingZoneSlice.reducer

@@ -1,13 +1,15 @@
-import { FC } from 'react'
+import { FC, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 
 import { Paths } from 'utils/paths.ts'
 
 import styles from './Footer.module.scss'
 
-type FooterProps = {}
+type FooterProps = {
+	centerElement?: ReactNode
+}
 
-const Footer: FC<FooterProps> = () => {
+const Footer: FC<FooterProps> = ({ centerElement }) => {
 	return (
 		<footer className={styles['footer']}>
 			<div className={styles['footer__links']}>
@@ -18,6 +20,7 @@ const Footer: FC<FooterProps> = () => {
 					Github
 				</a>
 			</div>
+			{centerElement}
 			<div className={styles['footer__links']}>
 				<Link to={`${Paths.settings}#themes`} className={styles['footer__link']}>
 					Themes
