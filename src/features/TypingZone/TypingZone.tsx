@@ -1,12 +1,10 @@
 import { FC, useEffect, useState } from 'react'
-
-import { useAppDispatch, useAppSelector } from 'store/index'
+import store, { useAppDispatch, useAppSelector } from 'store/index'
 
 import { I_ModeOption, Mode } from './types'
-import { setWordOptionsAction } from './reducer'
-import { selectMode, selectTimeOptions, selectWordOptions } from './selectors'
+import { setTextAction, updateText } from './reducer'
+import { selectMode, selectText, selectTimeOptions } from './selectors'
 
-import { getRandomWords } from 'utils/getRandomWords'
 import { calculateWPM } from 'utils/calculateWPM'
 
 import TypingResult from 'components/TypingResult/TypingResult'
@@ -14,11 +12,7 @@ import RestartIcon from 'components/icons/RestartIcon/RestartIcon'
 
 import styles from './TypingZone.module.scss'
 
-const testText =
-	'old how hand house tell of much will problem program this nation system up hand than show hold which both end through long present order know where nation without what get state present for small those early then or under'
-
-// const text = 'old how hand house tell of much will problem program'
-
+// Тип буквы с состоянием
 type T_Letter = {
 	key: string
 	state: string
@@ -26,51 +20,35 @@ type T_Letter = {
 
 type TypingZoneProps = {}
 
-const generateInitialTextArr = (text: string): T_Letter[][] =>
-	text
-		.split(' ')
-		.map((word, wordIndex, words) =>
+const TypingZone: FC<TypingZoneProps> = () => {
+	const dispatch = useAppDispatch()
+	// Получаем данные из Redux
+	const currentMode = useAppSelector(selectMode)
+	const timeOptions = useAppSelector(selectTimeOptions)
+	const text = useAppSelector(selectText)
+
+	// Генерация начального массива текста
+	const generateInitialTextArr = (text: string[]): T_Letter[][] =>
+		text.map((word, wordIndex, words) =>
 			[...word]
 				.map(letter => ({ key: letter, state: 'default' }))
 				.concat(wordIndex < words.length - 1 ? [{ key: ' ', state: 'default' }] : [])
 		)
 
-const TypingZone: FC<TypingZoneProps> = () => {
-	const dispatch = useAppDispatch()
-
-	const currentMode = useAppSelector(selectMode)
-	const wordOptions = useAppSelector(selectWordOptions)
-	const timeOptions = useAppSelector(selectTimeOptions)
-
+	// Локальные состояния
 	const [isResultOpen, setIsResultOpen] = useState(false)
 	const [wpm, setWpm] = useState(0)
 
 	const [initialCountdown, setInitialCountdown] = useState<I_ModeOption['count']>(
 		timeOptions.find(option => option.enabled)?.count || timeOptions[0].count
 	)
-	const [countdown, setCountdown] = useState<I_ModeOption['count']>(
-		timeOptions.find(option => option.enabled)?.count || timeOptions[0].count
-	)
+	const [countdown, setCountdown] = useState<number>(initialCountdown)
 	const [isCountdownActive, setIsCountdownActive] = useState(false)
 	const [errorCount, setErrorCount] = useState(0)
 	const [globalIndex, setGlobalIndex] = useState({ wordIndex: 0, letterIndex: 0 })
-	const [text, setText] = useState('')
 	const [textArr, setTextArr] = useState<T_Letter[][]>(generateInitialTextArr(text))
 
-	const updateText = () => {
-		let updatedText: string = ''
-		try {
-			const wordCount = wordOptions.find(option => option.enabled)?.count || wordOptions[0].count
-			updatedText = getRandomWords(testText, wordCount)
-		} catch (error) {
-			console.log(error)
-			dispatch(setWordOptionsAction(wordOptions[0]))
-			updatedText = getRandomWords(text, wordOptions[0].count)
-		} finally {
-			setText(updatedText)
-		}
-	}
-
+	// Изменение состояния текущей буквы
 	const updateLetterState = (state: 'correct' | 'incorrect', increment = true) => {
 		setTextArr(prev => {
 			const updated = [...prev]
@@ -81,6 +59,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		if (increment) changeGlobalIndex('increment')
 	}
 
+	// Изменение текущего индекса
 	const changeGlobalIndex = (action: 'increment' | 'decrement') => {
 		setGlobalIndex(({ wordIndex, letterIndex }) => {
 			if (action === 'increment') {
@@ -101,6 +80,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		})
 	}
 
+	// Обработчик нажатий клавиш
 	const handleKeyDown = (event: KeyboardEvent) => {
 		if (event.key === 'Backspace') {
 			changeGlobalIndex('decrement')
@@ -117,20 +97,9 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		}
 
 		if (event.key.length === 1) {
-			if (globalIndex.wordIndex === 0 && globalIndex.letterIndex === 0) {
-				if (currentMode === Mode['words']) {
-					//
-				} else if (currentMode === Mode['time'] && !isCountdownActive) {
-					startTyping()
-				}
-			}
-			if (
-				globalIndex.wordIndex >= textArr.length - 1 &&
-				globalIndex.letterIndex >= textArr[globalIndex.wordIndex].length - 1
-			) {
-				console.log('last word')
-				endTyping()
-			}
+			// Начало набора текста
+			if (!isCountdownActive && currentMode === Mode['time']) startTyping()
+
 			const currentLetter = textArr[globalIndex.wordIndex][globalIndex.letterIndex]
 			if (currentLetter?.key === event.key) {
 				updateLetterState('correct')
@@ -138,71 +107,64 @@ const TypingZone: FC<TypingZoneProps> = () => {
 				setErrorCount(prev => prev + 1)
 				updateLetterState('incorrect')
 			}
+
+			if (
+				globalIndex.wordIndex >= textArr.length - 1 &&
+				globalIndex.letterIndex >= textArr[globalIndex.wordIndex].length - 1
+			) {
+				endTyping()
+			}
 		}
 	}
 
+	// Запуск таймера обратного отсчета
+	useEffect(() => {
+		let intervalId: NodeJS.Timeout
+		if (isCountdownActive && countdown > 0) {
+			intervalId = setInterval(() => setCountdown(prev => prev - 1), 1000)
+		} else if (countdown <= 0) {
+			endTyping()
+		}
+		return () => clearInterval(intervalId)
+	}, [isCountdownActive, countdown])
+
+	// Обновление тайпинга при изменении опций времени
+	useEffect(() => {
+		setInitialCountdown(timeOptions.find(option => option.enabled)?.count || timeOptions[0].count)
+	}, [timeOptions])
+
+	useEffect(() => {
+		resetTyping()
+	}, [text])
+
+	// Слушатель событий клавиш
 	useEffect(() => {
 		document.addEventListener('keydown', handleKeyDown)
 		return () => document.removeEventListener('keydown', handleKeyDown)
 	}, [globalIndex, currentMode])
 
-	useEffect(() => {
-		let intervalId: NodeJS.Timeout
-
-		if (isCountdownActive && countdown > 0) {
-			intervalId = setInterval(() => {
-				setCountdown(prev => prev - 1)
-			}, 1000)
-		} else if (countdown <= 0) {
-			endTyping()
-		}
-
-		return () => clearInterval(intervalId)
-	}, [isCountdownActive, countdown])
-
-	useEffect(() => {
-		const newCountdown = timeOptions.find(option => option.enabled)?.count || timeOptions[0].count
-		setInitialCountdown(newCountdown)
-		setCountdown(newCountdown)
-	}, [timeOptions])
-
-	useEffect(() => updateText(), [wordOptions])
-
-	useEffect(() => resetTyping(), [text, currentMode, initialCountdown, wordOptions])
-
+	// Начало теста
 	const startTyping = () => {
 		if (isResultOpen) return
-		if (currentMode === Mode['words']) {
-			// ...
-		} else if (currentMode === Mode['time']) {
-			setIsCountdownActive(true)
-		}
+		if (currentMode === Mode['time']) setIsCountdownActive(true)
 	}
 
+	// Завершение теста
 	const endTyping = () => {
-		console.log('-- End Typing ---')
-
-		const updatedWpm = calculateWPM(text.split(' ').slice(0, globalIndex.wordIndex), initialCountdown)
-		setWpm(updatedWpm)
-		console.log(updatedWpm)
-
-		setGlobalIndex({ wordIndex: 0, letterIndex: 0 })
-		setTextArr(generateInitialTextArr(text))
-
-		if (currentMode === Mode['time']) {
-			setIsCountdownActive(false)
-			setCountdown(initialCountdown)
-		}
-
+		console.log('Количество ошибок: ', errorCount)
+		const wordsTyped = text.slice(0, globalIndex.wordIndex)
+		setWpm(calculateWPM(wordsTyped, initialCountdown))
 		setIsResultOpen(true)
+		resetTyping()
 	}
 
+	// Сброс теста
 	const resetTyping = () => {
 		setErrorCount(0)
 		setGlobalIndex({ wordIndex: 0, letterIndex: 0 })
 		setTextArr(generateInitialTextArr(text))
-		setIsCountdownActive(false)
 		setCountdown(initialCountdown)
+		setIsCountdownActive(false)
 	}
 
 	return (
@@ -219,7 +181,10 @@ const TypingZone: FC<TypingZoneProps> = () => {
 						</div>
 					))}
 				</div>
-				<div className={styles['restart']} onClick={resetTyping}>
+				<div
+					className={styles['restart']}
+					onClick={() => dispatch(setTextAction(updateText({ ...store.getState().TypingZone })))}
+				>
 					<RestartIcon style={{ width: '24px', height: '24px' }} />
 				</div>
 				<p className={`${styles['countdown']} ${isCountdownActive ? '' : styles['countdown--hide']}`}>

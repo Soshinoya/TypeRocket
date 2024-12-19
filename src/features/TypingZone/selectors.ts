@@ -7,3 +7,4 @@ export const selectPlayerMode = (state: T_RootState) => state.TypingZone.playerM
 export const selectMode = (state: T_RootState) => state.TypingZone.mode
 export const selectWordOptions = (state: T_RootState) => state.TypingZone.wordOptions
 export const selectTimeOptions = (state: T_RootState) => state.TypingZone.timeOptions
+export const selectText = (state: T_RootState) => state.TypingZone.text

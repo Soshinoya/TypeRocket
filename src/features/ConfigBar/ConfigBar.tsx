@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react'
 
-import { useAppSelector, useAppDispatch } from 'store/index'
+import store, { useAppSelector, useAppDispatch } from 'store/index'
 
 import { I_ModeOption, Mode } from 'features/TypingZone/types'
 
@@ -10,6 +10,8 @@ import {
 	setModeAction,
 	setWordOptionsAction,
 	setTimeOptionsAction,
+	setTextAction,
+	updateText,
 } from 'features/TypingZone/reducer'
 
 import {
@@ -36,6 +38,10 @@ const ConfigBar: FC<ConfigBarProps> = () => {
 	const timeOptions = useAppSelector(selectTimeOptions)
 
 	const [currentModeOptions, setCurrentModeOptions] = useState<I_ModeOption[]>(wordOptions)
+
+	useEffect(() => {
+		dispatch(setTextAction(updateText({ ...store.getState().TypingZone })))
+	}, [currentLanguage, isPunctuation, isNumbers, currentMode, wordOptions, timeOptions])
 
 	useEffect(() => {
 		if (currentMode === Mode['words']) {
@@ -70,7 +76,7 @@ const ConfigBar: FC<ConfigBarProps> = () => {
 
 	return (
 		<div className={styles['config-bar']}>
-			<p className={styles['config-bar-item']}>{currentLanguage}</p>
+			<p className={styles['config-bar-item']}>{currentLanguage.name}</p>
 			<div className={styles['separator']}></div>
 			<div className={styles['config-bar-item__wrapper']}>
 				<p

@@ -1,7 +1,6 @@
-export const getRandomWords = (text: string, wordCount: number): string => {
-	// Разбиваем текст на слова
-	const words = text.split(/\s+/).filter(Boolean) // Убираем пустые строки
+import { random } from './utils'
 
+export const getRandomWords = (words: string[], wordCount: number): string[] => {
 	if (wordCount > words.length) {
 		throw new Error('Запрошенное количество слов превышает количество доступных в тексте')
 	}
@@ -11,7 +10,7 @@ export const getRandomWords = (text: string, wordCount: number): string => {
 	const usedIndices = new Set<number>()
 
 	while (randomWords.length < wordCount) {
-		const randomIndex = Math.floor(Math.random() * words.length)
+		const randomIndex = random(words.length)
 
 		if (!usedIndices.has(randomIndex)) {
 			randomWords.push(words[randomIndex])
@@ -19,5 +18,5 @@ export const getRandomWords = (text: string, wordCount: number): string => {
 		}
 	}
 
-	return randomWords.join(' ')
+	return randomWords
 }
