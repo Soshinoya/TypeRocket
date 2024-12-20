@@ -13,3 +13,19 @@ body,
 body {
     background-color: variables.$primary-700;
 }
+
+.body--blur {
+    overflow: hidden;
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        backdrop-filter: blur(5px);
+        z-index: 10;
+        transition: backdrop-filter 0.3s variables.$transitionTimingFunc;
+    }
+}

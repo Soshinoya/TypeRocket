@@ -1,4 +1,5 @@
 import { FC, useEffect, useState } from 'react'
+
 import store, { useAppDispatch, useAppSelector } from 'store/index'
 
 import { I_ModeOption, Mode } from './types'
@@ -155,6 +156,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		const wordsTyped = text.slice(0, globalIndex.wordIndex)
 		setWpm(calculateWPM(wordsTyped, initialCountdown))
 		setIsResultOpen(true)
+		dispatch(setTextAction(updateText({ ...store.getState().TypingZone })))
 		resetTyping()
 	}
 

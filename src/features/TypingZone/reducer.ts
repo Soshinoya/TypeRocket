@@ -10,11 +10,11 @@ import { addNumbers, addPunctuation } from 'utils/utils'
 import { getRandomWords } from 'utils/getRandomWords'
 
 const initialConfig: I_TypingZone = {
-	language: languages['english_200'],
+	language: languages.english_200,
 	isPunctuation: false,
 	isNumbers: false,
 	playerMode: PlayerMode['single'],
-	mode: Mode['time'],
+	mode: Mode['words'],
 	wordOptions: [
 		{ count: 20, enabled: true },
 		{ count: 40, enabled: false },

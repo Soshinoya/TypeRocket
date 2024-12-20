@@ -16,7 +16,8 @@
 			"store/*": ["src/store/*"],
 			"styles/*": ["src/styles/*"],
 			"utils/*": ["src/utils/*"],
-			"data/*": ["src/data/*"]
+			"data/*": ["src/data/*"],
+			"hooks/*": ["src/hooks/*"]
 		},
 
 		/* Bundler mode */

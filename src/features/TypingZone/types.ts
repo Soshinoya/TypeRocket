@@ -1,16 +1,31 @@
+import { nanoid } from '@reduxjs/toolkit'
+
 export type Language = {
+	id: string
 	key: string
 	name: string
 }
 
 export const languages: { [key: string]: Language } = {
 	english_200: {
+		id: nanoid(10),
 		key: 'english_200',
 		name: 'English 200',
 	},
 	english_1k: {
+		id: nanoid(10),
 		key: 'english_1k',
 		name: 'English 1K',
+	},
+	russian_200: {
+		id: nanoid(10),
+		key: 'russian_200',
+		name: 'Russian 200',
+	},
+	russian_1k: {
+		id: nanoid(10),
+		key: 'russian_1k',
+		name: 'Russian 1K',
 	},
 } as const
 
