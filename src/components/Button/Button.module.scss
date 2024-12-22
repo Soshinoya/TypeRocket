@@ -1,0 +1,14 @@
+@use "../../styles/base/variables.scss";
+@use "../../styles/base/typography.scss";
+
+.button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 30px;
+    border-radius: 10px;
+    background-color: variables.$primary;
+    @extend %epilogue-500;
+    color: variables.$primary-700;
+}

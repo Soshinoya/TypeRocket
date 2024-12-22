@@ -1,0 +1,53 @@
+@use "../../styles/base/variables.scss";
+@use "../../styles/base/typography.scss";
+
+@mixin input($type) {
+    @if $type == error {
+        color: variables.$error-color;
+        border-color: variables.$error-color;
+    } @else if $type == disabled {
+        color: variables.$gray-color;
+        border-color: variables.$gray-color;
+    } @else {
+        @warn No such type as $type;
+    }
+}
+
+.input {
+    width: 100%;
+    padding: 18px 25px;
+    color: variables.$primary;
+    @extend %body-default-light;
+    border: 1px solid variables.$primary-600;
+    border-radius: 10px;
+    background-color: variables.$primary-700;
+
+    &__wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    &__label {
+        color: variables.$primary-600;
+        @extend %body-small-medium;
+    }
+
+    &--error {
+        @include input(error);
+    }
+
+    &--disabled {
+        @include input(disabled);
+    }
+}
+
+.input__wrapper {
+    .input:not(:disabled):focus-within {
+        border-color: variables.$primary;
+    }
+
+    .input:not(:disabled):focus-within .input__label {
+        color: variables.$primary;
+    }
+}

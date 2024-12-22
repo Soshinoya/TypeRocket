@@ -56,7 +56,7 @@
 }
 
 .incorrect {
-    color: red;
+    color: variables.$error-color;
 }
 
 .countdown {
