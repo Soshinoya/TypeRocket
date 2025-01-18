@@ -1,27 +1,6 @@
 @use "../../styles/base/typography.scss";
 @use "../../styles/base/variables.scss";
 
-// .blinking-cursor {
-//     font-weight: 100;
-//     font-size: 30px;
-//     color: #2e3d48;
-//     -webkit-animation: 1s blink step-end infinite;
-//     -moz-animation: 1s blink step-end infinite;
-//     -ms-animation: 1s blink step-end infinite;
-//     -o-animation: 1s blink step-end infinite;
-//     animation: 1s blink step-end infinite;
-// }
-
-// @keyframes blink {
-//     from,
-//     to {
-//         color: transparent;
-//     }
-//     50% {
-//         color: black;
-//     }
-// }
-
 .typing-zone {
     position: relative;
     height: 100%;
@@ -33,11 +12,11 @@
 }
 
 .words {
+    position: relative;
     max-width: 1000px;
     display: flex;
     flex-wrap: wrap;
     user-select: none;
-    column-gap: 10px;
     row-gap: 15px;
 }
 
@@ -56,6 +35,15 @@
 
 .incorrect {
     color: variables.$error-color;
+}
+
+.space {
+    width: 10px;
+    margin-top: -4px;
+
+    &--incorrect {
+        background-color: #f7768e;
+    }
 }
 
 .countdown {

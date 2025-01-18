@@ -9,6 +9,7 @@ import { selectMode, selectText, selectTimeOptions } from './selectors'
 import { calculateWPM } from 'utils/calculateWPM'
 
 import TypingResult from 'components/TypingResult/TypingResult'
+import BlinkingCursor from 'components/BlinkingCursor/BlinkingCursor'
 import RestartIcon from 'components/icons/RestartIcon/RestartIcon'
 
 import styles from './TypingZone.module.scss'
@@ -17,6 +18,11 @@ import styles from './TypingZone.module.scss'
 type T_Letter = {
 	key: string
 	state: string
+}
+
+type T_CurrentLetterRect = {
+	top: string
+	left: string
 }
 
 type TypingZoneProps = {}
@@ -37,6 +43,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		)
 
 	// Локальные состояния
+	const [currentLetterRect, setCurrentLetterRect] = useState<T_CurrentLetterRect>({ top: '0px', left: '0px' })
 	const [isResultOpen, setIsResultOpen] = useState(false)
 	const [wpm, setWpm] = useState(0)
 
@@ -144,6 +151,22 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		return () => document.removeEventListener('keydown', handleKeyDown)
 	}, [globalIndex, currentMode])
 
+	useEffect(() => {
+		const wordsElement = document.querySelector('.words')
+		const wordEl = wordsElement?.querySelector(`[word-id="${globalIndex.wordIndex}"]`)
+		const letterEl = wordEl?.querySelector(`[letter-id="${globalIndex.letterIndex}"]`)
+
+		if (wordsElement && letterEl) {
+			const wordsRect = wordsElement.getBoundingClientRect()
+			const letterRect = letterEl.getBoundingClientRect()
+
+			setCurrentLetterRect({
+				top: `${letterRect.top - wordsRect.top - 6}px`,
+				left: `${letterRect.left - wordsRect.left}px`,
+			})
+		}
+	}, [globalIndex])
+
 	// Начало теста
 	const startTyping = () => {
 		if (isResultOpen) return
@@ -172,16 +195,25 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	return (
 		<>
 			<div className={styles['typing-zone']}>
-				<div className={styles['words']}>
+				<div className={`words ${styles['words']}`}>
 					{textArr.map((word, wordIdx) => (
-						<div className={styles['word']} key={wordIdx}>
+						<div className={styles['word']} word-id={wordIdx} key={wordIdx}>
 							{word.map((letter, letterIdx) => (
-								<div className={`${styles['letter']} ${styles[letter.state]}`} key={letterIdx}>
+								<div
+									className={`${styles['letter']} ${letter.key === ' ' ? styles['space'] : ''} ${
+										letter.state !== 'default' && letter.key !== ' '
+											? styles[letter.state]
+											: styles[`space--${letter.state}`]
+									}`}
+									letter-id={letterIdx}
+									key={letterIdx}
+								>
 									{letter.key}
 								</div>
 							))}
 						</div>
 					))}
+					<BlinkingCursor top={currentLetterRect.top} left={currentLetterRect.left} />
 				</div>
 				<div
 					className={styles['restart']}
