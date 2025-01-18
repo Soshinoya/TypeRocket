@@ -33,7 +33,7 @@
 }
 
 .words {
-    max-width: 800px;
+    max-width: 1000px;
     display: flex;
     flex-wrap: wrap;
     user-select: none;
@@ -43,7 +43,6 @@
 
 .word {
     display: inline-flex;
-    // margin: 5px 7.5px;
 }
 
 .letter {

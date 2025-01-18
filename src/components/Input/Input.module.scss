@@ -13,14 +13,23 @@
     }
 }
 
+.input,
+.input__label {
+    transition:
+        border-color 0.3s variables.$transitionTimingFunc,
+        color 0.3s variables.$transitionTimingFunc;
+}
+
 .input {
     width: 100%;
-    padding: 18px 25px;
-    color: variables.$primary;
+    padding: 13px 25px;
+    color: variables.$primary-600;
     @extend %body-default-light;
+    font-weight: 400;
     border: 1px solid variables.$primary-600;
     border-radius: 10px;
     background-color: variables.$primary-700;
+    outline: none;
 
     &__wrapper {
         display: flex;
@@ -31,6 +40,7 @@
     &__label {
         color: variables.$primary-600;
         @extend %body-small-medium;
+        order: -1;
     }
 
     &--error {
@@ -44,10 +54,11 @@
 
 .input__wrapper {
     .input:not(:disabled):focus-within {
+        color: variables.$primary;
         border-color: variables.$primary;
     }
 
-    .input:not(:disabled):focus-within .input__label {
+    .input:not(:disabled):focus-within + .input__label {
         color: variables.$primary;
     }
 }

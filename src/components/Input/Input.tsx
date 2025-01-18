@@ -57,11 +57,6 @@ const Input: FC<InputProps> = ({
 
 	return (
 		<div className={styles['input__wrapper']}>
-			{label && (
-				<label htmlFor={name} className={styles['input__label']}>
-					{label}
-				</label>
-			)}
 			<input
 				id={name}
 				className={`${styles['input']} ${modificator ? styles[`input--${modificator}`] : ''}`}
@@ -73,6 +68,11 @@ const Input: FC<InputProps> = ({
 				onBlur={onBlur}
 				maxLength={maxLength}
 			/>
+			{label && (
+				<label htmlFor={name} className={styles['input__label']}>
+					{label}
+				</label>
+			)}
 		</div>
 	)
 }

@@ -5,6 +5,8 @@ import { Paths } from './utils/paths.ts'
 import Root from './layouts/Root/Root'
 import Home from 'pages/Home/Home.tsx'
 import Settings from './pages/Settings/Settings'
+import Login from 'pages/Login/Login.tsx'
+import Register from 'pages/Register/Register.tsx'
 
 function App() {
 	const router = createBrowserRouter([
@@ -22,6 +24,14 @@ function App() {
 				// 	element: <About />,
 				// },
 			],
+		},
+		{
+			path: Paths.login,
+			element: <Login />,
+		},
+		{
+			path: Paths.register,
+			element: <Register />,
 		},
 		{
 			path: Paths.settings,

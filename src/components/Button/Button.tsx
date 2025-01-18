@@ -5,11 +5,12 @@ import styles from './Button.module.scss'
 type ButtonProps = {
 	text: string
 	action: Function
+	variant?: 'filled' | 'outline'
 }
 
-const Button: FC<ButtonProps> = ({ text, action }) => {
+const Button: FC<ButtonProps> = ({ variant = 'filled', text, action }) => {
 	return (
-		<button className={styles['button']} onClick={() => action()}>
+		<button className={`${styles['button']} ${styles[`button--${variant}`]}`} onClick={() => action()}>
 			{text}
 		</button>
 	)
