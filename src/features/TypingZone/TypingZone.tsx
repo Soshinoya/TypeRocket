@@ -47,6 +47,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	const [isResultOpen, setIsResultOpen] = useState(false)
 	const [wpm, setWpm] = useState(0)
 
+	const [currentEvent, setCurrentEvent] = useState<KeyboardEvent.key>()
 	const [initialCountdown, setInitialCountdown] = useState<I_ModeOption['count']>(
 		timeOptions.find(option => option.enabled)?.count || timeOptions[0].count
 	)
@@ -90,25 +91,20 @@ const TypingZone: FC<TypingZoneProps> = () => {
 
 	// Обработчик нажатий клавиш
 	const handleKeyDown = (event: KeyboardEvent) => {
+		setCurrentEvent(event.key)
+
 		if (event.key === 'Backspace') {
 			changeGlobalIndex('decrement')
-			setTextArr(prev => {
-				const updated = [...prev]
-				const { wordIndex, letterIndex } = globalIndex
-				if (letterIndex > 0 || (wordIndex > 0 && letterIndex === 0)) {
-					updated[wordIndex][letterIndex - 1]?.state &&
-						(updated[wordIndex][letterIndex - 1].state = 'default')
-				}
-				return updated
-			})
 			return
 		}
 
 		if (event.key.length === 1) {
 			// Начало набора текста
-			if (!isCountdownActive && currentMode === Mode['time']) startTyping()
+			if (!isCountdownActive && currentMode === Mode['time']) {
+				startTyping()
+			}
 
-			const currentLetter = textArr[globalIndex.wordIndex][globalIndex.letterIndex]
+			const currentLetter = textArr[globalIndex.wordIndex]?.[globalIndex.letterIndex]
 			if (currentLetter?.key === event.key) {
 				updateLetterState('correct')
 			} else {
@@ -116,6 +112,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 				updateLetterState('incorrect')
 			}
 
+			// Проверка на окончание набора текста
 			if (
 				globalIndex.wordIndex >= textArr.length - 1 &&
 				globalIndex.letterIndex >= textArr[globalIndex.wordIndex].length - 1
@@ -124,6 +121,24 @@ const TypingZone: FC<TypingZoneProps> = () => {
 			}
 		}
 	}
+
+	useEffect(() => {
+		if (currentEvent === 'Backspace') {
+			setTextArr(prev => {
+				const updated = [...prev]
+				const { wordIndex, letterIndex } = globalIndex
+
+				// Удаление состояния буквы при нажатии Backspace
+				if (letterIndex > 0 || (wordIndex > 0 && letterIndex === 0)) {
+					const letter = updated[wordIndex]?.[letterIndex]
+					if (letter?.state) {
+						letter.state = 'default'
+					}
+				}
+				return updated
+			})
+		}
+	}, [currentEvent, globalIndex])
 
 	// Запуск таймера обратного отсчета
 	useEffect(() => {
