@@ -14,14 +14,18 @@
 .words {
     position: relative;
     max-width: 1000px;
+    height: 81px;
     display: flex;
     flex-wrap: wrap;
     user-select: none;
     row-gap: 15px;
+    overflow: hidden;
 }
 
 .word {
     display: inline-flex;
+    position: inherit;
+    top: 0;
 }
 
 .letter {

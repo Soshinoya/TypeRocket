@@ -14,6 +14,10 @@ import RestartIcon from 'components/icons/RestartIcon/RestartIcon'
 
 import styles from './TypingZone.module.scss'
 
+import hitAudio from 'assets/audio/typewriter-key-hit.mp3'
+
+const incorrectLetterAudio = new Audio(hitAudio)
+
 // Тип буквы с состоянием
 type T_Letter = {
 	key: string
@@ -47,7 +51,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	const [isResultOpen, setIsResultOpen] = useState(false)
 	const [wpm, setWpm] = useState(0)
 
-	const [currentEvent, setCurrentEvent] = useState<KeyboardEvent.key>()
+	const [currentEvent, setCurrentEvent] = useState<KeyboardEvent['key']>()
 	const [initialCountdown, setInitialCountdown] = useState<I_ModeOption['count']>(
 		timeOptions.find(option => option.enabled)?.count || timeOptions[0].count
 	)
@@ -92,6 +96,8 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	// Обработчик нажатий клавиш
 	const handleKeyDown = (event: KeyboardEvent) => {
 		setCurrentEvent(event.key)
+		incorrectLetterAudio.pause()
+		incorrectLetterAudio.currentTime = 0
 
 		if (event.key === 'Backspace') {
 			changeGlobalIndex('decrement')
@@ -110,6 +116,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 			} else {
 				setErrorCount(prev => prev + 1)
 				updateLetterState('incorrect')
+				incorrectLetterAudio.play()
 			}
 
 			// Проверка на окончание набора текста
