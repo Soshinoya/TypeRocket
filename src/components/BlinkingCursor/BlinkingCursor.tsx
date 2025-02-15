@@ -8,7 +8,7 @@ type BlinkingCursorProps = {
 }
 
 const BlinkingCursor: FC<BlinkingCursorProps> = ({ top, left }) => {
-	return <div className={styles['blinking-cursor']} style={{ top, left }}></div>
+	return <div className={`blinking-cursor ${styles['blinking-cursor']}`} style={{ top, left }}></div>
 }
 
 export default BlinkingCursor

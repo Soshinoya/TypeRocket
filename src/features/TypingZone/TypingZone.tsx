@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from 'react'
 
 import store, { useAppDispatch, useAppSelector } from 'store/index'
 
-import { I_ModeOption, Mode } from './types'
+import { Mode } from './types'
 import { setTextAction, updateText } from './reducer'
 import { selectMode, selectText, selectTimeOptions } from './selectors'
 
@@ -33,6 +33,7 @@ type TypingZoneProps = {}
 
 const TypingZone: FC<TypingZoneProps> = () => {
 	const dispatch = useAppDispatch()
+
 	// Получаем данные из Redux
 	const currentMode = useAppSelector(selectMode)
 	const timeOptions = useAppSelector(selectTimeOptions)
@@ -52,10 +53,9 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	const [wpm, setWpm] = useState(0)
 
 	const [currentEvent, setCurrentEvent] = useState<KeyboardEvent['key']>()
-	const [initialCountdown, setInitialCountdown] = useState<I_ModeOption['count']>(
+	const [countdown, setCountdown] = useState<number>(
 		timeOptions.find(option => option.enabled)?.count || timeOptions[0].count
 	)
-	const [countdown, setCountdown] = useState<number>(initialCountdown)
 	const [isCountdownActive, setIsCountdownActive] = useState(false)
 	const [errorCount, setErrorCount] = useState(0)
 	const [globalIndex, setGlobalIndex] = useState({ wordIndex: 0, letterIndex: 0 })
@@ -75,21 +75,29 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	// Изменение текущего индекса
 	const changeGlobalIndex = (action: 'increment' | 'decrement') => {
 		setGlobalIndex(({ wordIndex, letterIndex }) => {
+			const currentWord = textArr[wordIndex]
+			const isAtStartOfWord = letterIndex === 0
+
 			if (action === 'increment') {
-				if (letterIndex < textArr[wordIndex].length - 1) {
+				if (letterIndex < currentWord.length - 1) {
 					return { wordIndex, letterIndex: letterIndex + 1 }
 				}
-				return wordIndex < textArr.length - 1
-					? { wordIndex: wordIndex + 1, letterIndex: 0 }
-					: { wordIndex, letterIndex }
+				if (wordIndex < textArr.length - 1) {
+					return { wordIndex: wordIndex + 1, letterIndex: 0 }
+				}
 			} else {
-				if (letterIndex > 0) {
+				const cursor = document.querySelector('.blinking-cursor') as HTMLElement
+				if (parseInt(cursor.style.left) === 0) return { wordIndex, letterIndex }
+
+				if (!isAtStartOfWord) {
 					return { wordIndex, letterIndex: letterIndex - 1 }
 				}
-				return wordIndex > 0
-					? { wordIndex: wordIndex - 1, letterIndex: textArr[wordIndex - 1].length - 1 }
-					: { wordIndex, letterIndex }
+				if (wordIndex > 0) {
+					return { wordIndex: wordIndex - 1, letterIndex: textArr[wordIndex - 1].length - 1 }
+				}
 			}
+
+			return { wordIndex, letterIndex }
 		})
 	}
 
@@ -160,7 +168,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 
 	// Обновление тайпинга при изменении опций времени
 	useEffect(() => {
-		setInitialCountdown(timeOptions.find(option => option.enabled)?.count || timeOptions[0].count)
+		setCountdown(timeOptions.find(option => option.enabled)?.count || timeOptions[0].count)
 	}, [timeOptions])
 
 	useEffect(() => {
@@ -174,20 +182,41 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	}, [globalIndex, currentMode])
 
 	useEffect(() => {
-		const wordsElement = document.querySelector('.words')
+		const wordsElement = document.querySelector('.words') as HTMLElement
 		const wordEl = wordsElement?.querySelector(`[word-id="${globalIndex.wordIndex}"]`)
 		const letterEl = wordEl?.querySelector(`[letter-id="${globalIndex.letterIndex}"]`)
 
-		if (wordsElement && letterEl) {
-			const wordsRect = wordsElement.getBoundingClientRect()
-			const letterRect = letterEl.getBoundingClientRect()
+		if (!wordsElement || !letterEl) return
 
-			setCurrentLetterRect({
-				top: `${letterRect.top - wordsRect.top - 6}px`,
-				left: `${letterRect.left - wordsRect.left}px`,
-			})
+		const wordsRect = wordsElement.getBoundingClientRect()
+		const letterRect = letterEl.getBoundingClientRect()
+
+		let topOffset = letterRect.top - wordsRect.top
+		let leftOffset = letterRect.left - wordsRect.left
+
+		if (topOffset >= 60) {
+			adjustWordPositions(wordsElement, topOffset)
+			topOffset = 0 // Сбросим topOffset, если он больше 60
 		}
+
+		setCurrentLetterRect({
+			top: `${topOffset}px`,
+			left: `${leftOffset}px`,
+		})
 	}, [globalIndex])
+
+	const adjustWordPositions = (wordsElement: HTMLElement, topOffset: number) => {
+		wordsElement.querySelectorAll('[word-id]').forEach(element => {
+			const el = element as HTMLElement
+			const currentTop = parseInt(el.style.top) || 0
+			el.style.top = `${currentTop - topOffset}px`
+		})
+	}
+
+	const restartIconHandler = () => {
+		dispatch(setTextAction(updateText({ ...store.getState().TypingZone })))
+		resetTyping()
+	}
 
 	// Начало теста
 	const startTyping = () => {
@@ -199,7 +228,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	const endTyping = () => {
 		console.log('Количество ошибок: ', errorCount)
 		const wordsTyped = text.slice(0, globalIndex.wordIndex)
-		setWpm(calculateWPM(wordsTyped, initialCountdown))
+		setWpm(calculateWPM(wordsTyped, timeOptions.find(option => option.enabled)?.count || timeOptions[0].count))
 		setIsResultOpen(true)
 		dispatch(setTextAction(updateText({ ...store.getState().TypingZone })))
 		resetTyping()
@@ -210,8 +239,12 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		setErrorCount(0)
 		setGlobalIndex({ wordIndex: 0, letterIndex: 0 })
 		setTextArr(generateInitialTextArr(text))
-		setCountdown(initialCountdown)
+		setCountdown(timeOptions.find(option => option.enabled)?.count || timeOptions[0].count)
 		setIsCountdownActive(false)
+		document.querySelectorAll('.words [word-id]').forEach(elem => {
+			const el = elem as HTMLElement
+			el.style.top = '0px'
+		})
 	}
 
 	return (
@@ -237,10 +270,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 					))}
 					<BlinkingCursor top={currentLetterRect.top} left={currentLetterRect.left} />
 				</div>
-				<div
-					className={styles['restart']}
-					onClick={() => dispatch(setTextAction(updateText({ ...store.getState().TypingZone })))}
-				>
+				<div className={styles['restart']} onClick={restartIconHandler}>
 					<RestartIcon style={{ width: '24px', height: '24px' }} />
 				</div>
 				<p className={`${styles['countdown']} ${isCountdownActive ? '' : styles['countdown--hide']}`}>

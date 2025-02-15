@@ -31,14 +31,7 @@ const initialConfig: I_TypingZone = {
 }
 
 // Обновление текста
-export const updateText = ({
-	language,
-	isPunctuation,
-	isNumbers,
-	mode,
-	wordOptions,
-	timeOptions,
-}: I_TypingZone): string[] => {
+export const updateText = ({ language, isPunctuation, isNumbers, mode, wordOptions }: I_TypingZone): string[] => {
 	let newText: string[]
 
 	// newText присваиваем исходный набор слов
@@ -55,6 +48,12 @@ export const updateText = ({
 			newText = new Array(15).fill('error', 0)
 		}
 	} else if (mode === Mode['time']) {
+		try {
+			newText = getRandomWords(newText)
+		} catch (error) {
+			console.error(error)
+			newText = new Array(15).fill('error', 0)
+		}
 	}
 
 	// Добавляем пунктуацию, если она включена

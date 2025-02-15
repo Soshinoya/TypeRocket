@@ -14,7 +14,7 @@
 .words {
     position: relative;
     max-width: 1000px;
-    height: 81px;
+    max-height: 81px;
     display: flex;
     flex-wrap: wrap;
     user-select: none;
@@ -26,6 +26,7 @@
     display: inline-flex;
     position: inherit;
     top: 0;
+    transition: top 0.2s variables.$transitionTimingFunc;
 }
 
 .letter {

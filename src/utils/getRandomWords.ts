@@ -1,6 +1,7 @@
 import { random } from './utils'
 
-export const getRandomWords = (words: string[], wordCount: number): string[] => {
+export const getRandomWords = (words: string[], wordCountParam?: number): string[] => {
+	const wordCount = wordCountParam !== undefined ? wordCountParam : words.length - 1
 	if (wordCount > words.length) {
 		throw new Error('Запрошенное количество слов превышает количество доступных в тексте')
 	}
