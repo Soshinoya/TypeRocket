@@ -54,3 +54,14 @@ export interface I_TypingZone {
 	timeOptions: I_ModeOption[]
 	text: string[]
 }
+
+// Тип буквы с состоянием
+export type T_Letter = {
+	key: string
+	state: string
+}
+
+export type T_CurrentLetterRect = {
+	top: string
+	left: string
+}

@@ -2,11 +2,12 @@ import { FC, useEffect, useState } from 'react'
 
 import store, { useAppDispatch, useAppSelector } from 'store/index'
 
-import { Mode } from './types'
+import { Mode, T_Letter, T_CurrentLetterRect } from './types'
 import { setTextAction, updateText } from './reducer'
 import { selectMode, selectText, selectTimeOptions } from './selectors'
 
-import { calculateWPM } from 'utils/calculateWPM'
+import { calculateWPM } from 'utils/calculateStats'
+import { generateInitialTextArr, closure, adjustWordPositions } from './utils'
 
 import TypingResult from 'components/TypingResult/TypingResult'
 import BlinkingCursor from 'components/BlinkingCursor/BlinkingCursor'
@@ -18,17 +19,6 @@ import hitAudio from 'assets/audio/typewriter-key-hit.mp3'
 
 const incorrectLetterAudio = new Audio(hitAudio)
 
-// Тип буквы с состоянием
-type T_Letter = {
-	key: string
-	state: string
-}
-
-type T_CurrentLetterRect = {
-	top: string
-	left: string
-}
-
 type TypingZoneProps = {}
 
 const TypingZone: FC<TypingZoneProps> = () => {
@@ -38,14 +28,6 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	const currentMode = useAppSelector(selectMode)
 	const timeOptions = useAppSelector(selectTimeOptions)
 	const text = useAppSelector(selectText)
-
-	// Генерация начального массива текста
-	const generateInitialTextArr = (text: string[]): T_Letter[][] =>
-		text.map((word, wordIndex, words) =>
-			[...word]
-				.map(letter => ({ key: letter, state: 'default' }))
-				.concat(wordIndex < words.length - 1 ? [{ key: ' ', state: 'default' }] : [])
-		)
 
 	// Локальные состояния
 	const [currentLetterRect, setCurrentLetterRect] = useState<T_CurrentLetterRect>({ top: '0px', left: '0px' })
@@ -61,45 +43,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	const [globalIndex, setGlobalIndex] = useState({ wordIndex: 0, letterIndex: 0 })
 	const [textArr, setTextArr] = useState<T_Letter[][]>(generateInitialTextArr(text))
 
-	// Изменение состояния текущей буквы
-	const updateLetterState = (state: 'correct' | 'incorrect', increment = true) => {
-		setTextArr(prev => {
-			const updated = [...prev]
-			const { wordIndex, letterIndex } = globalIndex
-			updated[wordIndex][letterIndex].state = state
-			return updated
-		})
-		if (increment) changeGlobalIndex('increment')
-	}
-
-	// Изменение текущего индекса
-	const changeGlobalIndex = (action: 'increment' | 'decrement') => {
-		setGlobalIndex(({ wordIndex, letterIndex }) => {
-			const currentWord = textArr[wordIndex]
-			const isAtStartOfWord = letterIndex === 0
-
-			if (action === 'increment') {
-				if (letterIndex < currentWord.length - 1) {
-					return { wordIndex, letterIndex: letterIndex + 1 }
-				}
-				if (wordIndex < textArr.length - 1) {
-					return { wordIndex: wordIndex + 1, letterIndex: 0 }
-				}
-			} else {
-				const cursor = document.querySelector('.blinking-cursor') as HTMLElement
-				if (parseInt(cursor.style.left) === 0) return { wordIndex, letterIndex }
-
-				if (!isAtStartOfWord) {
-					return { wordIndex, letterIndex: letterIndex - 1 }
-				}
-				if (wordIndex > 0) {
-					return { wordIndex: wordIndex - 1, letterIndex: textArr[wordIndex - 1].length - 1 }
-				}
-			}
-
-			return { wordIndex, letterIndex }
-		})
-	}
+	const { changeGlobalIndex, updateLetterState } = closure(textArr, globalIndex, setGlobalIndex, setTextArr)
 
 	// Обработчик нажатий клавиш
 	const handleKeyDown = (event: KeyboardEvent) => {
@@ -194,9 +138,9 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		let topOffset = letterRect.top - wordsRect.top
 		let leftOffset = letterRect.left - wordsRect.left
 
-		if (topOffset >= 60) {
+		if (topOffset >= 28) {
 			adjustWordPositions(wordsElement, topOffset)
-			topOffset = 0 // Сбросим topOffset, если он больше 60
+			topOffset = 0 // Сбросим topOffset, если он больше 28
 		}
 
 		setCurrentLetterRect({
@@ -204,14 +148,6 @@ const TypingZone: FC<TypingZoneProps> = () => {
 			left: `${leftOffset}px`,
 		})
 	}, [globalIndex])
-
-	const adjustWordPositions = (wordsElement: HTMLElement, topOffset: number) => {
-		wordsElement.querySelectorAll('[word-id]').forEach(element => {
-			const el = element as HTMLElement
-			const currentTop = parseInt(el.style.top) || 0
-			el.style.top = `${currentTop - topOffset}px`
-		})
-	}
 
 	const restartIconHandler = () => {
 		dispatch(setTextAction(updateText({ ...store.getState().TypingZone })))
