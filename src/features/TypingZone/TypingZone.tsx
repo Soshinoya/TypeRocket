@@ -35,10 +35,9 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	const [wpm, setWpm] = useState(0)
 
 	const [currentEvent, setCurrentEvent] = useState<KeyboardEvent['key']>()
-	const [countdown, setCountdown] = useState<number>(
-		timeOptions.find(option => option.enabled)?.count || timeOptions[0].count
-	)
-	const [isCountdownActive, setIsCountdownActive] = useState(false)
+	// timer - measures the time it takes to complete the test in seconds
+	const [timer, setTimer] = useState(0)
+	const [isTimerActive, setIsTimerActive] = useState(false)
 	const [errorCount, setErrorCount] = useState(0)
 	const [globalIndex, setGlobalIndex] = useState({ wordIndex: 0, letterIndex: 0 })
 	const [textArr, setTextArr] = useState<T_Letter[][]>(generateInitialTextArr(text))
@@ -57,10 +56,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		}
 
 		if (event.key.length === 1) {
-			// Начало набора текста
-			if (!isCountdownActive && currentMode === Mode['time']) {
-				startTyping()
-			}
+			startTyping()
 
 			const currentLetter = textArr[globalIndex.wordIndex]?.[globalIndex.letterIndex]
 			if (currentLetter?.key === event.key) {
@@ -99,21 +95,28 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		}
 	}, [currentEvent, globalIndex])
 
-	// Запуск таймера обратного отсчета
+	// Запуск таймера
 	useEffect(() => {
-		let intervalId: NodeJS.Timeout
-		if (isCountdownActive && countdown > 0) {
-			intervalId = setInterval(() => setCountdown(prev => prev - 1), 1000)
-		} else if (countdown <= 0) {
+		let intervalId: NodeJS.Timeout | undefined
+
+		console.log('Timer: ', timer)
+
+		if (isTimerActive) {
+			intervalId = setInterval(() => setTimer(prev => prev + 1), 1000)
+		}
+
+		const targetTime = timeOptions.find(option => option.enabled)?.count || timeOptions[0].count
+
+		if (timer >= targetTime && currentMode === Mode.time) {
 			endTyping()
 		}
-		return () => clearInterval(intervalId)
-	}, [isCountdownActive, countdown])
 
-	// Обновление тайпинга при изменении опций времени
-	useEffect(() => {
-		setCountdown(timeOptions.find(option => option.enabled)?.count || timeOptions[0].count)
-	}, [timeOptions])
+		return () => {
+			if (intervalId) {
+				clearInterval(intervalId)
+			}
+		}
+	}, [isTimerActive, timer])
 
 	useEffect(() => {
 		resetTyping()
@@ -157,14 +160,12 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	// Начало теста
 	const startTyping = () => {
 		if (isResultOpen) return
-		if (currentMode === Mode['time']) setIsCountdownActive(true)
+		setIsTimerActive(true)
 	}
 
 	// Завершение теста
 	const endTyping = () => {
-		console.log('Количество ошибок: ', errorCount)
-		const wordsTyped = text.slice(0, globalIndex.wordIndex)
-		setWpm(calculateWPM(wordsTyped, timeOptions.find(option => option.enabled)?.count || timeOptions[0].count))
+		setWpm(calculateWPM(text, timer, errorCount))
 		setIsResultOpen(true)
 		dispatch(setTextAction(updateText({ ...store.getState().TypingZone })))
 		resetTyping()
@@ -175,8 +176,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		setErrorCount(0)
 		setGlobalIndex({ wordIndex: 0, letterIndex: 0 })
 		setTextArr(generateInitialTextArr(text))
-		setCountdown(timeOptions.find(option => option.enabled)?.count || timeOptions[0].count)
-		setIsCountdownActive(false)
+		setIsTimerActive(false)
 		document.querySelectorAll('.words [word-id]').forEach(elem => {
 			const el = elem as HTMLElement
 			el.style.top = '0px'
@@ -209,9 +209,11 @@ const TypingZone: FC<TypingZoneProps> = () => {
 				<div className={styles['restart']} onClick={restartIconHandler}>
 					<RestartIcon style={{ width: '24px', height: '24px' }} />
 				</div>
-				<p className={`${styles['countdown']} ${isCountdownActive ? '' : styles['countdown--hide']}`}>
-					{countdown}
-				</p>
+				{currentMode === Mode.time && (
+					<p className={`${styles['countdown']} ${isTimerActive ? '' : styles['countdown--hide']}`}>
+						{(timeOptions.find(option => option.enabled)?.count || timeOptions[0].count) - timer}
+					</p>
+				)}
 			</div>
 			<TypingResult wpm={wpm} isOpen={isResultOpen} setIsOpen={setIsResultOpen} />
 		</>
