@@ -4,11 +4,12 @@ import styles from './TypingResult.module.scss'
 
 type TypingResultProps = {
 	wpm: number
+	rawWpm: number
 	isOpen: boolean
 	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const TypingResult: FC<TypingResultProps> = ({ wpm, isOpen, setIsOpen }) => {
+const TypingResult: FC<TypingResultProps> = ({ wpm, rawWpm, isOpen, setIsOpen }) => {
 	return (
 		<div className={`${styles['result__wrapper']} ${isOpen ? styles['result__wrapper--active'] : ''}`}>
 			<div className={styles['result']}>

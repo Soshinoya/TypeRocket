@@ -2,11 +2,11 @@ import { FC, useEffect, useState } from 'react'
 
 import store, { useAppDispatch, useAppSelector } from 'store/index'
 
-import { Mode, T_Letter, T_CurrentLetterRect } from './types'
+import { Mode, T_Word, T_CurrentLetterRect } from './types'
 import { setTextAction, updateText } from './reducer'
 import { selectMode, selectText, selectTimeOptions } from './selectors'
 
-import { calculateWPM } from 'utils/calculateStats'
+import { calculateWPM, calculateRawWPM } from 'utils/calculateStats'
 import { generateInitialTextArr, closure, adjustWordPositions } from './utils'
 
 import TypingResult from 'components/TypingResult/TypingResult'
@@ -33,14 +33,16 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	const [currentLetterRect, setCurrentLetterRect] = useState<T_CurrentLetterRect>({ top: '0px', left: '0px' })
 	const [isResultOpen, setIsResultOpen] = useState(false)
 	const [wpm, setWpm] = useState(0)
+	const [rawWpm, setRawWpm] = useState(0)
 
 	const [currentEvent, setCurrentEvent] = useState<KeyboardEvent['key']>()
+
 	// timer - measures the time it takes to complete the test in seconds
 	const [timer, setTimer] = useState(0)
 	const [isTimerActive, setIsTimerActive] = useState(false)
 	const [errorCount, setErrorCount] = useState(0)
 	const [globalIndex, setGlobalIndex] = useState({ wordIndex: 0, letterIndex: 0 })
-	const [textArr, setTextArr] = useState<T_Letter[][]>(generateInitialTextArr(text))
+	const [textArr, setTextArr] = useState<T_Word[]>(generateInitialTextArr(text))
 
 	const { changeGlobalIndex, updateLetterState } = closure(textArr, globalIndex, setGlobalIndex, setTextArr)
 
@@ -58,19 +60,24 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		if (event.key.length === 1) {
 			startTyping()
 
-			const currentLetter = textArr[globalIndex.wordIndex]?.[globalIndex.letterIndex]
+			const currentLetter = textArr[globalIndex.wordIndex]?.letters?.[globalIndex.letterIndex]
 			if (currentLetter?.key === event.key) {
 				updateLetterState('correct')
+
+				if (textArr[globalIndex.wordIndex].state !== 'incorrect') {
+					textArr[globalIndex.wordIndex].state = 'correct'
+				}
 			} else {
 				setErrorCount(prev => prev + 1)
 				updateLetterState('incorrect')
+				textArr[globalIndex.wordIndex].state = 'incorrect'
 				incorrectLetterAudio.play()
 			}
 
 			// Проверка на окончание набора текста
 			if (
 				globalIndex.wordIndex >= textArr.length - 1 &&
-				globalIndex.letterIndex >= textArr[globalIndex.wordIndex].length - 1
+				globalIndex.letterIndex >= textArr[globalIndex.wordIndex].letters.length - 1
 			) {
 				endTyping()
 			}
@@ -85,7 +92,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 
 				// Удаление состояния буквы при нажатии Backspace
 				if (letterIndex > 0 || (wordIndex > 0 && letterIndex === 0)) {
-					const letter = updated[wordIndex]?.[letterIndex]
+					const letter = updated[wordIndex]?.letters?.[letterIndex]
 					if (letter?.state) {
 						letter.state = 'default'
 					}
@@ -98,8 +105,6 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	// Запуск таймера
 	useEffect(() => {
 		let intervalId: NodeJS.Timeout | undefined
-
-		console.log('Timer: ', timer)
 
 		if (isTimerActive) {
 			intervalId = setInterval(() => setTimer(prev => prev + 1), 1000)
@@ -165,9 +170,22 @@ const TypingZone: FC<TypingZoneProps> = () => {
 
 	// Завершение теста
 	const endTyping = () => {
-		setWpm(calculateWPM(text, timer, errorCount))
+		const correctWords = textArr.reduce<string[]>((prev, curr) => {
+			if (curr.state === 'correct') {
+				const currentWord = curr.letters.map(({ key }) => key).join('')
+				return [...prev, currentWord]
+			}
+			return prev
+		}, [])
+
+		const wordsTyped = text.slice(0, globalIndex.wordIndex + 1)
+
+		setWpm(calculateWPM(correctWords, timer))
+		setRawWpm(calculateRawWPM(wordsTyped, timer))
+		console.log('Ошибки: ', errorCount)
 		setIsResultOpen(true)
 		dispatch(setTextAction(updateText({ ...store.getState().TypingZone })))
+
 		resetTyping()
 	}
 
@@ -189,7 +207,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 				<div className={`words ${styles['words']}`}>
 					{textArr.map((word, wordIdx) => (
 						<div className={styles['word']} word-id={wordIdx} key={wordIdx}>
-							{word.map((letter, letterIdx) => (
+							{word.letters.map((letter, letterIdx) => (
 								<div
 									className={`${styles['letter']} ${letter.key === ' ' ? styles['space'] : ''} ${
 										letter.state !== 'default' && letter.key !== ' '
@@ -215,7 +233,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 					</p>
 				)}
 			</div>
-			<TypingResult wpm={wpm} isOpen={isResultOpen} setIsOpen={setIsResultOpen} />
+			<TypingResult wpm={wpm} rawWpm={rawWpm} isOpen={isResultOpen} setIsOpen={setIsResultOpen} />
 		</>
 	)
 }

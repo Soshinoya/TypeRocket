@@ -1,12 +1,21 @@
-import { T_Letter } from './types'
+import { T_Letter, T_Word } from './types'
 
 // Генерация начального массива текста
-export const generateInitialTextArr = (text: string[]): T_Letter[][] =>
-	text.map((word, wordIndex, words) =>
-		[...word]
-			.map(letter => ({ key: letter, state: 'default' }))
-			.concat(wordIndex < words.length - 1 ? [{ key: ' ', state: 'default' }] : [])
-	)
+export const generateInitialTextArr = (text: string[]): T_Word[] =>
+	text.map((word, wordIndex, words) => {
+		// Создаем массив букв для текущего слова
+		const letters = [...word].map(letter => ({ key: letter, state: 'default' }))
+
+		// Если это не последнее слово, добавляем пробел
+		if (wordIndex < words.length - 1) {
+			letters.push({ key: ' ', state: 'default' })
+		}
+
+		return {
+			state: 'default', // Добавляем состояние слова по умолчанию
+			letters,
+		}
+	})
 
 export const adjustWordPositions = (wordsElement: HTMLElement, topOffset: number) => {
 	wordsElement.querySelectorAll('[word-id]').forEach(element => {
@@ -17,17 +26,17 @@ export const adjustWordPositions = (wordsElement: HTMLElement, topOffset: number
 }
 
 export const closure = (
-	textArr: T_Letter[][],
+	textArr: T_Word[],
 	globalIndex: { wordIndex: number; letterIndex: number },
 	setGlobalIndex: React.Dispatch<React.SetStateAction<{ wordIndex: number; letterIndex: number }>>,
-	setTextArr: React.Dispatch<React.SetStateAction<T_Letter[][]>>
+	setTextArr: React.Dispatch<React.SetStateAction<T_Word[]>>
 ) => {
 	const changeGlobalIndex = (action: 'increment' | 'decrement') => {
 		setGlobalIndex(({ wordIndex, letterIndex }) => {
 			const currentWord = textArr[wordIndex]
 
 			if (action === 'increment') {
-				return handleIncrement(wordIndex, letterIndex, currentWord)
+				return handleIncrement(wordIndex, letterIndex, currentWord.letters)
 			} else {
 				return handleDecrement(wordIndex, letterIndex)
 			}
@@ -52,7 +61,7 @@ export const closure = (
 			return { wordIndex, letterIndex: letterIndex - 1 }
 		}
 		if (wordIndex > 0) {
-			return { wordIndex: wordIndex - 1, letterIndex: textArr[wordIndex - 1].length - 1 }
+			return { wordIndex: wordIndex - 1, letterIndex: textArr[wordIndex - 1].letters.length - 1 }
 		}
 		return { wordIndex, letterIndex }
 	}
@@ -61,7 +70,7 @@ export const closure = (
 		setTextArr(prev => {
 			const updated = [...prev]
 			const { wordIndex, letterIndex } = globalIndex
-			updated[wordIndex][letterIndex].state = state
+			updated[wordIndex].letters[letterIndex].state = state
 			return updated
 		})
 		if (increment) changeGlobalIndex('increment')

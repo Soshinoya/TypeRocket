@@ -16,7 +16,7 @@ const initialConfig: I_TypingZone = {
 	playerMode: PlayerMode['single'],
 	mode: Mode['words'],
 	wordOptions: [
-		{ count: 20, enabled: true },
+		{ count: 3, enabled: true },
 		{ count: 40, enabled: false },
 		{ count: 80, enabled: false },
 		{ count: 160, enabled: false },

@@ -57,8 +57,14 @@ export interface I_TypingZone {
 
 // Тип буквы с состоянием
 export type T_Letter = {
-	key: string
 	state: string
+	key: string
+}
+
+// Тип слова с состоянием
+export type T_Word = {
+	state: string
+	letters: T_Letter[]
 }
 
 export type T_CurrentLetterRect = {
