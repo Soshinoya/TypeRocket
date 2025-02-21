@@ -6,7 +6,7 @@ import { Mode, T_Word, T_CurrentLetterRect } from './types'
 import { setTextAction, updateText } from './reducer'
 import { selectMode, selectText, selectTimeOptions } from './selectors'
 
-import { calculateWPM, calculateRawWPM } from 'utils/calculateStats'
+import { calculateWPM, calculateRawWPM, calculateAcc, calculateConsistency } from 'utils/calculateStats'
 import { generateInitialTextArr, closure, adjustWordPositions } from './utils'
 
 import TypingResult from 'components/TypingResult/TypingResult'
@@ -34,6 +34,11 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	const [isResultOpen, setIsResultOpen] = useState(false)
 	const [wpm, setWpm] = useState(0)
 	const [rawWpm, setRawWpm] = useState(0)
+	const [acc, setAcc] = useState(0)
+	const [consistency, setConsistency] = useState(0)
+
+	const [t1, setT1] = useState(0)
+	const [timeBetweenKeyStrokes, setTimeBetweenKeyStrokes] = useState<number[]>([])
 
 	const [currentEvent, setCurrentEvent] = useState<KeyboardEvent['key']>()
 
@@ -60,7 +65,14 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		if (event.key.length === 1) {
 			startTyping()
 
+			// Записываем время между нажатиями клавиш
+			let t2 = performance.now() // Получаем текущее время в миллисекундах
+			let deltaT = Math.round(t2 - t1) // Вычисляем разницу времени между текущим и предыдущим нажатиями
+			setTimeBetweenKeyStrokes(prev => [...prev, deltaT])
+			setT1(t2)
+
 			const currentLetter = textArr[globalIndex.wordIndex]?.letters?.[globalIndex.letterIndex]
+
 			if (currentLetter?.key === event.key) {
 				updateLetterState('correct')
 
@@ -182,6 +194,9 @@ const TypingZone: FC<TypingZoneProps> = () => {
 
 		setWpm(calculateWPM(correctWords, timer))
 		setRawWpm(calculateRawWPM(wordsTyped, timer))
+		setAcc(calculateAcc(wordsTyped, errorCount))
+		setConsistency(calculateConsistency(timeBetweenKeyStrokes))
+
 		console.log('Ошибки: ', errorCount)
 		setIsResultOpen(true)
 		dispatch(setTextAction(updateText({ ...store.getState().TypingZone })))
@@ -195,6 +210,8 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		setGlobalIndex({ wordIndex: 0, letterIndex: 0 })
 		setTextArr(generateInitialTextArr(text))
 		setIsTimerActive(false)
+		setTimeBetweenKeyStrokes([])
+		setT1(0)
 		document.querySelectorAll('.words [word-id]').forEach(elem => {
 			const el = elem as HTMLElement
 			el.style.top = '0px'
@@ -209,11 +226,10 @@ const TypingZone: FC<TypingZoneProps> = () => {
 						<div className={styles['word']} word-id={wordIdx} key={wordIdx}>
 							{word.letters.map((letter, letterIdx) => (
 								<div
-									className={`${styles['letter']} ${letter.key === ' ' ? styles['space'] : ''} ${
-										letter.state !== 'default' && letter.key !== ' '
+									className={`${styles['letter']} ${letter.key === ' ' ? styles['space'] : ''} ${letter.state !== 'default' && letter.key !== ' '
 											? styles[letter.state]
 											: styles[`space--${letter.state}`]
-									}`}
+										}`}
 									letter-id={letterIdx}
 									key={letterIdx}
 								>
