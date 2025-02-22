@@ -11,6 +11,16 @@
     border-radius: 40px;
     background-color: rgba(variables.$white-color, 0.05);
     backdrop-filter: blur(15px);
+
+    &-modal__item {
+        padding: 20px;
+        @extend %body-default-action;
+        color: variables.$accent;
+
+        &:hover {
+            background-color: variables.$accent-600;
+        }
+    }
 }
 
 .config-bar-item {

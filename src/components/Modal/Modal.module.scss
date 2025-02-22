@@ -18,14 +18,4 @@
     &--active {
         display: block;
     }
-
-    &__item {
-        padding: 20px;
-        @extend %body-default-action;
-        color: variables.$accent;
-
-        &:hover {
-            background-color: variables.$accent-600;
-        }
-    }
 }

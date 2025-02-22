@@ -197,7 +197,6 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		setAcc(calculateAcc(wordsTyped, errorCount))
 		setConsistency(calculateConsistency(timeBetweenKeyStrokes))
 
-		console.log('Ошибки: ', errorCount)
 		setIsResultOpen(true)
 		dispatch(setTextAction(updateText({ ...store.getState().TypingZone })))
 
@@ -226,10 +225,11 @@ const TypingZone: FC<TypingZoneProps> = () => {
 						<div className={styles['word']} word-id={wordIdx} key={wordIdx}>
 							{word.letters.map((letter, letterIdx) => (
 								<div
-									className={`${styles['letter']} ${letter.key === ' ' ? styles['space'] : ''} ${letter.state !== 'default' && letter.key !== ' '
+									className={`${styles['letter']} ${letter.key === ' ' ? styles['space'] : ''} ${
+										letter.state !== 'default' && letter.key !== ' '
 											? styles[letter.state]
 											: styles[`space--${letter.state}`]
-										}`}
+									}`}
 									letter-id={letterIdx}
 									key={letterIdx}
 								>
@@ -249,7 +249,16 @@ const TypingZone: FC<TypingZoneProps> = () => {
 					</p>
 				)}
 			</div>
-			<TypingResult wpm={wpm} rawWpm={rawWpm} isOpen={isResultOpen} setIsOpen={setIsResultOpen} />
+			<TypingResult
+				wpm={wpm}
+				rawWpm={rawWpm}
+				acc={acc}
+				consistency={consistency}
+				errorCount={errorCount}
+				time={timer}
+				isOpen={isResultOpen}
+				setIsOpen={setIsResultOpen}
+			/>
 		</>
 	)
 }

@@ -141,16 +141,26 @@ const ConfigBar: FC<ConfigBarProps> = () => {
 			<Modal
 				isOpen={isModalOpen}
 				setIsOpen={setIsModalOpen}
-				options={Object.values(languages).map(language => {
-					return {
-						id: language.id,
-						title: language.name,
-						onClick: () => {
-							setIsModalOpen(false)
-							dispatch(setLanguageAction(language))
-						},
-					}
-				})}
+				children={
+					<ul>
+						{Object.values(languages)
+							.map(language => {
+								return {
+									id: language.id,
+									title: language.name,
+									onClick: () => {
+										setIsModalOpen(false)
+										dispatch(setLanguageAction(language))
+									},
+								}
+							})
+							.map(({ id, title, onClick }) => (
+								<li className={styles['config-bar-modal__item']} onClick={() => onClick()} key={id}>
+									{title}
+								</li>
+							))}
+					</ul>
+				}
 			/>
 		</>
 	)

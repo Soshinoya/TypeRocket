@@ -1,10 +1,6 @@
 export const calculateWPM = (correctWords: string[], timeInSeconds: number): number => {
 	const charactersCount = correctWords.map(word => word + ' ').join('').length
 
-	console.log(
-		`WPM params: correctWords - ${correctWords}; timeInSeconds - ${timeInSeconds}; charactersCount - ${charactersCount}`
-	)
-
 	// Проверка: время должно быть больше 0
 	if (timeInSeconds <= 0) {
 		throw new Error('Время должно быть больше 0')
@@ -18,10 +14,6 @@ export const calculateWPM = (correctWords: string[], timeInSeconds: number): num
 
 export const calculateRawWPM = (wordsTyped: string[], timeInSeconds: number): number => {
 	const charactersCount = wordsTyped.map(word => word + ' ').join('').length
-
-	console.log(
-		`Raw WPM params: wordsTyped - ${wordsTyped}; timeInSeconds - ${timeInSeconds}; charactersCount - ${charactersCount}`
-	)
 
 	// Проверка: время должно быть больше 0
 	if (timeInSeconds <= 0) {
@@ -37,9 +29,7 @@ export const calculateRawWPM = (wordsTyped: string[], timeInSeconds: number): nu
 export const calculateAcc = (wordsTyped: string[], errors: number): number => {
 	const charactersCount = wordsTyped.map(word => word + ' ').join('').length
 
-	console.log('Accurancy: ', Math.round((charactersCount - errors) / charactersCount * 100), '%')
-
-	return Math.round((charactersCount - errors) / charactersCount * 100)
+	return Math.round(((charactersCount - errors) / charactersCount) * 100)
 }
 
 // Функция для вычисления консистентности
@@ -82,8 +72,6 @@ export const calculateConsistency = (timeBetweenKeyStrokes: number[]): number =>
 	} else {
 		consistency = Math.round(consistency)
 	}
-
-	console.log(`Consistency: ${consistency}%`)
 
 	return consistency
 }

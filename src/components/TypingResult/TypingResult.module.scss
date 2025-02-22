@@ -1,81 +1,77 @@
 @use "../../styles/base/typography.scss";
 @use "../../styles/base/variables.scss";
 
-.result {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 500px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 40px;
-    padding: 25px;
-    border: 1px solid rgba(variables.$white-color, 0.3);
-    border-radius: 40px;
-    background-color: variables.$primary-700;
-    z-index: 20;
-
-    &__wrapper {
-        display: none;
-
-        &--active {
-            display: block;
-        }
-    }
-}
-
-.blur {
-    &::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        backdrop-filter: blur(0px);
-        z-index: 10;
-        transition: backdrop-filter 0.3s variables.$transitionTimingFunc;
-    }
-
-    &--active::before {
-        backdrop-filter: blur(5px);
-    }
-}
-
 .result-header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    width: 100%;
+    margin-bottom: 20px;
 
     &__title,
-    &__cross {
-        color: variables.$white-color;
+    &__date {
+        color: variables.$accent;
     }
 
     &__title {
-        font-size: 32px;
-    }
-
-    &__cross {
-        cursor: pointer;
+        font-size: 38px;
+        @extend %epilogue-700;
     }
 }
 
-.result-item {
+.result-body {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 30px;
+
+    .result-stats {
+        grid-area: 1 / 1 / 2 / 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &__inner {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            align-items: center;
+            justify-content: center;
+            grid-column-gap: 50px;
+            grid-row-gap: 10px;
+        }
+    }
+
+    .result-ad {
+        grid-area: 1 / 2 / 2 / 3;
+        width: 250px;
+        height: 350px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #363636;
+    }
+
+    .result-chart {
+        grid-area: 2 / 1 / 3 / 3;
+        min-width: 1000px;
+        height: 225px;
+        background-color: #363636;
+    }
+}
+
+.result-stats-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-
-    &__title,
-    &__subtitle {
-        color: variables.$white-color;
-    }
 
     &__title {
-        font-size: 52px;
+        color: variables.$accent;
+        font-size: 70px;
+        @extend %inter-700;
+    }
+
+    &__desc {
+        color: variables.$accent-100;
+        @extend %inter-500;
+        font-size: 16px;
+        letter-spacing: -2%;
+        line-height: 26px;
     }
 }
