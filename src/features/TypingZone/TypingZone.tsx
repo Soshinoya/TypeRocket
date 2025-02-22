@@ -11,6 +11,7 @@ import { generateInitialTextArr, closure, adjustWordPositions } from './utils'
 
 import TypingResult from 'components/TypingResult/TypingResult'
 import BlinkingCursor from 'components/BlinkingCursor/BlinkingCursor'
+
 import RestartIcon from 'components/icons/RestartIcon/RestartIcon'
 
 import styles from './TypingZone.module.scss'
@@ -36,6 +37,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	const [rawWpm, setRawWpm] = useState(0)
 	const [acc, setAcc] = useState(0)
 	const [consistency, setConsistency] = useState(0)
+	const [errorCount, setErrorCount] = useState(0)
 
 	const [t1, setT1] = useState(0)
 	const [timeBetweenKeyStrokes, setTimeBetweenKeyStrokes] = useState<number[]>([])
@@ -45,7 +47,6 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	// timer - measures the time it takes to complete the test in seconds
 	const [timer, setTimer] = useState(0)
 	const [isTimerActive, setIsTimerActive] = useState(false)
-	const [errorCount, setErrorCount] = useState(0)
 	const [globalIndex, setGlobalIndex] = useState({ wordIndex: 0, letterIndex: 0 })
 	const [textArr, setTextArr] = useState<T_Word[]>(generateInitialTextArr(text))
 
@@ -118,9 +119,9 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	useEffect(() => {
 		let intervalId: NodeJS.Timeout | undefined
 
-		if (isTimerActive) {
-			intervalId = setInterval(() => setTimer(prev => prev + 1), 1000)
-		}
+		if (!isTimerActive) return
+
+		intervalId = setInterval(() => setTimer(prev => prev + 1), 1000)
 
 		const targetTime = timeOptions.find(option => option.enabled)?.count || timeOptions[0].count
 
@@ -141,9 +142,10 @@ const TypingZone: FC<TypingZoneProps> = () => {
 
 	// Слушатель событий клавиш
 	useEffect(() => {
+		if (isResultOpen) return
 		document.addEventListener('keydown', handleKeyDown)
 		return () => document.removeEventListener('keydown', handleKeyDown)
-	}, [globalIndex, currentMode])
+	}, [globalIndex, currentMode, isResultOpen])
 
 	useEffect(() => {
 		const wordsElement = document.querySelector('.words') as HTMLElement
@@ -169,6 +171,13 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		})
 	}, [globalIndex])
 
+	useEffect(() => {
+		if (!isResultOpen) {
+			dispatch(setTextAction(updateText({ ...store.getState().TypingZone })))
+			resetTyping()
+		}
+	}, [isResultOpen])
+
 	const restartIconHandler = () => {
 		dispatch(setTextAction(updateText({ ...store.getState().TypingZone })))
 		resetTyping()
@@ -182,6 +191,8 @@ const TypingZone: FC<TypingZoneProps> = () => {
 
 	// Завершение теста
 	const endTyping = () => {
+		setIsTimerActive(false)
+
 		const correctWords = textArr.reduce<string[]>((prev, curr) => {
 			if (curr.state === 'correct') {
 				const currentWord = curr.letters.map(({ key }) => key).join('')
@@ -198,9 +209,6 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		setConsistency(calculateConsistency(timeBetweenKeyStrokes))
 
 		setIsResultOpen(true)
-		dispatch(setTextAction(updateText({ ...store.getState().TypingZone })))
-
-		resetTyping()
 	}
 
 	// Сброс теста
@@ -209,6 +217,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		setGlobalIndex({ wordIndex: 0, letterIndex: 0 })
 		setTextArr(generateInitialTextArr(text))
 		setIsTimerActive(false)
+		setTimer(0)
 		setTimeBetweenKeyStrokes([])
 		setT1(0)
 		document.querySelectorAll('.words [word-id]').forEach(elem => {
