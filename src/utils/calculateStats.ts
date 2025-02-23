@@ -1,9 +1,8 @@
 export const calculateWPM = (correctWords: string[], timeInSeconds: number): number => {
 	const charactersCount = correctWords.map(word => word + ' ').join('').length
 
-	// Проверка: время должно быть больше 0
 	if (timeInSeconds <= 0) {
-		throw new Error('Время должно быть больше 0')
+		return 0
 	}
 
 	const wpm = charactersCount / 5 / (timeInSeconds / 60)
@@ -15,9 +14,8 @@ export const calculateWPM = (correctWords: string[], timeInSeconds: number): num
 export const calculateRawWPM = (wordsTyped: string[], timeInSeconds: number): number => {
 	const charactersCount = wordsTyped.map(word => word + ' ').join('').length
 
-	// Проверка: время должно быть больше 0
 	if (timeInSeconds <= 0) {
-		throw new Error('Время должно быть больше 0')
+		return 0
 	}
 
 	const rawWpm = charactersCount / 5 / (timeInSeconds / 60)

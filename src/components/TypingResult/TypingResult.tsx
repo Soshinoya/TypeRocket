@@ -5,6 +5,7 @@ import Modal from 'components/Modal/Modal'
 import Ad from 'components/icons/Ad/Ad'
 
 import styles from './TypingResult.module.scss'
+import Chart from 'components/Chart/Chart'
 
 type TypingResultProps = {
 	wpm: number
@@ -13,6 +14,7 @@ type TypingResultProps = {
 	consistency: number
 	errorCount: number
 	time: number
+	wpmPerTimeArr: { time: number; wpm: number; rawWpm: number }[]
 	isOpen: boolean
 	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -24,6 +26,7 @@ const TypingResult: FC<TypingResultProps> = ({
 	consistency,
 	errorCount,
 	time,
+	wpmPerTimeArr,
 	isOpen,
 	setIsOpen,
 }) => {
@@ -70,7 +73,29 @@ const TypingResult: FC<TypingResultProps> = ({
 						<div className={styles['result-ad']}>
 							<Ad />
 						</div>
-						<div className={styles['result-chart']}></div>
+						<div className={styles['result-chart']}>
+							<Chart
+								verticalDataArrays={[
+									{
+										dataset: wpmPerTimeArr.map(item => item.wpm),
+										options: {
+											label: 'wpm',
+											borderColor: '#fa5b17',
+											backgroundColor: '#fa5b17',
+										},
+									},
+									{
+										dataset: wpmPerTimeArr.map(item => item.rawWpm),
+										options: {
+											label: 'raw wpm',
+											borderColor: '#d2fc04',
+											backgroundColor: '#d2fc04',
+										},
+									},
+								]}
+								horizontalDataArr={wpmPerTimeArr.map(item => item.time)}
+							/>
+						</div>
 					</div>
 				</>
 			}

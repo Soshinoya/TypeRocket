@@ -38,11 +38,13 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	const [acc, setAcc] = useState(0)
 	const [consistency, setConsistency] = useState(0)
 	const [errorCount, setErrorCount] = useState(0)
+	const [wpmPerTimeArr, setWpmPerTimeArr] = useState<{ time: number; wpm: number; rawWpm: number }[]>([])
 
 	const [t1, setT1] = useState(0)
 	const [timeBetweenKeyStrokes, setTimeBetweenKeyStrokes] = useState<number[]>([])
 
 	const [currentEvent, setCurrentEvent] = useState<KeyboardEvent['key']>()
+	const [correctWords, setCorrectWords] = useState<string[]>([])
 
 	// timer - measures the time it takes to complete the test in seconds
 	const [timer, setTimer] = useState(0)
@@ -121,7 +123,17 @@ const TypingZone: FC<TypingZoneProps> = () => {
 
 		if (!isTimerActive) return
 
-		intervalId = setInterval(() => setTimer(prev => prev + 1), 1000)
+		intervalId = setInterval(() => {
+			setTimer(prev => prev + 1)
+			setWpmPerTimeArr(prev => [
+				...prev,
+				{
+					time: timer,
+					wpm: calculateWPM(correctWords, timer),
+					rawWpm: calculateRawWPM(text.slice(0, globalIndex.wordIndex + 1), timer),
+				},
+			])
+		}, 1000)
 
 		const targetTime = timeOptions.find(option => option.enabled)?.count || timeOptions[0].count
 
@@ -178,6 +190,18 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		}
 	}, [isResultOpen])
 
+	useEffect(() => {
+		setCorrectWords(() =>
+			textArr.reduce<string[]>((prev, curr) => {
+				if (curr.state === 'correct') {
+					const currentWord = curr.letters.map(({ key }) => key).join('')
+					return [...prev, currentWord]
+				}
+				return prev
+			}, [])
+		)
+	}, [textArr])
+
 	const restartIconHandler = () => {
 		dispatch(setTextAction(updateText({ ...store.getState().TypingZone })))
 		resetTyping()
@@ -192,14 +216,6 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	// Завершение теста
 	const endTyping = () => {
 		setIsTimerActive(false)
-
-		const correctWords = textArr.reduce<string[]>((prev, curr) => {
-			if (curr.state === 'correct') {
-				const currentWord = curr.letters.map(({ key }) => key).join('')
-				return [...prev, currentWord]
-			}
-			return prev
-		}, [])
 
 		const wordsTyped = text.slice(0, globalIndex.wordIndex + 1)
 
@@ -265,6 +281,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 				consistency={consistency}
 				errorCount={errorCount}
 				time={timer}
+				wpmPerTimeArr={wpmPerTimeArr}
 				isOpen={isResultOpen}
 				setIsOpen={setIsResultOpen}
 			/>
