@@ -1,4 +1,4 @@
-import { FC, useRef } from 'react'
+import { FC } from 'react'
 
 import {
 	Chart as ChartJS,
@@ -32,8 +32,6 @@ type ChartProps = {
 }
 
 const Chart: FC<ChartProps> = ({ horizontalDataArr, verticalDataArrays }) => {
-	const chartRef = useRef(null)
-
 	const data: ChartData = {
 		labels: horizontalDataArr,
 		datasets: verticalDataArrays.map(({ dataset, options }) => {
@@ -42,6 +40,7 @@ const Chart: FC<ChartProps> = ({ horizontalDataArr, verticalDataArrays }) => {
 				data: horizontalDataArr.map((_, i) => dataset[i]),
 				borderColor: options.borderColor,
 				backgroundColor: options.backgroundColor,
+				pointRadius: 2,
 			}
 		}),
 	}
@@ -95,7 +94,7 @@ const Chart: FC<ChartProps> = ({ horizontalDataArr, verticalDataArrays }) => {
 	}
 
 	// @ts-ignore
-	return <Line ref={chartRef} options={options} data={data} />
+	return <Line options={options} data={data} />
 }
 
 export default Chart

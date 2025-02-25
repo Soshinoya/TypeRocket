@@ -99,13 +99,13 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		}
 	}
 
+	// Удаление состояния буквы при нажатии Backspace
 	useEffect(() => {
 		if (currentEvent === 'Backspace') {
 			setTextArr(prev => {
 				const updated = [...prev]
 				const { wordIndex, letterIndex } = globalIndex
 
-				// Удаление состояния буквы при нажатии Backspace
 				if (letterIndex > 0 || (wordIndex > 0 && letterIndex === 0)) {
 					const letter = updated[wordIndex]?.letters?.[letterIndex]
 					if (letter?.state) {
@@ -116,6 +116,13 @@ const TypingZone: FC<TypingZoneProps> = () => {
 			})
 		}
 	}, [currentEvent, globalIndex])
+
+	// Слушатель событий клавиш
+	useEffect(() => {
+		if (isResultOpen) return
+		document.addEventListener('keydown', handleKeyDown)
+		return () => document.removeEventListener('keydown', handleKeyDown)
+	}, [globalIndex, currentMode, isResultOpen])
 
 	// Запуск таймера
 	useEffect(() => {
@@ -151,13 +158,6 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	useEffect(() => {
 		resetTyping()
 	}, [text])
-
-	// Слушатель событий клавиш
-	useEffect(() => {
-		if (isResultOpen) return
-		document.addEventListener('keydown', handleKeyDown)
-		return () => document.removeEventListener('keydown', handleKeyDown)
-	}, [globalIndex, currentMode, isResultOpen])
 
 	useEffect(() => {
 		const wordsElement = document.querySelector('.words') as HTMLElement
@@ -274,17 +274,19 @@ const TypingZone: FC<TypingZoneProps> = () => {
 					</p>
 				)}
 			</div>
-			<TypingResult
-				wpm={wpm}
-				rawWpm={rawWpm}
-				acc={acc}
-				consistency={consistency}
-				errorCount={errorCount}
-				time={timer}
-				wpmPerTimeArr={wpmPerTimeArr}
-				isOpen={isResultOpen}
-				setIsOpen={setIsResultOpen}
-			/>
+			{isResultOpen && (
+				<TypingResult
+					wpm={wpm}
+					rawWpm={rawWpm}
+					acc={acc}
+					consistency={consistency}
+					errorCount={errorCount}
+					time={timer}
+					wpmPerTimeArr={wpmPerTimeArr}
+					isOpen={isResultOpen}
+					setIsOpen={setIsResultOpen}
+				/>
+			)}
 		</>
 	)
 }

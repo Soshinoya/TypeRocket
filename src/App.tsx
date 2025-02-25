@@ -7,7 +7,6 @@ import Home from 'pages/Home/Home.tsx'
 import Settings from './pages/Settings/Settings'
 import Login from 'pages/Login/Login.tsx'
 import Register from 'pages/Register/Register.tsx'
-import Chart from 'components/Chart/Chart.tsx'
 
 function App() {
 	const router = createBrowserRouter([
@@ -20,10 +19,6 @@ function App() {
 					index: true,
 					element: <Home />,
 				},
-				// {
-				// 	path: 'about',
-				// 	element: <About />,
-				// },
 			],
 		},
 		{
@@ -37,10 +32,6 @@ function App() {
 		{
 			path: Paths.settings,
 			element: <Settings />,
-		},
-		{
-			path: '/chart',
-			element: <Chart />,
 		},
 	])
 
