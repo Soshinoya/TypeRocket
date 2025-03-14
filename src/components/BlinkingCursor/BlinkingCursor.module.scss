@@ -3,7 +3,7 @@
 .blinking-cursor {
     position: absolute;
     width: 1px;
-    height: 15px;
+    height: 43px;
     background-color: variables.$white-color;
     -webkit-animation: 1s blink step-end infinite;
     -moz-animation: 1s blink step-end infinite;

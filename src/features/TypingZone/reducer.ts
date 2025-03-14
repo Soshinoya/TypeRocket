@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+import MeasureText from 'text-measure'
 
 import type { I_Action, T_Reducer } from 'store/types'
 
@@ -9,6 +10,8 @@ import { languagesData } from 'data/languages/languages'
 import { addNumbers, addPunctuation } from 'utils/utils'
 import { getRandomWords } from 'utils/getRandomWords'
 
+const textMeasure = new MeasureText('32px JetBrains Mono')
+
 const initialConfig: I_TypingZone = {
 	language: languages.english_200,
 	isPunctuation: false,
@@ -16,7 +19,7 @@ const initialConfig: I_TypingZone = {
 	playerMode: PlayerMode['single'],
 	mode: Mode['words'],
 	wordOptions: [
-		{ count: 10, enabled: true },
+		{ count: 20, enabled: true },
 		{ count: 40, enabled: false },
 		{ count: 80, enabled: false },
 		{ count: 160, enabled: false },
@@ -31,45 +34,54 @@ const initialConfig: I_TypingZone = {
 }
 
 // Обновление текста
-export const updateText = ({ language, isPunctuation, isNumbers, mode, wordOptions }: I_TypingZone): string[] => {
-	let newText: string[]
+export const updateText = (state: I_TypingZone, containerWidth: number): string[][] => {
+	console.log('Функция updateText вызывается слишком часто? Это нехорошо...', containerWidth)
 
-	// newText присваиваем исходный набор слов
-	newText = languagesData[language.key]
+	const { language, isPunctuation, isNumbers, mode, wordOptions } = state
+
+	let text: string[][] = []
+	let currentLine: number = 0
+	let currentLineWidth: number = 0
+
+	text[currentLine] = []
+
+	// wordsArr присваиваем исходный набор слов
+	let wordsArr: string[] = languagesData[language.key]
 
 	// Изменение количества слов в тексте
 	if (mode === Mode['words']) {
-		try {
-			const wordCount = wordOptions.find(option => option.enabled)?.count || wordOptions[0].count
-			newText = getRandomWords(newText, wordCount)
-		} catch (error) {
-			console.error(error)
-			// dispatch(setWordOptionsAction(wordOptions[0]))
-			newText = new Array(15).fill('error', 0)
-		}
+		const wordCount = wordOptions.find(option => option.enabled)?.count || wordOptions[0].count
+		wordsArr = getRandomWords(wordsArr, wordCount)
 	} else if (mode === Mode['time']) {
-		try {
-			newText = getRandomWords(newText)
-		} catch (error) {
-			console.error(error)
-			newText = new Array(15).fill('error', 0)
-		}
 	}
 
-	// Добавляем пунктуацию, если она включена
 	if (isPunctuation) {
-		newText = addPunctuation(newText)
+		wordsArr = addPunctuation(wordsArr)
 	}
 
-	// Добавляем цифры, если они включены
 	if (isNumbers) {
-		newText = addNumbers(newText)
+		wordsArr = addNumbers(wordsArr)
 	}
 
-	return newText
+	wordsArr.forEach(word => {
+		const wordWidth = +(textMeasure.width(word) + 10).toFixed(2)
+
+		// Проверяем, поместится ли слово в текущую строку
+		if (currentLineWidth + wordWidth > containerWidth) {
+			currentLine += 1
+			currentLineWidth = 0
+			text[currentLine] = [] // Инициализируем новую строку
+		}
+
+		// Добавляем слово в текущую строку
+		text[currentLine].push(word)
+		currentLineWidth += wordWidth
+	})
+
+	return text
 }
 
-const initialState: I_TypingZone = { ...initialConfig, text: updateText(initialConfig) }
+const initialState: I_TypingZone = { ...initialConfig, text: updateText(initialConfig, 0) }
 
 export const languageReducer: T_Reducer<I_TypingZone, Language> = (state, action) => {
 	state.language = action.payload
@@ -113,7 +125,7 @@ export const timeOptionsReducer: T_Reducer<I_TypingZone, I_ModeOption> = (state,
 	state.timeOptions = updateItems(state.timeOptions, action)
 }
 
-export const textReducer: T_Reducer<I_TypingZone, string[]> = (state, action) => {
+export const textReducer: T_Reducer<I_TypingZone, string[][]> = (state, action) => {
 	state.text = action.payload
 }
 

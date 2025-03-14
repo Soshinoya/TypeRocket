@@ -13,8 +13,10 @@
 
 .words {
     position: relative;
-    max-width: 1000px;
-    max-height: 81px;
+    width: 80dvw;
+    max-height: calc(
+        43px * 3 + 15px * 2
+    ); // Высота символа, умноженного на 3 (т.к. видно всего три строчки) + отступ между строчками
     display: flex;
     flex-wrap: wrap;
     user-select: none;
@@ -30,8 +32,9 @@
 }
 
 .letter {
-    @extend %body-default-action;
+    @extend %typing-word-regular;
     color: variables.$accent;
+    text-transform: none;
 }
 
 .correct {
@@ -44,7 +47,6 @@
 
 .space {
     width: 10px;
-    margin-top: -4px;
 
     &--incorrect {
         background-color: #f7768e;

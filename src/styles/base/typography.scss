@@ -37,6 +37,11 @@ body,
     @extend %epilogue-500;
 }
 
+%typing-word-regular {
+    @extend %jetbrainsmono-400;
+    font-size: 32px;
+}
+
 // General heading styles
 h1,
 h2,

@@ -45,7 +45,8 @@ const ConfigBar: FC<ConfigBarProps> = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 
 	useEffect(() => {
-		dispatch(setTextAction(updateText({ ...store.getState().TypingZone })))
+		const wordsEl = document.querySelector('.words') as HTMLElement
+		dispatch(setTextAction(updateText({ ...store.getState().TypingZone }, wordsEl.offsetWidth)))
 	}, [currentLanguage, isPunctuation, isNumbers, currentMode, wordOptions, timeOptions])
 
 	useEffect(() => {

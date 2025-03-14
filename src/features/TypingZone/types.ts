@@ -52,7 +52,7 @@ export interface I_TypingZone {
 	mode: Mode
 	wordOptions: I_ModeOption[]
 	timeOptions: I_ModeOption[]
-	text: string[]
+	text: string[][]
 }
 
 // Тип буквы с состоянием
@@ -68,6 +68,6 @@ export type T_Word = {
 }
 
 export type T_CurrentLetterRect = {
-	top: string
+	// top: string
 	left: string
 }

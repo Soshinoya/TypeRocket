@@ -8,7 +8,7 @@ type ModalProps = {
 	isOpen: boolean
 	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 	children: ReactNode
-	style: React.CSSProperties
+	style?: React.CSSProperties
 }
 
 const Modal: FC<ModalProps> = ({ isOpen, setIsOpen, children, style }) => {
