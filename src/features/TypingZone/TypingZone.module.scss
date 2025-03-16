@@ -14,11 +14,12 @@
 .words {
     position: relative;
     width: 80dvw;
-    max-height: calc(
+    height: calc(
         43px * 3 + 15px * 2
     ); // Высота символа, умноженного на 3 (т.к. видно всего три строчки) + отступ между строчками
     display: flex;
     flex-wrap: wrap;
+    align-content: baseline;
     user-select: none;
     row-gap: 15px;
     overflow: hidden;
@@ -26,9 +27,6 @@
 
 .word {
     display: inline-flex;
-    position: inherit;
-    top: 0;
-    transition: top 0.2s variables.$transitionTimingFunc;
 }
 
 .letter {

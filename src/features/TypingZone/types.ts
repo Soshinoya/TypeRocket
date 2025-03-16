@@ -63,6 +63,7 @@ export type T_Letter = {
 
 // Тип слова с состоянием
 export type T_Word = {
+	index: number
 	state: string
 	letters: T_Letter[]
 }

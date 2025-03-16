@@ -27,7 +27,9 @@ export const calculateRawWPM = (wordsTyped: string[], timeInSeconds: number): nu
 export const calculateAcc = (wordsTyped: string[], errors: number): number => {
 	const charactersCount = wordsTyped.map(word => word + ' ').join('').length
 
-	return Math.round(((charactersCount - errors) / charactersCount) * 100)
+	const acc = Math.round(((charactersCount - errors) / charactersCount) * 100)
+
+	return acc > 0 ? acc : 0
 }
 
 // Функция для вычисления консистентности

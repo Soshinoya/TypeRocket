@@ -53,6 +53,7 @@ export const updateText = (state: I_TypingZone, containerWidth: number): string[
 		const wordCount = wordOptions.find(option => option.enabled)?.count || wordOptions[0].count
 		wordsArr = getRandomWords(wordsArr, wordCount)
 	} else if (mode === Mode['time']) {
+		wordsArr = getRandomWords(wordsArr)
 	}
 
 	if (isPunctuation) {

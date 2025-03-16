@@ -7,7 +7,7 @@ import { setTextAction, updateText } from './reducer'
 import { selectMode, selectText, selectTimeOptions } from './selectors'
 
 import { calculateWPM, calculateRawWPM, calculateAcc, calculateConsistency } from 'utils/calculateStats'
-import { generateInitialTextArr, closure } from './utils'
+import { generateInitialTextArr, updateWords, closure } from './utils'
 
 import TypingResult from 'components/TypingResult/TypingResult'
 import BlinkingCursor from 'components/BlinkingCursor/BlinkingCursor'
@@ -48,13 +48,14 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	const [timeBetweenKeyStrokes, setTimeBetweenKeyStrokes] = useState<number[]>([])
 
 	const [currentEvent, setCurrentEvent] = useState<KeyboardEvent['key']>()
-	const [correctWords, setCorrectWords] = useState<string[]>([])
+	const [correctWords, setCorrectWords] = useState<{ index: number; word: string }[]>([])
+	const [typedWords, setTypedWords] = useState<{ index: number; word: string }[]>([])
 
 	// timer - measures the time it takes to complete the test in seconds
 	const [timer, setTimer] = useState(0)
 	const [isTimerActive, setIsTimerActive] = useState(false)
 	const [globalIndex, setGlobalIndex] = useState({ lineIndex: 0, wordIndex: 0, letterIndex: 0 })
-	const [textArr, setTextArr] = useState<T_Word[][]>([])
+	const [textArr, setTextArr] = useState<T_Word[][]>(generateInitialTextArr(text))
 
 	const { changeGlobalIndex, updateLetterState } = closure(textArr, globalIndex, setGlobalIndex, setTextArr)
 
@@ -78,39 +79,74 @@ const TypingZone: FC<TypingZoneProps> = () => {
 			setTimeBetweenKeyStrokes(prev => [...prev, deltaT])
 			setT1(t2)
 
-			const { wordIndex, letterIndex } = globalIndex
+			const { lineIndex, wordIndex, letterIndex } = globalIndex
 
-			const currentLetter = textArr[0]?.[wordIndex]?.letters?.[letterIndex]
+			const currentLetter = textArr[lineIndex]?.[wordIndex]?.letters?.[letterIndex]
 
 			if (currentLetter?.key === event.key) {
 				updateLetterState('correct')
 
-				if (textArr[0][wordIndex].state !== 'incorrect') {
-					textArr[0][wordIndex].state = 'correct'
+				if (textArr[lineIndex][wordIndex].state !== 'incorrect') {
+					textArr[lineIndex][wordIndex].state = 'correct'
 				}
 			} else {
 				setErrorCount(prev => prev + 1)
 				updateLetterState('incorrect')
-				textArr[0][wordIndex].state = 'incorrect'
+				textArr[lineIndex][wordIndex].state = 'incorrect'
 				incorrectLetterAudio.play()
 			}
 
 			// Проверка на окончание набора текста
-			if (wordIndex >= textArr.flat().length - 1 && letterIndex >= textArr[0][wordIndex].letters.length - 1) {
+			if (
+				textArr[lineIndex][wordIndex].index >= textArr.flat().length - 1 &&
+				letterIndex >= textArr[lineIndex][wordIndex].letters.length - 1
+			) {
 				endTyping()
 			}
 		}
 	}
+
+	useEffect(() => {
+		setTextArr(generateInitialTextArr(text))
+	}, [text])
+
+	useEffect(() => {
+		if (textArr.length > 0) {
+			setCorrectWords(prevCorrectWords =>
+				updateWords(
+					prevCorrectWords,
+					textArr,
+					word => word.state === 'correct' && word.letters.every(({ state }) => state === 'correct'),
+					({ index, letters }) => ({
+						index,
+						word: letters.map(({ key }) => key).join(''),
+					})
+				)
+			)
+
+			setTypedWords(prevTypedWords =>
+				updateWords(
+					prevTypedWords,
+					textArr,
+					word => word.letters.every(({ state }) => state !== 'default'),
+					({ index, letters }) => ({
+						index,
+						word: letters.map(({ key }) => key).join(''),
+					})
+				)
+			)
+		}
+	}, [globalIndex])
 
 	// Deleting a letter's state when pressing Backspace
 	useEffect(() => {
 		if (currentEvent === 'Backspace') {
 			setTextArr(prev => {
 				const updated = [...prev]
-				const { wordIndex, letterIndex } = globalIndex
+				const { lineIndex, wordIndex, letterIndex } = globalIndex
 
 				if (letterIndex > 0 || (wordIndex > 0 && letterIndex === 0)) {
-					const letter = updated[0][wordIndex]?.letters?.[letterIndex]
+					const letter = updated[lineIndex][wordIndex]?.letters?.[letterIndex]
 					if (letter?.state) {
 						letter.state = 'default'
 					}
@@ -125,7 +161,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		if (isResultOpen) return
 		document.addEventListener('keydown', handleKeyDown)
 		return () => document.removeEventListener('keydown', handleKeyDown)
-	}, [globalIndex, currentMode, isResultOpen])
+	}, [globalIndex, currentMode, isResultOpen, textArr])
 
 	// Starting the timer
 	useEffect(() => {
@@ -139,8 +175,14 @@ const TypingZone: FC<TypingZoneProps> = () => {
 				...prev,
 				{
 					time: timer,
-					wpm: calculateWPM(correctWords, timer),
-					rawWpm: calculateRawWPM(text.flat().slice(0, globalIndex.wordIndex + 1), timer),
+					wpm: calculateWPM(
+						correctWords.map(({ word }) => word),
+						timer
+					),
+					rawWpm: calculateRawWPM(
+						typedWords.map(({ word }) => word),
+						timer
+					),
 				},
 			])
 		}, 1000)
@@ -157,12 +199,6 @@ const TypingZone: FC<TypingZoneProps> = () => {
 			}
 		}
 	}, [isTimerActive, timer])
-
-	useEffect(() => {
-		const { lineIndex } = globalIndex
-		const formattedTextArr = [...text].splice(lineIndex, lineIndex + 4)
-		setTextArr(generateInitialTextArr(formattedTextArr))
-	}, [text, globalIndex.lineIndex])
 
 	useEffect(() => {
 		if (wordsElRef.current) {
@@ -198,18 +234,6 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		}
 	}, [isResultOpen])
 
-	useEffect(() => {
-		setCorrectWords(() =>
-			textArr.flat().reduce<string[]>((prev, curr) => {
-				if (curr.state === 'correct') {
-					const currentWord = curr.letters.map(({ key }) => key).join('')
-					return [...prev, currentWord]
-				}
-				return prev
-			}, [])
-		)
-	}, [textArr])
-
 	const restartIconHandler = () => {
 		dispatch(setTextAction(updateText({ ...store.getState().TypingZone }, wordsElWidth)))
 		resetTyping()
@@ -225,11 +249,24 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	const endTyping = () => {
 		setIsTimerActive(false)
 
-		const wordsTyped = text.flat().slice(0, globalIndex.wordIndex + 1)
-
-		setWpm(calculateWPM(correctWords, timer))
-		setRawWpm(calculateRawWPM(wordsTyped, timer))
-		setAcc(calculateAcc(wordsTyped, errorCount))
+		setWpm(
+			calculateWPM(
+				correctWords.map(({ word }) => word),
+				timer
+			)
+		)
+		setRawWpm(
+			calculateRawWPM(
+				typedWords.map(({ word }) => word),
+				timer
+			)
+		)
+		setAcc(
+			calculateAcc(
+				typedWords.map(({ word }) => word),
+				errorCount
+			)
+		)
 		setConsistency(calculateConsistency(timeBetweenKeyStrokes))
 
 		setIsResultOpen(true)
@@ -255,26 +292,28 @@ const TypingZone: FC<TypingZoneProps> = () => {
 				<div className={`words ${styles['words']}`} ref={wordsElRef}>
 					{textArr.length > 0 ? (
 						<>
-							{textArr.flat().map((word, wordIdx) => (
-								<div className={styles['word']} word-id={wordIdx} key={wordIdx}>
-									{word.letters.map((letter, letterIdx) => (
-										<div
-											className={`${styles['letter']} ${
-												letter.key === ' ' ? styles['space'] : ''
-											} ${
-												letter.state !== 'default' && letter.key !== ' '
-													? styles[letter.state]
-													: styles[`space--${letter.state}`]
-											}`}
-											letter-id={letterIdx}
-											key={letterIdx}
-										>
-											{letter.key}
-										</div>
-									))}
-								</div>
-							))}
-							{/* <BlinkingCursor top={currentLetterRect.top} left={currentLetterRect.left} /> */}
+							{[...textArr]
+								.splice(globalIndex.lineIndex, 4)
+								.flat()
+								.map((word, wordIdx) => (
+									<div className={styles['word']} word-id={wordIdx} key={wordIdx}>
+										{word.letters.map((letter, letterIdx) => (
+											<div
+												className={`${styles['letter']} ${
+													letter.key === ' ' ? styles['space'] : ''
+												} ${
+													letter.state !== 'default' && letter.key !== ' '
+														? styles[letter.state]
+														: styles[`space--${letter.state}`]
+												}`}
+												letter-id={letterIdx}
+												key={letterIdx}
+											>
+												{letter.key}
+											</div>
+										))}
+									</div>
+								))}
 							<BlinkingCursor left={currentLetterRect.left} />
 						</>
 					) : null}
