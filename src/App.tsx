@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 
 import { Paths } from './utils/paths.ts'
@@ -9,10 +10,18 @@ import Login from 'pages/Login/Login.tsx'
 import Register from 'pages/Register/Register.tsx'
 
 function App() {
+	const [isPlayIntro, setIsPlayIntro] = useState(true)
+
+	useEffect(() => {
+		if (window.location.pathname !== Paths.root) {
+			setIsPlayIntro(false)
+		}
+	}, [])
+
 	const router = createBrowserRouter([
 		{
 			path: Paths.root,
-			element: <Root />,
+			element: <Root isPlayIntro={isPlayIntro} setIsPlayIntro={setIsPlayIntro} />,
 			errorElement: <Navigate to={Paths.root} />,
 			children: [
 				{

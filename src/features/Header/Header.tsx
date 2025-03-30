@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 import { Paths } from 'utils/paths'
 
@@ -14,11 +14,9 @@ type HeaderProps = {}
 const Header: FC<HeaderProps> = () => {
 	const isUserAuthenticated = false
 
-	const navigate = useNavigate()
-
 	return (
 		<header className={styles['header']}>
-			<Link to={Paths.root}>
+			<Link to={Paths.root} viewTransition>
 				<Logo />
 			</Link>
 			<nav className={styles['header-nav']}>
@@ -34,8 +32,12 @@ const Header: FC<HeaderProps> = () => {
 						</>
 					) : (
 						<>
-							<Button text='Register' action={() => navigate('/register')} />
-							<Button text='Login' action={() => navigate('/login')} variant='outline' />
+							<Link to={Paths.register} viewTransition>
+								<Button text='Register' action={() => {}} />
+							</Link>
+							<Link to={Paths.login} viewTransition>
+								<Button text='Login' action={() => {}} variant='outline' />
+							</Link>
 						</>
 					)}
 				</ul>

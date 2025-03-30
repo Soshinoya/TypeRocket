@@ -8,3 +8,21 @@
 .main {
     flex-grow: 1;
 }
+
+.intro {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: 999;
+}
+
+.outlet {
+    height: 100%;
+
+    &--hidden {
+        transition: opacity 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+        opacity: 0;
+    }
+}
