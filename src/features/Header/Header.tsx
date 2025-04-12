@@ -12,7 +12,7 @@ import styles from './Header.module.scss'
 type HeaderProps = {}
 
 const Header: FC<HeaderProps> = () => {
-	const isUserAuthenticated = false
+	const isUserAuthenticated = true
 
 	return (
 		<header className={styles['header']}>
@@ -23,11 +23,11 @@ const Header: FC<HeaderProps> = () => {
 				<ul className={styles['header-nav__links']}>
 					{isUserAuthenticated ? (
 						<>
-							<Link to={Paths.root} className={styles['header-nav__link']}>
+							<Link to={Paths.root} className={styles['header-nav__link']} viewTransition>
 								Mode
 							</Link>
-							<Link to={Paths.root} className={styles['header-nav__link']}>
-								<UserIcon />
+							<Link to={Paths.profile} className={styles['header-nav__link']} viewTransition>
+								<UserIcon style={{ width: '16px', height: '16px' }} />
 							</Link>
 						</>
 					) : (

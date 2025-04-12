@@ -1,0 +1,6 @@
+@use "../../styles/base/variables.scss";
+@use "../../styles/base/typography.scss";
+
+.percentage {
+    color: variables.$primary;
+}

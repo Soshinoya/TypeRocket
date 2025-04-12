@@ -18,7 +18,8 @@
 			"utils/*": ["src/utils/*"],
 			"data/*": ["src/data/*"],
 			"hooks/*": ["src/hooks/*"],
-			"assets/*": ["src/assets/*"]
+			"assets/*": ["src/assets/*"],
+			"types/*": ["src/types/*"]
 		},
 
 		/* Bundler mode */

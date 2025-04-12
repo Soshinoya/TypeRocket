@@ -1,0 +1,29 @@
+@use "../../../styles/base/variables.scss";
+@use "../../../styles/base/typography.scss";
+
+.experience {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    &__inner {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 5px;
+    }
+
+    &__level {
+        color: variables.$primary;
+    }
+
+    &__text {
+        @extend %body-small-medium;
+        color: variables.$primary-600;
+    }
+
+    &__diagram {
+        width: 100px;
+        height: 100px;
+    }
+}

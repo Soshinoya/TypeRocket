@@ -8,6 +8,7 @@ import Home from 'pages/Home/Home.tsx'
 import Settings from './pages/Settings/Settings'
 import Login from 'pages/Login/Login.tsx'
 import Register from 'pages/Register/Register.tsx'
+import Profile from 'pages/Profile/Profile.tsx'
 
 function App() {
 	const [isPlayIntro, setIsPlayIntro] = useState(true)
@@ -27,6 +28,10 @@ function App() {
 				{
 					index: true,
 					element: <Home />,
+				},
+				{
+					path: Paths.profile,
+					element: <Profile />,
 				},
 			],
 		},

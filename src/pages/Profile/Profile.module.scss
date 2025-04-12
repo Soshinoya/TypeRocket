@@ -1,0 +1,46 @@
+@use "../../styles/base/variables.scss";
+@use "../../styles/base/typography.scss";
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    &__wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 90px;
+        padding: 100px;
+    }
+
+    &__img {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100px;
+        height: 100px;
+        padding: 10px;
+        border: 1px solid variables.$primary;
+        border-radius: 50%;
+    }
+
+    &__inner {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    &__name {
+        color: variables.$primary;
+    }
+
+    &__text {
+        @extend %body-small-medium;
+        color: variables.$primary-600;
+    }
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+}
