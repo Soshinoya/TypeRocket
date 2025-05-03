@@ -1,11 +1,14 @@
 import React, { FC } from 'react'
 
+import styles from './TypingResult.module.scss'
+
 import Modal from 'components/Modal/Modal'
 
 import Ad from 'components/icons/Ad/Ad'
 
-import styles from './TypingResult.module.scss'
 import Chart from 'components/Chart/Chart'
+
+import { getDate } from 'utils/utils'
 
 type TypingResultProps = {
 	wpm: number
@@ -39,7 +42,7 @@ const TypingResult: FC<TypingResultProps> = ({
 				<>
 					<div className={styles['result-header']}>
 						<h2 className={styles['result-header__title']}>Results</h2>
-						<p className={styles['result-header__date']}>Oct. 18 2017</p>
+						<p className={styles['result-header__date']}>{getDate(new Date())}</p>
 					</div>
 					<div className={styles['result-body']}>
 						<div className={styles['result-stats']}>

@@ -1,3 +1,5 @@
+import { months } from 'data/months'
+
 const punctuationCharacters = ['()', ',', "''", '""', '.', '-', '!', '?', ';', ':']
 
 export const tolowercase = (str: string): string => {
@@ -53,4 +55,8 @@ export const addNumbers = (
 	}
 
 	return result
+}
+
+export const getDate = (date: Date) => {
+	return `${months[date.getMonth()]} ${date.getDate()} ${date.getFullYear()}`
 }
