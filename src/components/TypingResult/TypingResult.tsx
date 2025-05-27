@@ -1,4 +1,6 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
+
+import { useAppSelector } from 'store/index'
 
 import styles from './TypingResult.module.scss'
 
@@ -8,7 +10,16 @@ import Ad from 'components/icons/Ad/Ad'
 
 import Chart from 'components/Chart/Chart'
 
+import {
+	selectIsPunctuation,
+	selectIsNumbers,
+	selectMode,
+	selectWordOptions,
+	selectTimeOptions,
+} from 'features/TypingZone/selectors'
+
 import { getDate } from 'utils/utils'
+import { computeExperience } from 'utils/experience'
 
 type TypingResultProps = {
 	wpm: number
@@ -33,6 +44,31 @@ const TypingResult: FC<TypingResultProps> = ({
 	isOpen,
 	setIsOpen,
 }) => {
+	const isPunctuation = useAppSelector(selectIsPunctuation)
+	const isNumbers = useAppSelector(selectIsNumbers)
+	const mode = useAppSelector(selectMode)
+	const wordOptions = useAppSelector(selectWordOptions)
+	const timeOptions = useAppSelector(selectTimeOptions)
+
+	useEffect(() => {
+		if (isOpen) {
+			const earnedXP = computeExperience({
+				hasPunctuation: isPunctuation,
+				hasNumbers: isNumbers,
+				mode: mode,
+				count:
+					[...wordOptions, ...timeOptions].find(({ enabled }) => enabled === true)?.count ||
+					wordOptions[0].count,
+				wpm,
+				acc,
+				consistency,
+				errorCount,
+			})
+
+			console.log(earnedXP)
+		}
+	}, [isOpen])
+
 	return (
 		<Modal
 			isOpen={isOpen}
