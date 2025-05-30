@@ -1,8 +1,19 @@
 .root-layout {
+    position: relative;
     height: 100%;
     display: flex;
     flex-direction: column;
     padding: 25px;
+}
+
+.root-notifications {
+    position: absolute;
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+    gap: 25px;
+    top: 75px;
+    right: 25px;
 }
 
 .main {

@@ -4,9 +4,11 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 import { T_RootState } from './types'
 
 import TypingZone from 'features/TypingZone/reducer'
+import Notifications from 'features/Notification/reducer'
 
 const reducer = combineReducers({
 	TypingZone,
+	Notifications,
 })
 
 const store = configureStore({ reducer })

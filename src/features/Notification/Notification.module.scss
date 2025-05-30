@@ -1,0 +1,125 @@
+@use "../../styles/base/variables.scss";
+@use "../../styles/base/typography.scss";
+
+.notification {
+    min-width: 370px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 50px;
+    transform: translateX(1000px);
+    transition: transform 0.3s cubic-bezier(0.47, 0, 0.745, 0.715);
+    padding: 20px;
+    border: 1px solid variables.$primary-600;
+    border-radius: 10px;
+    background-color: variables.$primary-700;
+    overflow: hidden;
+
+    &__inner {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    &__icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__info {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    &__title {
+        @extend %inter-400;
+        font-size: 17px;
+        color: variables.$primary;
+    }
+
+    &__subtitle {
+        @extend %body-small-regular;
+        color: rgba(variables.$primary, 0.5);
+    }
+
+    &__cross {
+        cursor: pointer;
+    }
+
+    &__progressbar {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        background-color: rgba(variables.$primary-600, 0.2);
+        transition: width 0.2s variables.$transitionTimingFunc;
+    }
+
+    &__inner,
+    &__cross {
+        z-index: 10;
+    }
+
+    &--active {
+        transform: translateX(0);
+    }
+
+    &--error {
+        border-color: #500000;
+
+        .notification {
+            &__title {
+                color: variables.$error-color;
+            }
+
+            &__subtitle {
+                color: rgba(variables.$error-color, 0.5);
+            }
+
+            &__progressbar {
+                background-color: rgba(#500000, 0.2);
+            }
+        }
+    }
+
+    &--info {
+        border-color: #002f55;
+
+        .notification {
+            &__title {
+                color: variables.$info-color;
+            }
+
+            &__subtitle {
+                color: rgba(variables.$info-color, 0.5);
+            }
+
+            &__progressbar {
+                background-color: rgba(#002f55, 0.2);
+            }
+        }
+    }
+
+    &--warning {
+        border-color: variables.$accent-600;
+
+        .notification {
+            &__title {
+                color: variables.$accent;
+            }
+
+            &__subtitle {
+                color: rgba(variables.$accent, 0.5);
+            }
+
+            &__progressbar {
+                background-color: rgba(variables.$accent-600, 0.2);
+            }
+        }
+    }
+}

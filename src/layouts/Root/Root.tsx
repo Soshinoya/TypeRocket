@@ -1,8 +1,13 @@
 import { FC, useEffect, useRef } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 
+import { useAppSelector } from 'store/index'
+
+import { selectNotifications } from 'features/Notification/selectors'
+
 import { Paths } from 'utils/paths'
 
+import Notification from 'features/Notification/Notification'
 import Header from 'features/Header/Header'
 import ConfigBar from 'features/ConfigBar/ConfigBar'
 import Footer from 'components/Footer/Footer'
@@ -20,6 +25,8 @@ const Root: FC<RootProps> = ({ isPlayIntro, setIsPlayIntro }) => {
 
 	const introRef = useRef<HTMLDivElement>(null)
 	const outletRef = useRef<HTMLDivElement>(null)
+
+	const notifications = useAppSelector(selectNotifications)
 
 	useEffect(() => {
 		if (!isPlayIntro) return
@@ -46,6 +53,11 @@ const Root: FC<RootProps> = ({ isPlayIntro, setIsPlayIntro }) => {
 				</div>
 			</main>
 			<Footer centerElement={location.pathname === Paths['root'] ? <ConfigBar /> : null} />
+			<ul className={styles['root-notifications']}>
+				{notifications.map(notification => (
+					<Notification key={notification.id} {...notification} />
+				))}
+			</ul>
 		</div>
 	)
 }
