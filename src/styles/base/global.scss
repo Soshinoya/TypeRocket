@@ -11,7 +11,7 @@ body,
 }
 
 body {
-    background-color: variables.$primary-700;
+    background-color: var(--primary-700);
 }
 
 .body--blur {

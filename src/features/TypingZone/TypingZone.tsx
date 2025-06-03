@@ -170,18 +170,19 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		if (!isTimerActive) return
 
 		intervalId = setInterval(() => {
-			setTimer(prev => prev + 1)
+			const newTimer = timer + 1
+			setTimer(newTimer)
 			setWpmPerTimeArr(prev => [
 				...prev,
 				{
-					time: timer,
+					time: newTimer,
 					wpm: calculateWPM(
 						correctWords.map(({ word }) => word),
-						timer
+						newTimer
 					),
 					rawWpm: calculateRawWPM(
 						typedWords.map(({ word }) => word),
-						timer
+						newTimer
 					),
 				},
 			])
@@ -280,6 +281,9 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		setTimer(0)
 		setTimeBetweenKeyStrokes([])
 		setT1(0)
+		setWpmPerTimeArr([])
+		setCorrectWords([])
+		setTypedWords([])
 		document.querySelectorAll('.words [word-id]').forEach(elem => {
 			const el = elem as HTMLElement
 			el.style.top = '0px'
@@ -327,19 +331,17 @@ const TypingZone: FC<TypingZoneProps> = () => {
 					</p>
 				)}
 			</div>
-			{isResultOpen && (
-				<TypingResult
-					wpm={wpm}
-					rawWpm={rawWpm}
-					acc={acc}
-					consistency={consistency}
-					errorCount={errorCount}
-					time={timer}
-					wpmPerTimeArr={wpmPerTimeArr}
-					isOpen={isResultOpen}
-					setIsOpen={setIsResultOpen}
-				/>
-			)}
+			<TypingResult
+				wpm={wpm}
+				rawWpm={rawWpm}
+				acc={acc}
+				consistency={consistency}
+				errorCount={errorCount}
+				time={timer}
+				wpmPerTimeArr={wpmPerTimeArr}
+				isOpen={isResultOpen}
+				setIsOpen={setIsResultOpen}
+			/>
 		</>
 	)
 }

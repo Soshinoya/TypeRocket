@@ -3,6 +3,8 @@
 
 .typing-zone {
     position: relative;
+    max-width: 1600px;
+    margin: 0 auto;
     height: 100%;
     display: flex;
     align-items: center;
@@ -13,7 +15,7 @@
 
 .words {
     position: relative;
-    width: 80dvw;
+    width: 55dvw;
     height: calc(
         43px * 3 + 15px * 2
     ); // Высота символа, умноженного на 3 (т.к. видно всего три строчки) + отступ между строчками
@@ -31,16 +33,16 @@
 
 .letter {
     @extend %typing-word-regular;
-    color: variables.$accent;
+    color: var(--accent);
     text-transform: none;
 }
 
 .correct {
-    color: variables.$primary;
+    color: var(--primary);
 }
 
 .incorrect {
-    color: variables.$error-color;
+    color: var(--error-color);
 }
 
 .space {
@@ -58,7 +60,7 @@
     transform: translate(-50%, -50%);
     @extend %epilogue-700;
     font-size: 500px;
-    color: rgba(variables.$accent-100, 0.05);
+    color: rgba(var(--accent-100), 0.05);
     z-index: -1;
     user-select: none;
 

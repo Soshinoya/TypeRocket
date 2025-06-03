@@ -1,15 +1,19 @@
-import { FC, ReactNode } from 'react'
+import { FC, ReactNode, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { Paths } from 'utils/paths.ts'
 
 import styles from './Footer.module.scss'
 
+import Themes from 'features/Themes/Themes'
+
 type FooterProps = {
 	centerElement?: ReactNode
 }
 
 const Footer: FC<FooterProps> = ({ centerElement }) => {
+	const [isThemesModalOpen, setIsThemesModalOpen] = useState(false)
+
 	return (
 		<footer className={styles['footer']}>
 			<div className={styles['footer__links']}>
@@ -22,13 +26,14 @@ const Footer: FC<FooterProps> = ({ centerElement }) => {
 			</div>
 			{centerElement}
 			<div className={styles['footer__links']}>
-				<Link to={`${Paths.settings}#themes`} className={styles['footer__link']}>
+				<p className={styles['footer__link']} onClick={() => setIsThemesModalOpen(true)}>
 					Themes
-				</Link>
+				</p>
 				<Link to={`${Paths.settings}#version`} className={styles['footer__link']}>
 					Version
 				</Link>
 			</div>
+			<Themes isOpen={isThemesModalOpen} setIsOpen={setIsThemesModalOpen} />
 		</footer>
 	)
 }

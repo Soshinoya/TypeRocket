@@ -2,6 +2,10 @@ import { FC } from 'react'
 
 import s from './Profile.module.scss'
 
+import { useAppSelector } from 'store/index'
+
+import { selectCurrentTheme } from 'features/Themes/selectors'
+
 import { TAchievement } from 'types/Public'
 import { UserExperience, UserAchievement } from 'types/User'
 
@@ -1842,6 +1846,8 @@ const data = [
 type ProfileProps = {}
 
 const Profile: FC<ProfileProps> = () => {
+	const { primary, primarySemiBold, accent } = useAppSelector(selectCurrentTheme)
+
 	const experienceInfo: UserExperience = {
 		level: 114,
 		experience: 721,
@@ -1960,7 +1966,7 @@ const Profile: FC<ProfileProps> = () => {
 			<div className={s['header']}>
 				<div className={s['profile']}>
 					<div className={s['profile__img']}>
-						<UserIcon isStroke={true} color='#d2fc04' />
+						<UserIcon isStroke={true} color={primary} />
 					</div>
 					<div className={s['profile__inner']}>
 						<h2 className={s['profile__name']}>Soshinoya</h2>
@@ -2000,12 +2006,16 @@ const Profile: FC<ProfileProps> = () => {
 						fontSize: 16,
 						colorScheme: 'dark',
 						theme: {
-							light: ['#f0f0f0', '#fa5b17'],
-							dark: ['#404D01', '#fa5b17'],
+							light: ['#f0f0f0', accent],
+							dark: [primarySemiBold, accent],
 						},
 						weekStart: 1,
 						showWeekdayLabels: true,
-						style: { color: '#d2fc04', textTransform: 'lowercase', gap: '160px !important' },
+						style: {
+							color: primary,
+							textTransform: 'lowercase',
+							gap: '160px !important',
+						},
 						// loading: true
 					}}
 				/>

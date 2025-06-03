@@ -20,9 +20,9 @@ const initialConfig: I_TypingZone = {
 	mode: Mode['words'],
 	wordOptions: [
 		{ count: 10, enabled: true },
+		{ count: 20, enabled: false },
 		{ count: 40, enabled: false },
 		{ count: 80, enabled: false },
-		{ count: 160, enabled: false },
 	],
 	timeOptions: [
 		{ count: 15, enabled: true },

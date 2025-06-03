@@ -1,15 +1,50 @@
-$primary-100: #eaf2c2;
-$primary: #d2fc04;
-$primary-600: #404d01;
-$primary-700: #111400;
-$accent-100: #f2d0c2;
-$accent: #fa5b17;
-$accent-600: #4d1c07;
-$white-color: #fff;
-$black-color: #000;
-$error-color: #a70000;
-$info-color: #42aaff;
-$gray-color: #363636;
+:root {
+    --primary-100: #eaf2c2;
+    --rgb-primary-100: 234, 242, 194;
+    --primary: #d2fc04;
+    --rgb-primary: 210, 252, 4;
+    --primary-600: #404d01;
+    --rgb-primary-600: 64, 77, 1;
+    --primary-700: #111400;
+    --rgb-primary-700: 17, 20, 0;
+    --accent-100: #f2d0c2;
+    --accent: #fa5b17;
+    --accent-600: #4d1c07;
+    --white-color: #fff;
+    --rgb-white-color: 255, 255, 255;
+    --black-color: 0, 0, 0;
+    --error-color: #a70000;
+    --info-color: #42aaff;
+    --gray-color: #363636;
+}
+
+[data-theme="ez_mode"] {
+    --primary-100: #b0d9fc;
+    --rgb-primary-100: 176, 217, 252;
+    --primary: #138bf7;
+    --rgb-primary: 19, 139, 247;
+    --primary-600: #004a8d;
+    --rgb-primary-600: 0, 74, 141;
+    --primary-700: #002e53;
+    --rgb-primary-700: 0, 46, 83;
+    --accent-100: #fcb1e9;
+    --accent: #fa62d5;
+    --accent-600: #63034b;
+}
+
+[data-theme="new_theme"] {
+    --primary-100: #;
+    --rgb-primary-100: ;
+    --primary: #;
+    --rgb-primary: ;
+    --primary-600: #;
+    --rgb-primary-600: ;
+    --primary-700: #;
+    --rgb-primary-700: ;
+    --accent-100: #;
+    --accent: #;
+    --accent-600: #;
+}
 
 $transitionTimingFunc: cubic-bezier(0.165, 0.84, 0.44, 1);
 

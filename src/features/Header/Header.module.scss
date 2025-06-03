@@ -15,6 +15,6 @@
 
     &__link {
         @extend %body-default-action;
-        color: variables.$accent;
+        color: var(--accent);
     }
 }

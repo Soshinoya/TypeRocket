@@ -8,7 +8,7 @@
 
     &__title,
     &__date {
-        color: variables.$accent;
+        color: var(--accent);
     }
 
     &__title {
@@ -45,7 +45,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: #363636;
+        background-color: var(--gray-color);
     }
 
     .result-chart {
@@ -61,13 +61,13 @@
     align-items: center;
 
     &__title {
-        color: variables.$accent;
+        color: var(--accent);
         font-size: 70px;
         @extend %inter-700;
     }
 
     &__desc {
-        color: variables.$accent-100;
+        color: var(--accent-100);
         @extend %inter-500;
         font-size: 16px;
         letter-spacing: -2%;

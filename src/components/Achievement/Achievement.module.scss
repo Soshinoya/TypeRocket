@@ -2,11 +2,12 @@
 @use "../../styles/base/typography.scss";
 
 .achievement {
+    width: 350px;
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background-color: variables.$gray-color;
+    background-color: var(--gray-color);
     border: 1px solid rgba(#ccc, 0.3);
     border-radius: 10px;
     overflow: hidden;
@@ -18,7 +19,7 @@
         padding: 20px;
         margin-block-start: 0;
         margin-block-end: 0;
-        color: rgba(variables.$white-color, 0.3);
+        color: rgba(var(--rgb-white-color), 0.3);
     }
 
     &__icon {
@@ -27,7 +28,7 @@
         right: -70px;
 
         svg {
-            fill: rgba(variables.$white-color, 0.3);
+            fill: rgba(var(--rgb-white-color), 0.3);
         }
     }
 
@@ -37,7 +38,7 @@
         flex-direction: column;
         gap: 10px;
         padding: 20px;
-        background-color: rgba(variables.$white-color, 0.1);
+        background-color: rgba(var(--rgb-white-color), 0.1);
         backdrop-filter: blur(5px);
 
         &__header {
@@ -46,11 +47,11 @@
         }
 
         &__title {
-            color: rgba(variables.$white-color, 0.3);
+            color: rgba(var(--rgb-white-color), 0.3);
         }
 
         &__date {
-            color: rgba(variables.$white-color, 0.3);
+            color: rgba(var(--rgb-white-color), 0.3);
             @extend %body-small-medium;
         }
 
@@ -61,29 +62,29 @@
     }
 
     &--completed {
-        background-color: variables.$primary-700;
-        border-color: rgba(variables.$primary, 0.3);
+        background-color: var(--primary-700);
+        border-color: rgba(var(--rgb-primary), 0.3);
 
         .achievement {
             &__number {
-                color: rgba(variables.$primary, 0.3);
+                color: rgba(var(--rgb-primary), 0.3);
             }
 
             &__icon svg {
-                fill: rgba(variables.$primary, 0.3);
+                fill: rgba(var(--rgb-primary), 0.3);
             }
         }
 
         .achievement-content {
-            background-color: rgba(variables.$white-color, 0.1);
+            background-color: rgba(var(--rgb-white-color), 0.1);
 
             &__title {
-                color: variables.$primary;
+                color: var(--primary);
             }
 
             &__date,
             &__description {
-                color: rgba(variables.$primary-100, 0.4);
+                color: rgba(var(--rgb-primary-100), 0.4);
             }
         }
     }

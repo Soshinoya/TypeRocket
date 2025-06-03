@@ -6,7 +6,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: variables.$primary-700;
+    background-color: var(--primary-700);
 }
 
 .logo,
@@ -26,7 +26,7 @@
 
     &__text {
         @extend %jetbrainsmono-400;
-        color: variables.$accent;
+        color: var(--accent);
         font-size: 17px;
         animation-delay: 0.1s;
     }

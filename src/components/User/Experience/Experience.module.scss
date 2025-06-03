@@ -14,12 +14,12 @@
     }
 
     &__level {
-        color: variables.$primary;
+        color: var(--primary);
     }
 
     &__text {
         @extend %body-small-medium;
-        color: variables.$primary-600;
+        color: var(--primary-600);
     }
 
     &__diagram {

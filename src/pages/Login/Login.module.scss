@@ -10,12 +10,12 @@
     margin: 0 auto;
 
     &__title {
-        color: variables.$primary;
+        color: var(--primary);
         margin-bottom: 5px;
     }
 
     &__subtitle {
-        color: variables.$primary-600;
+        color: var(--primary-600);
         margin-bottom: 40px;
     }
 }
@@ -36,10 +36,10 @@
         align-items: center;
         justify-content: center;
         gap: 5px;
-        color: variables.$primary-600;
+        color: var(--primary-600);
 
         a {
-            color: variables.$accent;
+            color: var(--accent);
         }
     }
 }

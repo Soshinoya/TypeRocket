@@ -9,8 +9,8 @@
     transform: translate(-50%, -50%);
     width: 560px;
     height: 770px;
-    background-color: variables.$primary-700;
-    border: 1px solid variables.$accent;
+    background-color: var(--primary-700);
+    border: 1px solid var(--accent);
     border-radius: 10px;
     overflow: hidden;
     z-index: 20;

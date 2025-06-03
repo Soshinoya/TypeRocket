@@ -1,0 +1,14 @@
+@use "../../styles/base/variables.scss";
+@use "../../styles/base/typography.scss";
+
+.themes__item {
+    padding: 20px;
+    @extend %body-default-action;
+    color: var(--accent);
+    cursor: pointer;
+
+    &--active,
+    &:hover {
+        background-color: var(--accent-600);
+    }
+}

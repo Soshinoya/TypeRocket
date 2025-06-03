@@ -1,6 +1,9 @@
+import { nanoid } from '@reduxjs/toolkit'
 import React, { FC, useEffect } from 'react'
 
-import { useAppSelector } from 'store/index'
+import { useAppDispatch, useAppSelector } from 'store/index'
+
+import { setNotificationAction } from 'features/Notification/reducer'
 
 import styles from './TypingResult.module.scss'
 
@@ -44,8 +47,10 @@ const TypingResult: FC<TypingResultProps> = ({
 	isOpen,
 	setIsOpen,
 }) => {
-	const isPunctuation = useAppSelector(selectIsPunctuation)
-	const isNumbers = useAppSelector(selectIsNumbers)
+	const dispatch = useAppDispatch()
+
+	const hasPunctuation = useAppSelector(selectIsPunctuation)
+	const hasNumbers = useAppSelector(selectIsNumbers)
 	const mode = useAppSelector(selectMode)
 	const wordOptions = useAppSelector(selectWordOptions)
 	const timeOptions = useAppSelector(selectTimeOptions)
@@ -53,9 +58,9 @@ const TypingResult: FC<TypingResultProps> = ({
 	useEffect(() => {
 		if (isOpen) {
 			const earnedXP = computeExperience({
-				hasPunctuation: isPunctuation,
-				hasNumbers: isNumbers,
-				mode: mode,
+				hasPunctuation,
+				hasNumbers,
+				mode,
 				count:
 					[...wordOptions, ...timeOptions].find(({ enabled }) => enabled === true)?.count ||
 					wordOptions[0].count,
@@ -65,11 +70,18 @@ const TypingResult: FC<TypingResultProps> = ({
 				errorCount,
 			})
 
-			console.log(earnedXP)
+			dispatch(
+				setNotificationAction({
+					id: nanoid(10),
+					title: 'Test completed',
+					subtitle: `You have gained ${earnedXP} experience points`,
+					status: 'success',
+				})
+			)
 		}
 	}, [isOpen])
 
-	return (
+	return isOpen ? (
 		<Modal
 			isOpen={isOpen}
 			setIsOpen={setIsOpen}
@@ -139,6 +151,8 @@ const TypingResult: FC<TypingResultProps> = ({
 				</>
 			}
 		/>
+	) : (
+		<></>
 	)
 }
 

@@ -20,7 +20,7 @@
         width: 100px;
         height: 100px;
         padding: 10px;
-        border: 1px solid variables.$primary;
+        border: 1px solid var(--primary);
         border-radius: 50%;
     }
 
@@ -31,12 +31,12 @@
     }
 
     &__name {
-        color: variables.$primary;
+        color: var(--primary);
     }
 
     &__text {
         @extend %body-small-medium;
-        color: variables.$primary-600;
+        color: var(--primary-600);
     }
 }
 
@@ -56,24 +56,26 @@
     gap: 15px;
 
     &__title {
-        color: variables.$accent;
+        color: var(--accent);
     }
 
     &__description {
-        color: rgba(variables.$primary, 0.5);
+        color: rgba(var(--rgb-primary), 0.5);
     }
 }
 
 .statistic {
+    width: fit-content;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     padding: 40px 60px;
-    border: 1px solid variables.$primary-600;
+    border: 1px solid var(--primary-600);
     border-radius: 40px;
+    gap: 30px;
 
     &__wrapper {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        display: flex;
+        justify-content: center;
         gap: 60px;
     }
 
@@ -83,16 +85,17 @@
         justify-content: space-between;
         gap: 10px;
         text-align: center;
+        padding: 0 25px;
     }
 
     &__title {
         @extend %epilogue-500;
         font-size: 52px;
-        color: variables.$accent;
+        color: var(--accent);
     }
 
     &__subtitle {
-        color: variables.$primary-600;
+        color: var(--primary-600);
     }
 }
 
@@ -101,6 +104,7 @@
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         grid-auto-rows: 190px;
+        justify-self: center;
         padding: 70px 115px 0;
         gap: 30px;
     }
@@ -112,17 +116,17 @@
     justify-content: space-between;
 
     &__title {
-        color: variables.$primary;
+        color: var(--primary);
     }
 
     &__progress {
         display: flex;
         align-items: center;
         gap: 15px;
-        color: variables.$primary;
+        color: var(--primary);
 
         span {
-            color: rgba(variables.$primary, 0.5);
+            color: rgba(var(--primary), 0.5);
         }
     }
 }

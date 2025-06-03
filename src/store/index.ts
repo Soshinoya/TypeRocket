@@ -5,10 +5,12 @@ import { T_RootState } from './types'
 
 import TypingZone from 'features/TypingZone/reducer'
 import Notifications from 'features/Notification/reducer'
+import Themes from 'features/Themes/reducer'
 
 const reducer = combineReducers({
 	TypingZone,
 	Notifications,
+	Themes,
 })
 
 const store = configureStore({ reducer })

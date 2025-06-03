@@ -3,11 +3,11 @@
 
 @mixin input($type) {
     @if $type == error {
-        color: variables.$error-color;
-        border-color: variables.$error-color;
+        color: var(--error-color);
+        border-color: var(--error-color);
     } @else if $type == disabled {
-        color: variables.$gray-color;
-        border-color: variables.$gray-color;
+        color: var(--gray-color);
+        border-color: var(--gray-color);
     } @else {
         @warn No such type as $type;
     }
@@ -23,12 +23,12 @@
 .input {
     width: 100%;
     padding: 13px 25px;
-    color: variables.$primary-600;
+    color: var(--primary-600);
     @extend %body-default-light;
     font-weight: 400;
-    border: 1px solid variables.$primary-600;
+    border: 1px solid var(--primary-600);
     border-radius: 10px;
-    background-color: variables.$primary-700;
+    background-color: var(--primary-700);
     outline: none;
 
     &__wrapper {
@@ -38,7 +38,7 @@
     }
 
     &__label {
-        color: variables.$primary-600;
+        color: var(--primary-600);
         @extend %body-small-medium;
         order: -1;
     }
@@ -54,11 +54,11 @@
 
 .input__wrapper {
     .input:not(:disabled):focus-within {
-        color: variables.$primary;
-        border-color: variables.$primary;
+        color: var(--primary);
+        border-color: var(--primary);
     }
 
     .input:not(:disabled):focus-within + .input__label {
-        color: variables.$primary;
+        color: var(--primary);
     }
 }
