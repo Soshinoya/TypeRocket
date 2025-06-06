@@ -29,9 +29,10 @@ type T_Dataset = {
 type ChartProps = {
 	horizontalDataArr: any[]
 	verticalDataArrays: T_Dataset[]
+	argOptions: ChartOptions
 }
 
-const Chart: FC<ChartProps> = ({ horizontalDataArr, verticalDataArrays }) => {
+const Chart: FC<ChartProps> = ({ horizontalDataArr, verticalDataArrays, argOptions }) => {
 	const data: ChartData = {
 		labels: horizontalDataArr,
 		datasets: verticalDataArrays.map(({ dataset, options }) => {
@@ -45,53 +46,7 @@ const Chart: FC<ChartProps> = ({ horizontalDataArr, verticalDataArrays }) => {
 		}),
 	}
 
-	const options: ChartOptions = {
-		maintainAspectRatio: false,
-		responsive: true,
-		plugins: {
-			legend: {
-				position: 'top' as const,
-			},
-		},
-		scales: {
-			x: {
-				title: {
-					display: true,
-					text: 'Time',
-					color: '#fa5b17',
-					font: {
-						family: 'Epilogue',
-						size: 14,
-					},
-				},
-				grid: {
-					color: '#363636',
-				},
-				ticks: {
-					color: '#f2d0c2',
-					backdropColor: '#f2d0c2',
-				},
-			},
-			y: {
-				title: {
-					display: true,
-					text: 'Words per minute',
-					color: '#fa5b17',
-					font: {
-						family: 'Epilogue',
-						size: 14,
-					},
-				},
-				grid: {
-					color: '#363636',
-				},
-				ticks: {
-					color: '#f2d0c2',
-					backdropColor: '#f2d0c2',
-				},
-			},
-		},
-	}
+	const options: ChartOptions = argOptions
 
 	// @ts-ignore
 	return <Line options={options} data={data} />

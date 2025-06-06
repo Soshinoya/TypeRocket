@@ -19,7 +19,7 @@ export const computeExperience = ({
 	acc,
 	consistency,
 	errorCount,
-	xpMultiplier = 4,
+	xpMultiplier = 2,
 }: TypingTestParams): number => {
 	// Normalize accuracy and consistency (assume consistency is 0-100)
 	const accuracyFactor = Math.max(0, Math.min(acc / 100, 1))

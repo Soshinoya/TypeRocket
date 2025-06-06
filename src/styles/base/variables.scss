@@ -32,7 +32,49 @@
     --accent-600: #63034b;
 }
 
-[data-theme="new_theme"] {
+[data-theme="sea_freshness"] {
+    --primary-100: #e1ebe7;
+    --rgb-primary-100: 225, 235, 231;
+    --primary: #3e3f3e;
+    --rgb-primary: 62, 63, 62;
+    --primary-600: #717977;
+    --rgb-primary-600: 113, 121, 119;
+    --primary-700: #b2d2c8;
+    --rgb-primary-700: 178, 210, 200;
+    --accent-100: #bd887f;
+    --accent: #c13117;
+    --accent-600: #490909;
+}
+
+[data-theme="dusty_rosewood"] {
+    --primary-100: #dad3c8;
+    --rgb-primary-100: 218, 211, 200;
+    --primary: #64374d;
+    --rgb-primary: 100, 55, 77;
+    --primary-600: #807463;
+    --rgb-primary-600: 128, 116, 99;
+    --primary-700: #c6b294;
+    --rgb-primary-700: 198, 178, 148;
+    --accent-100: #838e8a;
+    --accent: #405a52;
+    --accent-600: #091914;
+}
+
+[data-theme="lime_surge"] {
+    --primary-100: #eef7ff;
+    --rgb-primary-100: 238, 247, 255;
+    --primary: #bfcfdc;
+    --rgb-primary: 191, 207, 220;
+    --primary-600: #7c878e;
+    --rgb-primary-600: 124, 135, 142;
+    --primary-700: #4b5257;
+    --rgb-primary-700: 75, 82, 87;
+    --accent-100: #b5c59c;
+    --accent: #93c247;
+    --accent-600: #3a4a20;
+}
+
+[data-theme=""] {
     --primary-100: #;
     --rgb-primary-100: ;
     --primary: #;

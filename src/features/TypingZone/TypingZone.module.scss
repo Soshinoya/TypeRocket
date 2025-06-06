@@ -33,7 +33,7 @@
 
 .letter {
     @extend %typing-word-regular;
-    color: var(--accent);
+    color: var(--primary-600);
     text-transform: none;
 }
 
@@ -60,7 +60,7 @@
     transform: translate(-50%, -50%);
     @extend %epilogue-700;
     font-size: 500px;
-    color: rgba(var(--accent-100), 0.05);
+    color: rgba(var(--rgb-primary-100), 0.05);
     z-index: -1;
     user-select: none;
 

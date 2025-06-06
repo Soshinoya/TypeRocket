@@ -9,9 +9,9 @@ import styles from './TypingResult.module.scss'
 
 import Modal from 'components/Modal/Modal'
 
-import Ad from 'components/icons/Ad/Ad'
+import ResultWpmChart from 'components/Chart/ResultWpmChart'
 
-import Chart from 'components/Chart/Chart'
+import Ad from 'components/icons/Ad/Ad'
 
 import {
 	selectIsPunctuation,
@@ -125,27 +125,7 @@ const TypingResult: FC<TypingResultProps> = ({
 							<Ad />
 						</div>
 						<div className={styles['result-chart']}>
-							<Chart
-								verticalDataArrays={[
-									{
-										dataset: wpmPerTimeArr.map(item => item.wpm),
-										options: {
-											label: 'wpm',
-											borderColor: '#fa5b17',
-											backgroundColor: '#fa5b17',
-										},
-									},
-									{
-										dataset: wpmPerTimeArr.map(item => item.rawWpm),
-										options: {
-											label: 'raw wpm',
-											borderColor: '#d2fc04',
-											backgroundColor: '#d2fc04',
-										},
-									},
-								]}
-								horizontalDataArr={wpmPerTimeArr.map(item => item.time)}
-							/>
+							<ResultWpmChart wpmPerTimeArr={wpmPerTimeArr} />
 						</div>
 					</div>
 				</>
