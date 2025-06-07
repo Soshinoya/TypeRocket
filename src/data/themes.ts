@@ -57,14 +57,33 @@ export const themes: SingleTheme[] = [
 		accentSemiBold: '#3A4A20',
 	},
 	{
-		id: '',
-		title: '',
-		primaryLight: '#',
-		primary: '#',
-		primarySemiBold: '#',
-		primaryBold: '#',
-		accentLight: '#',
-		accent: '#',
-		accentSemiBold: '#',
+		id: 'dark_beach',
+		title: 'Dark Beach',
+		primaryLight: '#972fff',
+		primary: '#ebd7ff',
+		primarySemiBold: '#633a8c',
+		primaryBold: '#000',
+		accentLight: '#D8B9F7',
+		accent: '#c58aff',
+		accentSemiBold: '#1e001e',
 	},
-]
+	// {
+	// 	id: '',
+	// 	title: '',
+	// 	primaryLight: '#',
+	// 	primary: '#',
+	// 	primarySemiBold: '#',
+	// 	primaryBold: '#',
+	// 	accentLight: '#',
+	// 	accent: '#',
+	// 	accentSemiBold: '#',
+	// },
+].sort((a, b) => {
+	if (a.title.toLowerCase() < b.title.toLowerCase()) {
+		return -1
+	}
+	if (a.title.toLowerCase() > b.title.toLowerCase()) {
+		return 1
+	}
+	return 0
+})

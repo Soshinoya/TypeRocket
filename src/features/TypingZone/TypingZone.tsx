@@ -16,9 +16,11 @@ import RestartIcon from 'components/icons/RestartIcon/RestartIcon'
 
 import styles from './TypingZone.module.scss'
 
-import hitAudio from 'assets/audio/typewriter-key-hit.mp3'
+import hitAudio from 'assets/audio/error1_1.wav'
+import clickAudio from 'assets/audio/click4_11.wav'
 
 const incorrectLetterAudio = new Audio(hitAudio)
+const correctLetterAudio = new Audio(clickAudio)
 
 type TypingZoneProps = {}
 
@@ -32,6 +34,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 
 	// Local states
 	const wordsElRef = useRef<HTMLDivElement | null>(null)
+	const restartIconElRef = useRef<HTMLDivElement | null>(null)
 
 	const [wordsElWidth, setWordsElWidth] = useState(0)
 	// const [currentLetterRect, setCurrentLetterRect] = useState<T_CurrentLetterRect>({ top: '0px', left: '0px' })
@@ -64,6 +67,8 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		setCurrentEvent(event.key)
 		incorrectLetterAudio.pause()
 		incorrectLetterAudio.currentTime = 0
+		correctLetterAudio.pause()
+		correctLetterAudio.currentTime = 0
 
 		if (event.key === 'Backspace') {
 			changeGlobalIndex('decrement')
@@ -85,6 +90,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 
 			if (currentLetter?.key === event.key) {
 				updateLetterState('correct')
+				correctLetterAudio.play()
 
 				if (textArr[lineIndex][wordIndex].state !== 'incorrect') {
 					textArr[lineIndex][wordIndex].state = 'correct'
@@ -235,6 +241,20 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		}
 	}, [isResultOpen])
 
+	// Focus on restart icon when pressing tab
+	useEffect(() => {
+		const tabPressHandler = (e: KeyboardEvent) => {
+			if (restartIconElRef.current && e.key === 'Tab') {
+				e.preventDefault()
+				restartIconElRef.current.focus()
+			}
+		}
+
+		document.addEventListener('keydown', tabPressHandler)
+
+		return () => document.removeEventListener('keydown', tabPressHandler)
+	}, [restartIconElRef])
+
 	const restartIconHandler = () => {
 		dispatch(setTextAction(updateText({ ...store.getState().TypingZone }, wordsElWidth)))
 		resetTyping()
@@ -322,7 +342,18 @@ const TypingZone: FC<TypingZoneProps> = () => {
 						</>
 					) : null}
 				</div>
-				<div className={styles['restart']} onClick={restartIconHandler}>
+				<div
+					ref={restartIconElRef}
+					tabIndex={0}
+					className={styles['restart']}
+					onClick={restartIconHandler}
+					onKeyDown={e => {
+						if (e.key === 'Enter') {
+							restartIconHandler()
+							restartIconElRef.current?.blur()
+						}
+					}}
+				>
 					<RestartIcon style={{ width: '24px', height: '24px' }} />
 				</div>
 				{currentMode === Mode.time && (

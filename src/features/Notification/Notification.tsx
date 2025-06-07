@@ -1,14 +1,18 @@
 import { FC, useEffect, useState, useRef } from 'react'
 
-import { useAppDispatch } from 'store/index'
+import { useAppDispatch, useAppSelector } from 'store/index'
 
 import { I_Notification } from './types'
 import { deleteNotificationAction } from './reducer'
+
+import { selectCurrentTheme } from 'features/Themes/selectors'
 
 import styles from './Notification.module.scss'
 
 const Notification: FC<I_Notification> = ({ id, title, subtitle, status, duration = 5000 }) => {
 	const dispatch = useAppDispatch()
+
+	const { accent } = useAppSelector(selectCurrentTheme)
 
 	const [passedMS, setPassedMS] = useState(0)
 
@@ -23,7 +27,7 @@ const Notification: FC<I_Notification> = ({ id, title, subtitle, status, duratio
 					<svg width='28' height='28' viewBox='0 0 28 28' fill='none' xmlns='http://www.w3.org/2000/svg'>
 						<path
 							d='M0.478271 15.645L6.99994 22.1667L8.64494 20.51L2.13494 14M25.9466 6.51001L13.6033 18.865L8.74994 14L7.0816 15.645L13.6033 22.1667L27.6033 8.16668M20.9999 8.16668L19.3549 6.51001L11.9466 13.9183L13.6033 15.5633L20.9999 8.16668Z'
-							fill='#D2FC04'
+							fill={accent}
 						/>
 					</svg>
 				)
@@ -60,7 +64,7 @@ const Notification: FC<I_Notification> = ({ id, title, subtitle, status, duratio
 					<svg width='28' height='28' viewBox='0 0 28 28' fill='none' xmlns='http://www.w3.org/2000/svg'>
 						<path
 							d='M0.478271 15.645L6.99994 22.1667L8.64494 20.51L2.13494 14M25.9466 6.51001L13.6033 18.865L8.74994 14L7.0816 15.645L13.6033 22.1667L27.6033 8.16668M20.9999 8.16668L19.3549 6.51001L11.9466 13.9183L13.6033 15.5633L20.9999 8.16668Z'
-							fill='#D2FC04'
+							fill={accent}
 						/>
 					</svg>
 				)
@@ -151,7 +155,7 @@ const Notification: FC<I_Notification> = ({ id, title, subtitle, status, duratio
 						fillRule='evenodd'
 						clipRule='evenodd'
 						d='M25.3654 9.56727C25.4398 9.49289 25.4988 9.4046 25.539 9.30743C25.5793 9.21026 25.6 9.10611 25.6 9.00093C25.6 8.89575 25.5793 8.7916 25.539 8.69443C25.4988 8.59726 25.4398 8.50897 25.3654 8.4346C25.291 8.36022 25.2028 8.30123 25.1056 8.26098C25.0084 8.22073 24.9043 8.20001 24.7991 8.20001C24.6939 8.20001 24.5898 8.22073 24.4926 8.26098C24.3954 8.30123 24.3071 8.36022 24.2327 8.4346L16.8 15.8689L9.36725 8.4346C9.29288 8.36022 9.20459 8.30123 9.10742 8.26098C9.01024 8.22073 8.9061 8.20001 8.80092 8.20001C8.69574 8.20001 8.59159 8.22073 8.49442 8.26098C8.39725 8.30123 8.30896 8.36022 8.23458 8.4346C8.16021 8.50897 8.10122 8.59726 8.06097 8.69443C8.02072 8.7916 8 8.89575 8 9.00093C8 9.10611 8.02072 9.21026 8.06097 9.30743C8.10122 9.4046 8.16021 9.49289 8.23458 9.56727L15.6689 17L8.23458 24.4328C8.08438 24.583 8 24.7867 8 24.9991C8 25.2115 8.08438 25.4152 8.23458 25.5654C8.38478 25.7156 8.5885 25.8 8.80092 25.8C9.01334 25.8 9.21705 25.7156 9.36725 25.5654L16.8 18.1311L24.2327 25.5654C24.3829 25.7156 24.5867 25.8 24.7991 25.8C25.0115 25.8 25.2152 25.7156 25.3654 25.5654C25.5156 25.4152 25.6 25.2115 25.6 24.9991C25.6 24.7867 25.5156 24.583 25.3654 24.4328L17.9311 17L25.3654 9.56727Z'
-						fill='#363636'
+						fill={accent}
 					/>
 				</svg>
 			</div>

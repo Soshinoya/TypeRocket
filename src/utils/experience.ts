@@ -43,8 +43,8 @@ export const computeExperience = ({
 	// Speed multiplier is sqrt(wpm / 40) to reward higher speed but with diminishing returns (assuming 40 wpm avg)
 	const speedMultiplier = Math.sqrt(wpm / 40)
 
-	// Penalize errors: error penalty reduces XP, but not below zero; each error reduces by 5% XP (capped)
-	const errorPenalty = Math.min(1, 0.05 * errorCount)
+	// Penalize errors: error penalty reduces XP, but not below zero; each error reduces by 2.5% XP (capped)
+	const errorPenalty = Math.min(1, 0.025 * errorCount)
 	const errorMultiplier = 1 - errorPenalty
 
 	// Bonus multipliers for punctuation and numbers presence

@@ -10,9 +10,9 @@
     transform: translateX(1000px);
     transition: transform 0.3s cubic-bezier(0.47, 0, 0.745, 0.715);
     padding: 20px;
-    border: 1px solid #404d01;
+    border: 1px solid var(--primary-600);
     border-radius: 10px;
-    background-color: #111400;
+    background-color: transparent;
     overflow: hidden;
     z-index: 20;
 
@@ -40,12 +40,12 @@
     &__title {
         @extend %inter-400;
         font-size: 17px;
-        color: #d2fc04;
+        color: var(--primary);
     }
 
     &__subtitle {
         @extend %body-small-regular;
-        color: rgba(210, 252, 4, 0.5);
+        color: rgba(var(--rgb-primary), 0.5);
     }
 
     &__cross {
@@ -57,7 +57,7 @@
         top: 0;
         bottom: 0;
         left: 0;
-        background-color: rgba(64, 77, 1, 0.2);
+        background-color: rgba(var(--rgb-primary-600), 0.2);
         transition: width 0.2s variables.$transitionTimingFunc;
     }
 

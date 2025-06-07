@@ -21,6 +21,8 @@ import {
 	selectTimeOptions,
 } from 'features/TypingZone/selectors'
 
+import useIsEscapePress from 'hooks/useIsEscapePress'
+
 import { getDate } from 'utils/utils'
 import { computeExperience } from 'utils/experience'
 
@@ -54,6 +56,8 @@ const TypingResult: FC<TypingResultProps> = ({
 	const mode = useAppSelector(selectMode)
 	const wordOptions = useAppSelector(selectWordOptions)
 	const timeOptions = useAppSelector(selectTimeOptions)
+
+	useIsEscapePress(setIsOpen)
 
 	useEffect(() => {
 		if (isOpen) {
