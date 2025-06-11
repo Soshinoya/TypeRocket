@@ -1,0 +1,50 @@
+@use "../../styles/base/variables.scss";
+
+.intro {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary-700);
+}
+
+.logo,
+.logo__text {
+    transform: scale(0);
+    opacity: 0;
+    animation: 1.5s cubic-bezier(0.075, 0.82, 0.165, 1) 1;
+    animation-name: introAnimation;
+}
+
+.logo {
+    &__wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    &__text {
+        @extend %jetbrainsmono-400;
+        color: var(--accent);
+        font-size: 17px;
+        animation-delay: 0.1s;
+    }
+}
+
+@keyframes introAnimation {
+    25% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    80% {
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(-100px);
+    }
+}

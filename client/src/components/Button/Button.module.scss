@@ -1,0 +1,31 @@
+@use "../../styles/base/variables.scss";
+@use "../../styles/base/typography.scss";
+
+.button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 30px;
+    border-radius: 10px;
+    background-color: var(--primary);
+    @extend %epilogue-500;
+    color: var(--primary-700);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s variables.$transitionTimingFunc;
+
+    &:hover {
+        background-color: rgba(var(--primary), 0.6);
+    }
+
+    &--outline {
+        background-color: transparent;
+        border: 1px solid var(--primary);
+        color: var(--primary);
+
+        &:hover {
+            background-color: rgba(var(--primary), 0.2);
+        }
+    }
+}

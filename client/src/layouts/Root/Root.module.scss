@@ -1,0 +1,41 @@
+.root-layout {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 25px;
+}
+
+.root-notifications {
+    position: absolute;
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+    gap: 25px;
+    top: 75px;
+    right: 25px;
+}
+
+.main {
+    max-width: 1920px;
+    margin: 0 auto;
+    flex-grow: 1;
+}
+
+.intro {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: 999;
+}
+
+.outlet {
+    height: 100%;
+
+    &--hidden {
+        transition: opacity 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+        opacity: 0;
+    }
+}

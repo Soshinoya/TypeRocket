@@ -1,0 +1,53 @@
+@use "../../styles/base/variables.scss";
+@use "../../styles/base/typography.scss";
+
+.config-bar {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: -8px;
+    padding: 25px;
+    border: 1px solid rgba(var(--rgb-white-color), 0.3);
+    border-radius: 40px;
+    background-color: rgba(var(--rgb-white-color), 0.05);
+    backdrop-filter: blur(15px);
+
+    &-modal__item {
+        padding: 20px;
+        @extend %body-default-action;
+        color: var(--accent);
+
+        &:hover {
+            background-color: var(--accent-600);
+        }
+    }
+}
+
+.config-bar-item {
+    @extend %body-default-action;
+    color: var(--accent);
+    cursor: pointer;
+    white-space: nowrap;
+
+    &__wrapper {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    &__wrapper--options {
+        width: 115px;
+        gap: unset;
+        justify-content: space-between;
+    }
+
+    &--enabled {
+        color: var(--primary);
+    }
+}
+
+.separator {
+    height: 20px;
+    width: 1px;
+    background-color: rgba(var(--rgb-white-color), 0.3);
+}

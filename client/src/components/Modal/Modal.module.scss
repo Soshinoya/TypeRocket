@@ -1,0 +1,21 @@
+@use "../../styles/base/typography.scss";
+@use "../../styles/base/variables.scss";
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 560px;
+    height: 770px;
+    background-color: var(--primary-700);
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    overflow: hidden;
+    z-index: 20;
+
+    &--active {
+        display: block;
+    }
+}

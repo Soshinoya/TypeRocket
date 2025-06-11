@@ -1,0 +1,25 @@
+@use "../../styles/base/variables.scss";
+
+.blinking-cursor {
+    position: absolute;
+    width: 1px;
+    height: 43px;
+    background-color: var(--white-color);
+    -webkit-animation: 1s blink step-end infinite;
+    -moz-animation: 1s blink step-end infinite;
+    -ms-animation: 1s blink step-end infinite;
+    -o-animation: 1s blink step-end infinite;
+    animation: 1s blink infinite;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
