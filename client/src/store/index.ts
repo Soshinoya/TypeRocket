@@ -7,13 +7,19 @@ import TypingZone from 'features/TypingZone/reducer'
 import Notifications from 'features/Notification/reducer'
 import Themes from 'features/Themes/reducer'
 
+import { UserSlice } from 'features/api/User/UserSlice'
+
 const reducer = combineReducers({
 	TypingZone,
+	[UserSlice.reducerPath]: UserSlice.reducer,
 	Notifications,
 	Themes,
 })
 
-const store = configureStore({ reducer })
+const store = configureStore({
+	reducer,
+	middleware: getDefaultMiddleware => getDefaultMiddleware().concat(UserSlice.middleware),
+})
 
 export default store
 

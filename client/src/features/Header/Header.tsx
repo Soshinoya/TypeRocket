@@ -12,7 +12,7 @@ import styles from './Header.module.scss'
 type HeaderProps = {}
 
 const Header: FC<HeaderProps> = () => {
-	const isUserAuthenticated = true
+	const isUserAuthenticated = false
 
 	return (
 		<header className={styles['header']}>

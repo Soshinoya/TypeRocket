@@ -2,9 +2,17 @@ CREATE TABLE
     users (
         id SERIAL PRIMARY KEY,
         username VARCHAR(30) UNIQUE NOT NULL,
+        email VARCHAR(30) UNIQUE NOT NULL,
+        password VARCHAR(30) NOT NULL,
         creationDate DATE NOT NULL DEFAULT CURRENT_DATE,
-        description TEXT,
-        currentTheme VARCHAR(30)
+        description TEXT DEFAULT 'Hey there! I am using TypeRocket'
+    );
+
+CREATE TABLE
+    user_preferences (
+        id SERIAL PRIMARY KEY,
+        user_id INT NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+        currentThemeId VARCHAR(30)
     );
 
 CREATE TABLE
@@ -37,6 +45,22 @@ CREATE TABLE
     );
 
 CREATE TABLE
+    achievements (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(100) NOT NULL,
+        description TEXT,
+        experience_gained INT DEFAULT 0
+    );
+
+CREATE TABLE
+    user_achievements (
+        id SERIAL PRIMARY KEY,
+        user_id INT UNIQUE REFERENCES users (id) ON DELETE CASCADE,
+        achievement_id INT UNIQUE REFERENCES achievements (id) ON DELETE CASCADE,
+        completion_date DATE NOT NULL DEFAULT CURRENT_DATE
+    );
+
+CREATE TABLE
     user_activity (
         user_id INT NOT NULL,
         count INTEGER NOT NULL,
@@ -61,22 +85,6 @@ FROM
     ('2023-01-01') TO ('2024-01-01');
 
 CREATE INDEX idx_user_activity_date ON user_activity (date);
-
-CREATE TABLE
-    achievements (
-        id SERIAL PRIMARY KEY,
-        title VARCHAR(100) NOT NULL,
-        description TEXT,
-        experience_gained INT DEFAULT 0
-    );
-
-CREATE TABLE
-    user_achievements (
-        id SERIAL PRIMARY KEY,
-        user_id INT UNIQUE REFERENCES users (id) ON DELETE CASCADE,
-        achievement_id INT UNIQUE REFERENCES achievements (id) ON DELETE CASCADE,
-        completion_date DATE NOT NULL DEFAULT CURRENT_DATE
-    );
 
 INSERT INTO
     users (username)

@@ -1,11 +1,47 @@
-import { TAchievement } from './Public'
+import { TAchievement, TResultMetrics, TTestNames } from './Public'
 
-export type UserExperience = {
+export type TUser = {
+	id: number
+	username: string
+	email: string
+	password: string
+	creationDate: string
+	description: string
+}
+
+export type TUserCredentials = Pick<TUser, 'username' | 'email'> & {
+	password: string
+	repeatPassword: string
+}
+
+export type TUserPreferences = {
+	id: number
+	userId: TUser['id']
+	currentThemeId: string
+}
+
+export type TUserExperience = {
+	id: number
+	userId: TUser['id']
 	level: number
 	experience: number
 }
 
-export type UserAchievement = {
-	id: TAchievement['id']
-	dateOfCompletion: string
+export type TUserAchievement = {
+	id: number
+	userId: TUser['id']
+	achievementId: TAchievement['id']
+	completionDate: string
+}
+
+export type TUserBestResults = {
+	userId: TUser['id']
+	testNameId: TTestNames['id']
+	resultId: TResultMetrics['id']
+}
+
+export type TUserActivity = {
+	userId: TUser['id']
+	count: number
+	date: string
 }

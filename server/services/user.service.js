@@ -1,28 +1,38 @@
 import { pool } from '../app.js'
 
-// Проверка существования пользователя
-const checkUserExists = async (email, res) => {
-	const userExists = await pool.query('SELECT id FROM users WHERE email = $1', [email])
-	if (userExists.rows.length) {
-		return res.status(404).json({ error: 'The user with this email or username already exists' })
-	}
-}
-
 const userService = {
-	createUser: async (user, res) => {
-		const { username, email, password, description, currentTheme } = user
-
-		await checkUserExists(email, res)
+	getUser: async (email, password) => {
+		const result = await pool.query(`SELECT * FROM users WHERE email = $1 AND password = $2`, [email, password])
+		console.log('result: ', result)
+		return result.rows[0] || result.rows
+	},
+	isUserNameExists: async username => {
+		const result = await pool.query(`SELECT id FROM users WHERE username = $1`, [username])
+		console.log('result: ', result)
+		if (result.rows?.length) {
+			return result.rows[0]
+		}
+		return null
+	},
+	isUserEmailExists: async email => {
+		const result = await pool.query(`SELECT id FROM users WHERE email = $1`, [email])
+		console.log('result: ', result)
+		if (result.rows?.length) {
+			return result.rows[0]
+		}
+		return null
+	},
+	createUser: async user => {
+		const { username, email, password, description } = user
 
 		const result1 = await pool.query(
 			`
-            INSERT INTO users (username, email, password, description, currentTheme)
-            VALUES ($1, $2, $3, $4, $5)
-            RETURNING id;
+            INSERT INTO users (username, email, password, description)
+            VALUES ($1, $2, $3, $4)
+            RETURNING *;
             `,
-			[username, email, password, description, currentTheme]
+			[username, email, password, description]
 		)
-		console.log('result1: ', result1)
 
 		// Создаем строку в таблицах experience
 		const result2 = await pool.query(
@@ -30,18 +40,14 @@ const userService = {
             INSERT INTO experience (user_id, level, progress)
             VALUES ($1, 0, 0);
             `,
-			[result1.rows[0]]
+			[result1.rows[0].id]
 		)
+
 		// Добавить обработчик ошибки, если не получится создать строку в experience
-		console.log('result2: ', result2)
 
-		return result1.rows
+		return result1.rows[0]
 	},
-	deleteUser: async (user, res) => {
-		const { userId, email } = user
-
-		await checkUserExists(email, res)
-
+	deleteUser: async userId => {
 		const result = await pool.query(
 			`
             BEGIN; -- Начало транзакции

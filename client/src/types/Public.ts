@@ -4,3 +4,17 @@ export type TAchievement = {
 	description: string
 	experienceGained: number
 }
+
+export type TResultMetrics = {
+	id: number
+	wpm: number
+	rawWpm: number
+	accuracy: number
+	consistency: number
+	date: string
+}
+
+export type TTestNames = {
+	id: number
+	name: string
+}

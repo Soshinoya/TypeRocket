@@ -33,15 +33,15 @@ function App() {
 					path: Paths.profile,
 					element: <Profile />,
 				},
+				{
+					path: Paths.login,
+					element: <Login />,
+				},
+				{
+					path: Paths.register,
+					element: <Register />,
+				},
 			],
-		},
-		{
-			path: Paths.login,
-			element: <Login />,
-		},
-		{
-			path: Paths.register,
-			element: <Register />,
 		},
 		{
 			path: Paths.settings,
