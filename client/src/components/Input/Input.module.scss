@@ -22,7 +22,7 @@
 
 .input {
     width: 100%;
-    padding: 13px 25px;
+    padding: 15px 15px;
     color: var(--primary-600);
     @extend %body-default-light;
     font-weight: 400;
@@ -61,4 +61,11 @@
     .input:not(:disabled):focus-within + .input__label {
         color: var(--primary);
     }
+}
+
+.validate-tip {
+    @extend %body-default-light;
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--error-color);
 }

@@ -43,6 +43,17 @@ const Register: FC = () => {
 		isActive: false,
 	})
 
+	const [validateTips, setValidateTips] = useState<Map<string, string>>(new Map())
+
+	// Добавление элемента в Map
+	const addToValidateTips = (key: string, value: string) => {
+		setValidateTips(prevValidateTips => {
+			const newValidateTips = new Map(prevValidateTips)
+			newValidateTips.set(key, value)
+			return newValidateTips
+		})
+	}
+
 	const onFormSubmit = async (event: React.FormEvent) => {
 		event.preventDefault()
 
@@ -149,6 +160,9 @@ const Register: FC = () => {
 						type='username'
 						autocomplete='false'
 						maxLength={30}
+						adjacentInputValues={userCredentials}
+						validateTips={validateTips}
+						setValidateTips={addToValidateTips}
 					/>
 					<Input
 						value={userCredentials.email}
@@ -158,6 +172,9 @@ const Register: FC = () => {
 						type='email'
 						autocomplete='false'
 						maxLength={40}
+						adjacentInputValues={userCredentials}
+						validateTips={validateTips}
+						setValidateTips={addToValidateTips}
 					/>
 					<Input
 						value={userCredentials.password}
@@ -167,6 +184,10 @@ const Register: FC = () => {
 						type='password'
 						autocomplete='false'
 						maxLength={30}
+						adjacentInputValues={userCredentials}
+						validateTips={validateTips}
+						setValidateTips={addToValidateTips}
+						authType='register'
 					/>
 					<Input
 						value={userCredentials.repeatPassword}
@@ -176,6 +197,10 @@ const Register: FC = () => {
 						type='password'
 						autocomplete='false'
 						maxLength={30}
+						adjacentInputValues={userCredentials}
+						validateTips={validateTips}
+						setValidateTips={addToValidateTips}
+						authType='register'
 					/>
 				</div>
 				<Button text='Create account' action={() => {}} />
