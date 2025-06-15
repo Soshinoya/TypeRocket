@@ -1,4 +1,7 @@
-import { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect } from 'react'
+
+import { addToValidateTips } from 'utils/utils'
+
 import styles from './Input.module.scss'
 
 type InputProps = {
@@ -8,11 +11,12 @@ type InputProps = {
 	name?: string
 	label?: string
 	type?: 'username' | 'text' | 'password' | 'email'
+	isDisabled?: boolean
 	autocomplete?: string
 	maxLength?: number
 	adjacentInputValues?: { [key: string]: string }
 	validateTips?: Map<string, string>
-	setValidateTips?: (key: string, value: string) => void
+	setValidateTips?: React.Dispatch<React.SetStateAction<Map<string, string>>>
 	authType?: 'register' | 'login'
 }
 
@@ -36,7 +40,7 @@ const EMAIL_ERRORS = {
 // Функции валидации
 const validateUsername = (value: string) => {
 	if (value.includes(' ')) return USERNAME_ERRORS.SPACE
-	if (value.length > 29) return USERNAME_ERRORS.LENGTH
+	if (value.length > 30) return USERNAME_ERRORS.LENGTH
 	return ''
 }
 
@@ -60,6 +64,7 @@ const Input: FC<InputProps> = ({
 	name = '',
 	label,
 	type,
+	isDisabled = false,
 	autocomplete,
 	maxLength = 30,
 	adjacentInputValues,
@@ -67,8 +72,6 @@ const Input: FC<InputProps> = ({
 	setValidateTips = () => {},
 	authType,
 }) => {
-	const [modificator, setModificator] = useState<'' | 'error' | 'disabled'>('')
-
 	// Основная функция валидации
 	const validateField = (currentValue: string, fieldName: string) => {
 		let error = ''
@@ -98,10 +101,7 @@ const Input: FC<InputProps> = ({
 			}
 		}
 
-		if (error) setModificator('error')
-		else setModificator('')
-
-		setValidateTips(fieldName, error)
+		addToValidateTips(fieldName, error, setValidateTips)
 	}
 
 	// Обработчик изменений
@@ -133,7 +133,8 @@ const Input: FC<InputProps> = ({
 		<div className={styles.input__wrapper}>
 			<input
 				id={name}
-				className={`${styles.input} ${modificator && styles[`input--${modificator}`]}`}
+				disabled={isDisabled}
+				className={`${styles.input} ${validateTips.get(name) && styles[`input--error`]}`}
 				value={value}
 				onChange={handleChange}
 				onBlur={handleBlur}
@@ -141,7 +142,7 @@ const Input: FC<InputProps> = ({
 				type={type}
 				autoComplete={autocomplete}
 				maxLength={maxLength}
-				aria-invalid={modificator === 'error'}
+				aria-invalid={!!validateTips.get(name)}
 			/>
 
 			{label && (

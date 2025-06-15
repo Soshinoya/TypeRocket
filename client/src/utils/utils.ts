@@ -60,3 +60,15 @@ export const addNumbers = (
 export const getDate = (date: Date) => {
 	return `${months[date.getMonth()]} ${date.getDate()} ${date.getFullYear()}`
 }
+
+export const addToValidateTips = (
+	key: string,
+	value: string,
+	setValidateTips: React.Dispatch<React.SetStateAction<Map<string, string>>>
+) => {
+	setValidateTips(prevValidateTips => {
+		const newValidateTips = new Map(prevValidateTips)
+		newValidateTips.set(key, value)
+		return newValidateTips
+	})
+}

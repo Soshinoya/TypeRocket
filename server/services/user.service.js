@@ -3,12 +3,15 @@ import { pool } from '../app.js'
 const userService = {
 	getUser: async (email, password) => {
 		const result = await pool.query(`SELECT * FROM users WHERE email = $1 AND password = $2`, [email, password])
-		console.log('result: ', result)
-		return result.rows[0] || result.rows
+		console.log('getUser result: ', result)
+		if (result.rowCount === 1) {
+			return result.rows[0]
+		}
+		return null
 	},
 	isUserNameExists: async username => {
 		const result = await pool.query(`SELECT id FROM users WHERE username = $1`, [username])
-		console.log('result: ', result)
+		console.log('isUserNameExists result: ', result)
 		if (result.rows?.length) {
 			return result.rows[0]
 		}
@@ -16,7 +19,7 @@ const userService = {
 	},
 	isUserEmailExists: async email => {
 		const result = await pool.query(`SELECT id FROM users WHERE email = $1`, [email])
-		console.log('result: ', result)
+		console.log('isUserEmailExists result: ', result)
 		if (result.rows?.length) {
 			return result.rows[0]
 		}

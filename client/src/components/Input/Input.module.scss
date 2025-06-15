@@ -45,10 +45,18 @@
 
     &--error {
         @include input(error);
+
+        & + .input__label {
+            color: var(--error-color);
+        }
     }
 
     &--disabled {
         @include input(disabled);
+
+        & + .input__label {
+            color: var(--gray-color);
+        }
     }
 }
 

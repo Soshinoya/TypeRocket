@@ -13,9 +13,9 @@ export const UserSlice = createApi({
 		isEmailExists: builder.query<string, Pick<TUser, 'email'>>({
 			query: credentials => `/is_user_email_exists/${credentials.email}`,
 		}),
-		getUser: builder.mutation<TUser, Pick<TUser, 'email' | 'password'>>({
+		getUser: builder.query<TUser, Pick<TUser, 'email' | 'password'>>({
 			query: credentials => `/get_user/${credentials.email}/${credentials.password}`,
-			invalidatesTags: ['User'],
+			providesTags: ['User'],
 		}),
 		createUser: builder.mutation<TUser, TUserCredentials | string>({
 			query: user => ({
@@ -39,7 +39,8 @@ export const UserSlice = createApi({
 export const {
 	useLazyIsNameExistsQuery,
 	useLazyIsEmailExistsQuery,
-	useGetUserMutation,
+	useLazyGetUserQuery,
+	useGetUserQuery,
 	useCreateUserMutation,
 	useDeleteUserMutation,
 } = UserSlice

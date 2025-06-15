@@ -45,15 +45,6 @@ const Register: FC = () => {
 
 	const [validateTips, setValidateTips] = useState<Map<string, string>>(new Map())
 
-	// Добавление элемента в Map
-	const addToValidateTips = (key: string, value: string) => {
-		setValidateTips(prevValidateTips => {
-			const newValidateTips = new Map(prevValidateTips)
-			newValidateTips.set(key, value)
-			return newValidateTips
-		})
-	}
-
 	const onFormSubmit = async (event: React.FormEvent) => {
 		event.preventDefault()
 
@@ -162,7 +153,7 @@ const Register: FC = () => {
 						maxLength={30}
 						adjacentInputValues={userCredentials}
 						validateTips={validateTips}
-						setValidateTips={addToValidateTips}
+						setValidateTips={setValidateTips}
 					/>
 					<Input
 						value={userCredentials.email}
@@ -174,7 +165,7 @@ const Register: FC = () => {
 						maxLength={40}
 						adjacentInputValues={userCredentials}
 						validateTips={validateTips}
-						setValidateTips={addToValidateTips}
+						setValidateTips={setValidateTips}
 					/>
 					<Input
 						value={userCredentials.password}
@@ -186,7 +177,7 @@ const Register: FC = () => {
 						maxLength={30}
 						adjacentInputValues={userCredentials}
 						validateTips={validateTips}
-						setValidateTips={addToValidateTips}
+						setValidateTips={setValidateTips}
 						authType='register'
 					/>
 					<Input
@@ -199,7 +190,7 @@ const Register: FC = () => {
 						maxLength={30}
 						adjacentInputValues={userCredentials}
 						validateTips={validateTips}
-						setValidateTips={addToValidateTips}
+						setValidateTips={setValidateTips}
 						authType='register'
 					/>
 				</div>
