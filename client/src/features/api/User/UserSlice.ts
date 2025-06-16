@@ -7,12 +7,6 @@ export const UserSlice = createApi({
 	baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3000/user' }),
 	tagTypes: ['User'],
 	endpoints: builder => ({
-		isNameExists: builder.query<string, Pick<TUser, 'username'>>({
-			query: credentials => `/is_user_name_exists/${credentials.username}`,
-		}),
-		isEmailExists: builder.query<string, Pick<TUser, 'email'>>({
-			query: credentials => `/is_user_email_exists/${credentials.email}`,
-		}),
 		getUser: builder.query<TUser, Pick<TUser, 'email' | 'password'>>({
 			query: credentials => `/get_user/${credentials.email}/${credentials.password}`,
 			providesTags: ['User'],
@@ -36,11 +30,4 @@ export const UserSlice = createApi({
 	}),
 })
 
-export const {
-	useLazyIsNameExistsQuery,
-	useLazyIsEmailExistsQuery,
-	useLazyGetUserQuery,
-	useGetUserQuery,
-	useCreateUserMutation,
-	useDeleteUserMutation,
-} = UserSlice
+export const { useLazyGetUserQuery, useGetUserQuery, useCreateUserMutation, useDeleteUserMutation } = UserSlice

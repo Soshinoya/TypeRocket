@@ -9,7 +9,7 @@ import { TUserCredentials } from 'types/User'
 
 import { setNotificationAction } from 'features/Notification/reducer'
 
-import { useCreateUserMutation, useLazyIsEmailExistsQuery, useLazyIsNameExistsQuery } from 'features/api/User/UserSlice'
+import { useCreateUserMutation } from 'features/api/User/UserSlice'
 
 import { Paths } from 'utils/paths'
 
@@ -22,10 +22,6 @@ const Register: FC = () => {
 	const navigation = useNavigate()
 
 	const dispatch = useAppDispatch()
-
-	const [checkNameExists] = useLazyIsNameExistsQuery()
-
-	const [checkEmailExists] = useLazyIsEmailExistsQuery()
 
 	const [createUser] = useCreateUserMutation()
 
@@ -49,8 +45,10 @@ const Register: FC = () => {
 		event.preventDefault()
 
 		const getErrorMessage = (error: any): string => {
+			console.error('Login failed: ', error)
 			if (error?.data?.message) return error.data.message
 			if (error?.message) return error.message
+			if (error?.data) return error.data
 			return 'Unknown error occurred'
 		}
 
@@ -64,31 +62,14 @@ const Register: FC = () => {
 		}
 
 		try {
-			// 1. Проверка существования username и email
-			const [nameCheck, emailCheck] = await Promise.all([
-				checkNameExists({ username: userCredentials.username }),
-				checkEmailExists({ email: userCredentials.email }),
-			])
-
-			// Обработка ошибок проверки
-			if (nameCheck.error || emailCheck.error) {
-				const error = nameCheck.error || emailCheck.error
-				throw new Error(getErrorMessage(error))
-			}
-
-			// Проверка существующих пользователей
-			if (nameCheck.data || emailCheck.data) {
-				throw new Error(nameCheck.data ? 'Username already exists' : 'Email already registered')
-			}
-
-			// 2. Создание пользователя
+			// Создание пользователя
 			const { data: newUser, error: creationError } = await createUser(userCredentials)
 
 			if (creationError) {
 				throw new Error(getErrorMessage(creationError))
 			}
 
-			// 3. Успешная регистрация
+			// Успешная регистрация
 			setNotification({
 				title: 'Successful registration',
 				subtitle: 'You have been successfully registered',

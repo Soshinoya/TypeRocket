@@ -9,7 +9,7 @@ import { TUserCredentials } from 'types/User'
 import { I_Notification } from 'features/Notification/types'
 import { setNotificationAction } from 'features/Notification/reducer'
 
-import { useLazyGetUserQuery, useLazyIsEmailExistsQuery } from 'features/api/User/UserSlice'
+import { useLazyGetUserQuery } from 'features/api/User/UserSlice'
 
 import { Paths } from 'utils/paths'
 import { addToValidateTips } from 'utils/utils'
@@ -23,8 +23,6 @@ const Login: FC = () => {
 	const dispatch = useAppDispatch()
 
 	const navigation = useNavigate()
-
-	const [checkEmailExists] = useLazyIsEmailExistsQuery()
 
 	const [authentication] = useLazyGetUserQuery()
 
@@ -46,8 +44,10 @@ const Login: FC = () => {
 		event.preventDefault()
 
 		const getErrorMessage = (error: any): string => {
+			console.error('Login failed: ', error)
 			if (error?.data?.message) return error.data.message
 			if (error?.message) return error.message
+			if (error?.data) return error.data
 			return 'Unknown error occurred'
 		}
 
@@ -59,34 +59,18 @@ const Login: FC = () => {
 		}
 
 		try {
-			// 1. Проверка существования email
-			const emailCheck = await checkEmailExists({ email: userCredentials.email })
+			// Вход в систему
+			const { data: user, error } = await authentication(userCredentials)
 
-			// Обработка ошибок проверки
-			if (emailCheck.error) {
-				const error = emailCheck.error
+			if (error) {
 				throw new Error(getErrorMessage(error))
-			}
-
-			// Проверка существующих пользователей
-			if (!emailCheck.data) {
-				const errorMessage = 'The email address has not been registered yet'
-				addToValidateTips('email', errorMessage, setValidateTips)
-				throw new Error(errorMessage)
-			}
-
-			// 2. Вход в систему
-			const { data: user, error: authenticationError } = await authentication(userCredentials)
-
-			if (authenticationError) {
-				throw new Error(getErrorMessage(authenticationError))
 			} else if (!user) {
 				const errorMessage = 'Invalid password'
 				addToValidateTips('password', errorMessage, setValidateTips)
 				throw new Error(errorMessage)
 			}
 
-			// 3. Успешная аутентификация
+			// Успешная аутентификация
 			setNotification({
 				title: 'Successful login',
 				subtitle: 'You have been successfully logged in',
@@ -103,13 +87,12 @@ const Login: FC = () => {
 			return user
 		} catch (error) {
 			setNotification({
-				title: 'Login error',
+				title: 'Login failed',
 				subtitle: error instanceof Error ? error.message : 'Unknown error occurred',
 				status: 'error',
 				isActive: true,
 			})
 
-			console.error('Login failed: ', error)
 			return null
 		}
 	}
