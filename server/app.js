@@ -1,12 +1,14 @@
 import express from 'express'
 import cors from 'cors'
 import dotEnv from 'dotenv'
+import cookieParser from 'cookie-parser'
+import helmet from 'helmet'
 
 import pkg from 'pg'
 
 import { errorsHandler } from './utils/apiError.js'
 
-import { getUser, createUser, deleteUser } from './controllers/user.controller.js'
+import { refreshAccessToken, login, register, deleteUser } from './controllers/user.controller.js'
 
 import { getBestResult, getAllBestResult, setBestResult } from './controllers/results.controller.js'
 
@@ -19,6 +21,7 @@ import {
 import { addExperience } from './controllers/experience.controller.js'
 
 import { getActivity, setActivity } from './controllers/activity.controller.js'
+
 import { authMiddleware } from './middlewares/auth.middleware.js'
 
 const { Pool } = pkg
@@ -40,24 +43,42 @@ const pool = new Pool({
 const corsOptions = {
 	origin: 'http://localhost:5173',
 	methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+	credentials: true,
+	allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
 }
 
 app.use(express.json())
+app.use(cookieParser())
+app.use(helmet())
 app.use(cors(corsOptions))
 
-// Login
-app.get(
-	'/user/get_user/:email/:password',
-	async (req, res, next) => await authMiddleware.login(req, res, next),
-	async (req, res) => await getUser(req, res, errorsHandler)
+// Refresh токен
+app.post(
+	'/user/refresh',
+	async (req, res, next) => await authMiddleware.verifyRefreshToken(req, res, next),
+	async (req, res) => await refreshAccessToken(req, res, errorsHandler)
 )
 
-// Создание нового пользователя
+// Логин
 app.post(
-	'/user/create_user',
-	async (req, res, next) => await authMiddleware.register(req, res, next),
-	async (req, res) => await createUser(req, res, errorsHandler)
+	'/user/login',
+	async (req, res, next) => await authMiddleware.login(req, res, next),
+	async (req, res) => await login(req, res, errorsHandler)
 )
+
+// Регистрация
+app.post(
+	'/user/register',
+	async (req, res, next) => await authMiddleware.register(req, res, next),
+	async (req, res) => await register(req, res, errorsHandler)
+)
+
+// Логаут
+app.post('/user/logout', (req, res) => {
+	res.clearCookie('token')
+	res.clearCookie('refreshToken')
+	res.status(200).json({ message: 'Logged out' })
+})
 
 // Удаление пользователя (с учетом удаления зависящих полей в таблицах с результатами)
 app.delete('/user/delete_user', async (req, res) => await deleteUser(req, res, errorsHandler))

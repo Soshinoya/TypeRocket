@@ -72,3 +72,11 @@ export const addToValidateTips = (
 		return newValidateTips
 	})
 }
+
+// Функция для получения refresh token
+export const getRefreshToken = () => {
+	return document.cookie
+		.split('; ')
+		.find(row => row.startsWith('refreshToken='))
+		?.split('=')[1]
+}

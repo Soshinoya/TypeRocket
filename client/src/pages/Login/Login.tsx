@@ -9,10 +9,9 @@ import { TUserCredentials } from 'types/User'
 import { I_Notification } from 'features/Notification/types'
 import { setNotificationAction } from 'features/Notification/reducer'
 
-import { useLazyGetUserQuery } from 'features/api/User/UserSlice'
+import { useLoginMutation } from 'features/api/User/UserSlice'
 
 import { Paths } from 'utils/paths'
-import { addToValidateTips } from 'utils/utils'
 
 import styles from './Login.module.scss'
 
@@ -24,7 +23,7 @@ const Login: FC = () => {
 
 	const navigation = useNavigate()
 
-	const [authentication] = useLazyGetUserQuery()
+	const [authentication] = useLoginMutation()
 
 	const [userCredentials, setUserCredentials] = useState<Omit<TUserCredentials, 'username' | 'repeatPassword'>>({
 		email: '',
@@ -45,6 +44,7 @@ const Login: FC = () => {
 
 		const getErrorMessage = (error: any): string => {
 			console.error('Login failed: ', error)
+			if (error?.data?.error) return error.data.error
 			if (error?.data?.message) return error.data.message
 			if (error?.message) return error.message
 			if (error?.data) return error.data
@@ -60,14 +60,10 @@ const Login: FC = () => {
 
 		try {
 			// Вход в систему
-			const { data: user, error } = await authentication(userCredentials)
+			const { data, error } = await authentication(userCredentials)
 
 			if (error) {
 				throw new Error(getErrorMessage(error))
-			} else if (!user) {
-				const errorMessage = 'Invalid password'
-				addToValidateTips('password', errorMessage, setValidateTips)
-				throw new Error(errorMessage)
 			}
 
 			// Успешная аутентификация
@@ -78,13 +74,14 @@ const Login: FC = () => {
 				isActive: true,
 			})
 
+			// Сохраняем пользователя в состоянии
+			// dispatch(setUser(response.user));
+
 			navigation(Paths.profile)
 
 			resetForm()
 
-			console.log(user)
-
-			return user
+			console.log(data.user, '\n', data.accessToken)
 		} catch (error) {
 			setNotification({
 				title: 'Login failed',

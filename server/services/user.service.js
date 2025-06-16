@@ -1,9 +1,17 @@
 import { pool } from '../app.js'
 
 const userService = {
-	getUser: async (email, password) => {
-		const result = await pool.query(`SELECT * FROM users WHERE email = $1 AND password = $2`, [email, password])
-		console.log('getUser result: ', result)
+	login: async email => {
+		const result = await pool.query(`SELECT * FROM users WHERE email = $1`, [email])
+		console.log('login result: ', result)
+		if (result.rowCount === 1) {
+			return result.rows[0]
+		}
+		return null
+	},
+	getUserById: async id => {
+		const result = await pool.query(`SELECT id FROM users WHERE id = $1`, [id])
+		console.log('getUserById result: ', result)
 		if (result.rowCount === 1) {
 			return result.rows[0]
 		}
@@ -25,7 +33,7 @@ const userService = {
 		}
 		return false
 	},
-	createUser: async user => {
+	register: async user => {
 		const { username, email, password, description } = user
 
 		const result1 = await pool.query(

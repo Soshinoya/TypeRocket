@@ -84,15 +84,6 @@ VALUES
 FROM
     ('2023-01-01') TO ('2024-01-01');
 
-CREATE INDEX idx_user_activity_date ON user_activity (date);
-
-INSERT INTO
-    users (username)
-VALUES
-    ('Qwe'),
-    ('Asd'),
-    ('Rocket');
-
 INSERT INTO
     test_names (name)
 VALUES
@@ -105,49 +96,7 @@ VALUES
     ('test_40w'),
     ('test_80w');
 
-INSERT INTO
-    result_metrics (wpm, rawWpm, accuracy, consistency, date)
-VALUES
-    (92, 95, 99, 97, '2023-10-02'),
-    (62, 65, 70, 80, '2025-05-15');
-
-INSERT INTO
-    best_results (user_id, test_name_id, result_id)
-VALUES
-    (
-        1,
-        (
-            SELECT
-                id
-            FROM
-                test_names
-            WHERE
-                name = 'test_15s'
-        ),
-        1
-    ) ON CONFLICT (user_id, test_name_id) DO
-UPDATE
-SET
-    result_id = EXCLUDED.result_id;
-
-INSERT INTO
-    best_results (user_id, test_name_id, result_id)
-VALUES
-    (
-        2,
-        (
-            SELECT
-                id
-            FROM
-                test_names
-            WHERE
-                name = 'test_30s'
-        ),
-        2
-    ) ON CONFLICT (user_id, test_name_id) DO
-UPDATE
-SET
-    result_id = EXCLUDED.result_id;
+CREATE INDEX idx_user_activity_date ON user_activity (date);
 
 -- DROP SCHEMA public CASCADE;
 -- CREATE SCHEMA public;

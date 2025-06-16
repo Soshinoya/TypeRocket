@@ -1,19 +1,83 @@
+import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
+
+import { hashPassword } from '../utils/utils.js'
+
 import { userService } from '../services/user.service.js'
 
-const getUser = async (req, res, errorsHandler) => {
+const refreshAccessToken = async (req, res, errorsHandler) => {
 	try {
-		const { email, password } = req.params
-		const result = await userService.getUser(email, password)
-		res.json(result)
+		const { userId } = req
+
+		const user = await userService.getUserById(userId)
+		if (!user) {
+			return res.status(404).json({ error: 'USER_NOT_FOUND' })
+		}
+
+		const newAccessToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '15m' })
+
+		res.cookie('token', newAccessToken, {
+			httpOnly: true,
+			secure: process.env.REQUIRE_HTTPS === 'true',
+			sameSite: 'strict',
+			maxAge: 15 * 60 * 1000,
+		})
+
+		res.status(200).json({
+			message: 'TOKEN_REFRESHED',
+			userId: user.id,
+		})
 	} catch (err) {
 		errorsHandler(err, res)
 	}
 }
 
-const createUser = async (req, res, errorsHandler) => {
+const login = async (req, res, errorsHandler) => {
 	try {
-		const result = await userService.createUser(req.body)
-		res.json(result)
+		const { email, password } = req.body
+
+		const result = await userService.login(email, password)
+		const validPassword = await bcrypt.compare(password, result.password)
+
+		if (!validPassword) {
+			return res.status(400).json({ error: 'Incorrect password' })
+		}
+
+		const accessToken = jwt.sign({ userId: result.id }, process.env.JWT_SECRET, { expiresIn: '15m' })
+		const refreshToken = jwt.sign({ userId: result.id }, process.env.REFRESH_SECRET, { expiresIn: '7d' })
+
+		res.cookie('refreshToken', refreshToken, {
+			httpOnly: true,
+			secure: true,
+			sameSite: 'strict',
+			maxAge: 7 * 24 * 3600000,
+		})
+
+		res.json({ user: result, accessToken })
+	} catch (err) {
+		errorsHandler(err, res)
+	}
+}
+
+const register = async (req, res, errorsHandler) => {
+	try {
+		const hashedPassword = await hashPassword(req.body.password)
+		req.body.password = hashedPassword
+
+		const result = await userService.register(req.body)
+
+		// user.controller.js
+		const accessToken = jwt.sign({ userId: result.id }, process.env.JWT_SECRET, { expiresIn: '15m' })
+		const refreshToken = jwt.sign({ userId: result.id }, process.env.REFRESH_SECRET, { expiresIn: '7d' })
+
+		res.cookie('refreshToken', refreshToken, {
+			httpOnly: true,
+			secure: true,
+			sameSite: 'strict',
+			maxAge: 7 * 24 * 3600000,
+		})
+
+		res.json({ user: result, accessToken })
 	} catch (err) {
 		errorsHandler(err, res)
 	}
@@ -29,4 +93,4 @@ const deleteUser = async (req, res, errorsHandler) => {
 	}
 }
 
-export { getUser, createUser, deleteUser }
+export { refreshAccessToken, login, register, deleteUser }

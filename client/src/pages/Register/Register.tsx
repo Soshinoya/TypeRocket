@@ -9,7 +9,7 @@ import { TUserCredentials } from 'types/User'
 
 import { setNotificationAction } from 'features/Notification/reducer'
 
-import { useCreateUserMutation } from 'features/api/User/UserSlice'
+import { useRegisterMutation } from 'features/api/User/UserSlice'
 
 import { Paths } from 'utils/paths'
 
@@ -23,7 +23,7 @@ const Register: FC = () => {
 
 	const dispatch = useAppDispatch()
 
-	const [createUser] = useCreateUserMutation()
+	const [register] = useRegisterMutation()
 
 	const [userCredentials, setUserCredentials] = useState<TUserCredentials>({
 		username: '',
@@ -46,6 +46,7 @@ const Register: FC = () => {
 
 		const getErrorMessage = (error: any): string => {
 			console.error('Login failed: ', error)
+			if (error?.data?.error) return error.data.error
 			if (error?.data?.message) return error.data.message
 			if (error?.message) return error.message
 			if (error?.data) return error.data
@@ -63,7 +64,7 @@ const Register: FC = () => {
 
 		try {
 			// Создание пользователя
-			const { data: newUser, error: creationError } = await createUser(userCredentials)
+			const { data, error: creationError } = await register(userCredentials)
 
 			if (creationError) {
 				throw new Error(getErrorMessage(creationError))
@@ -81,7 +82,7 @@ const Register: FC = () => {
 
 			resetForm()
 
-			return newUser
+			console.log(data.user, '\n', data.accessToken)
 		} catch (error) {
 			setNotification({
 				title: 'Registration error',
