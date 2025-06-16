@@ -9,21 +9,21 @@ const userService = {
 		}
 		return null
 	},
-	isUserNameExists: async username => {
-		const result = await pool.query(`SELECT id FROM users WHERE username = $1`, [username])
-		console.log('isUserNameExists result: ', result)
-		if (result.rows?.length) {
-			return result.rows[0]
-		}
-		return null
-	},
 	isUserEmailExists: async email => {
 		const result = await pool.query(`SELECT id FROM users WHERE email = $1`, [email])
 		console.log('isUserEmailExists result: ', result)
-		if (result.rows?.length) {
-			return result.rows[0]
+		if (result.rowCount === 1) {
+			return true
 		}
-		return null
+		return false
+	},
+	isUserNameExists: async username => {
+		const result = await pool.query(`SELECT id FROM users WHERE username = $1`, [username])
+		console.log('isUserNameExists result: ', result)
+		if (result.rowCount === 1) {
+			return true
+		}
+		return false
 	},
 	createUser: async user => {
 		const { username, email, password, description } = user

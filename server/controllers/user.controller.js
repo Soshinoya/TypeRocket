@@ -10,26 +10,6 @@ const getUser = async (req, res, errorsHandler) => {
 	}
 }
 
-const isUserNameExists = async (req, res, errorsHandler) => {
-	try {
-		const { username } = req.params
-		const result = await userService.isUserNameExists(username)
-		res.json(result)
-	} catch (err) {
-		errorsHandler(err, res)
-	}
-}
-
-const isUserEmailExists = async (req, res, errorsHandler) => {
-	try {
-		const { email } = req.params
-		const result = await userService.isUserEmailExists(email)
-		res.json(result)
-	} catch (err) {
-		errorsHandler(err, res)
-	}
-}
-
 const createUser = async (req, res, errorsHandler) => {
 	try {
 		const result = await userService.createUser(req.body)
@@ -49,4 +29,4 @@ const deleteUser = async (req, res, errorsHandler) => {
 	}
 }
 
-export { isUserNameExists, isUserEmailExists, getUser, createUser, deleteUser }
+export { getUser, createUser, deleteUser }

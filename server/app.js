@@ -6,7 +6,7 @@ import pkg from 'pg'
 
 import { errorsHandler } from './utils/apiError.js'
 
-import { isUserNameExists, isUserEmailExists, getUser, createUser, deleteUser } from './controllers/user.controller.js'
+import { getUser, createUser, deleteUser } from './controllers/user.controller.js'
 
 import { getBestResult, getAllBestResult, setBestResult } from './controllers/results.controller.js'
 
@@ -19,6 +19,7 @@ import {
 import { addExperience } from './controllers/experience.controller.js'
 
 import { getActivity, setActivity } from './controllers/activity.controller.js'
+import { authMiddleware } from './middlewares/auth.middleware.js'
 
 const { Pool } = pkg
 
@@ -44,17 +45,19 @@ const corsOptions = {
 app.use(express.json())
 app.use(cors(corsOptions))
 
-// Получить пользователя
-app.get('/user/get_user/:email/:password', async (req, res) => await getUser(req, res, errorsHandler))
-
-// Проверка на доступность username
-app.get('/user/is_user_name_exists/:username', async (req, res) => await isUserNameExists(req, res, errorsHandler))
-
-// Проверка на доступность email
-app.get('/user/is_user_email_exists/:email', async (req, res) => await isUserEmailExists(req, res, errorsHandler))
+// Login
+app.get(
+	'/user/get_user/:email/:password',
+	async (req, res, next) => await authMiddleware.login(req, res, next),
+	async (req, res) => await getUser(req, res, errorsHandler)
+)
 
 // Создание нового пользователя
-app.post('/user/create_user', async (req, res) => await createUser(req, res, errorsHandler))
+app.post(
+	'/user/create_user',
+	async (req, res, next) => await authMiddleware.register(req, res, next),
+	async (req, res) => await createUser(req, res, errorsHandler)
+)
 
 // Удаление пользователя (с учетом удаления зависящих полей в таблицах с результатами)
 app.delete('/user/delete_user', async (req, res) => await deleteUser(req, res, errorsHandler))
