@@ -16,17 +16,7 @@ const refreshAccessToken = async (req, res, errorsHandler) => {
 
 		const newAccessToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '15m' })
 
-		res.cookie('token', newAccessToken, {
-			httpOnly: true,
-			secure: process.env.REQUIRE_HTTPS === 'true',
-			sameSite: 'strict',
-			maxAge: 15 * 60 * 1000,
-		})
-
-		res.status(200).json({
-			message: 'TOKEN_REFRESHED',
-			userId: user.id,
-		})
+		res.json({ accessToken: newAccessToken })
 	} catch (err) {
 		errorsHandler(err, res)
 	}
@@ -48,7 +38,7 @@ const login = async (req, res, errorsHandler) => {
 
 		res.cookie('refreshToken', refreshToken, {
 			httpOnly: true,
-			secure: true,
+			secure: process.env.NODE_ENV === 'production',
 			sameSite: 'strict',
 			maxAge: 7 * 24 * 3600000,
 		})
@@ -72,7 +62,7 @@ const register = async (req, res, errorsHandler) => {
 
 		res.cookie('refreshToken', refreshToken, {
 			httpOnly: true,
-			secure: true,
+			secure: process.env.NODE_ENV === 'production',
 			sameSite: 'strict',
 			maxAge: 7 * 24 * 3600000,
 		})

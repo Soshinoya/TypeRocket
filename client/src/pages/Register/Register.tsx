@@ -6,10 +6,11 @@ import { useAppDispatch } from 'store/index'
 
 import { I_Notification } from 'features/Notification/types'
 import { TUserCredentials } from 'types/User'
+import { setCurrentUser } from 'features/CurrentUser/reducer'
 
 import { setNotificationAction } from 'features/Notification/reducer'
 
-import { useRegisterMutation } from 'features/api/User/UserSlice'
+import { useRegisterMutation } from 'features/api/User/UserApiSlice'
 
 import { Paths } from 'utils/paths'
 
@@ -77,6 +78,8 @@ const Register: FC = () => {
 				status: 'success',
 				isActive: true,
 			})
+
+			dispatch(setCurrentUser(data.user))
 
 			navigation(Paths.profile)
 

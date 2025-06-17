@@ -1,15 +1,20 @@
 import { BaseQueryFn, createApi, FetchArgs, fetchBaseQuery, FetchBaseQueryError } from '@reduxjs/toolkit/query/react'
+import Cookies from 'universal-cookie'
+
+import { setAccessToken } from 'features/CurrentUser/reducer'
 
 import { TUserCredentials, type TUser } from 'types/User'
 
 import { Paths } from 'utils/paths'
-import { getRefreshToken } from 'utils/utils'
+
+const cookies = new Cookies()
 
 const baseQuery = fetchBaseQuery({
 	baseUrl: 'http://localhost:3000/user',
 	credentials: 'include',
 })
 
+// baseQueryWithReauth делает обычный запрос, если accessToken не подошел (статус 403), то делаем запрос на обновление access токена
 const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
 	args,
 	api,
@@ -17,13 +22,13 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
 ) => {
 	let result = await baseQuery(args, api, extraOptions)
 
-	if (result.error?.status === 403) {
+	if (result.error?.status === 401 || result.error?.status === 403) {
 		// Отправляем запрос на обновление токена
 		const refreshResult = await baseQuery(
 			{
 				url: '/refresh',
 				method: 'POST',
-				body: { refreshToken: getRefreshToken() },
+				body: { refreshToken: cookies.get('refreshToken') },
 			},
 			api,
 			extraOptions
@@ -31,18 +36,25 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
 
 		if (refreshResult.data) {
 			// Повторяем оригинальный запрос с новым токеном
+			type RefreshResponse = { accessToken: string }
+			const { accessToken: newAccessToken } = refreshResult.data as RefreshResponse
+
+			// Сохраняем новый токен в хранилище
+			api.dispatch(setAccessToken(newAccessToken))
+
 			result = await baseQuery(args, api, extraOptions)
 		} else {
 			// Логика выхода, если refresh не удался
 			await baseQuery({ url: '/logout', method: 'POST' }, api, extraOptions)
+			localStorage.removeItem('currentUser')
 			window.location.href = Paths.login
 		}
 	}
 	return result
 }
 
-export const UserSlice = createApi({
-	reducerPath: 'user',
+export const UserApiSlice = createApi({
+	reducerPath: 'userApi',
 	baseQuery: baseQueryWithReauth,
 	tagTypes: ['User'],
 	endpoints: builder => ({
@@ -73,4 +85,4 @@ export const UserSlice = createApi({
 	}),
 })
 
-export const { useLoginMutation, useRegisterMutation, useDeleteUserMutation } = UserSlice
+export const { useLoginMutation, useRegisterMutation, useDeleteUserMutation } = UserApiSlice

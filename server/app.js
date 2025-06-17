@@ -52,7 +52,6 @@ app.use(cookieParser())
 app.use(helmet())
 app.use(cors(corsOptions))
 
-// Refresh токен
 app.post(
 	'/user/refresh',
 	async (req, res, next) => await authMiddleware.verifyRefreshToken(req, res, next),

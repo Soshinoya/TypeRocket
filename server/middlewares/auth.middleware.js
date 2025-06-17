@@ -1,3 +1,5 @@
+import jwt from 'jsonwebtoken'
+
 import { userService } from '../services/user.service.js'
 
 import { errorsHandler } from '../utils/apiError.js'
@@ -32,27 +34,12 @@ export const authMiddleware = {
 			errorsHandler(err, res)
 		}
 	},
-	authenticateToken: (req, res, next) => {
-		const token = req.cookies.token
-
-		if (!token) {
-			return res.status(401).json({ error: 'The token is missing' })
-		}
-
-		jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-			if (err) {
-				return res.status(403).json({ error: 'Invalid token' })
-			}
-			req.user = user
-			console.log('(jwt.verify) user: ', user)
-			next()
-		})
-	},
 	verifyRefreshToken: async (req, res, next) => {
 		try {
 			const refreshToken = req.cookies.refreshToken
 
 			if (!refreshToken) {
+				console.log('!refreshToken')
 				return res.status(401).json({ error: 'REFRESH_TOKEN_MISSING' })
 			}
 
@@ -60,6 +47,7 @@ export const authMiddleware = {
 			req.userId = decoded.userId
 			next()
 		} catch (error) {
+			console.log('error: ', error)
 			if (error.name === 'TokenExpiredError') {
 				return res.status(403).json({ error: 'REFRESH_TOKEN_EXPIRED' })
 			}

@@ -8,8 +8,9 @@ import { TUserCredentials } from 'types/User'
 
 import { I_Notification } from 'features/Notification/types'
 import { setNotificationAction } from 'features/Notification/reducer'
+import { setCurrentUser } from 'features/CurrentUser/reducer'
 
-import { useLoginMutation } from 'features/api/User/UserSlice'
+import { useLoginMutation } from 'features/api/User/UserApiSlice'
 
 import { Paths } from 'utils/paths'
 
@@ -74,8 +75,7 @@ const Login: FC = () => {
 				isActive: true,
 			})
 
-			// Сохраняем пользователя в состоянии
-			// dispatch(setUser(response.user));
+			dispatch(setCurrentUser(data.user))
 
 			navigation(Paths.profile)
 
