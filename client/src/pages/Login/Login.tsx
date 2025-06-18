@@ -8,9 +8,10 @@ import { TUserCredentials } from 'types/User'
 
 import { I_Notification } from 'features/Notification/types'
 import { setNotificationAction } from 'features/Notification/reducer'
-import { setCurrentUser } from 'features/CurrentUser/reducer'
+import { setAccessToken, setCurrentUser, setExperience } from 'features/CurrentUser/reducer'
 
 import { useLoginMutation } from 'api/User/UserApiSlice'
+import { useGetExperienceMutation } from 'api/Experience/ExperienceApiSlice'
 
 import { Paths } from 'utils/paths'
 import { getErrorMessage } from 'utils/utils'
@@ -26,6 +27,8 @@ const Login: FC = () => {
 	const navigation = useNavigate()
 
 	const [authentication] = useLoginMutation()
+
+	const [getExperience] = useGetExperienceMutation()
 
 	const [userCredentials, setUserCredentials] = useState<Omit<TUserCredentials, 'username' | 'repeatPassword'>>({
 		email: '',
@@ -53,7 +56,7 @@ const Login: FC = () => {
 
 		try {
 			// Вход в систему
-			const { data, error } = await authentication(userCredentials)
+			const { data: newUser, error } = await authentication(userCredentials)
 
 			if (error) {
 				throw new Error(getErrorMessage(error))
@@ -67,13 +70,20 @@ const Login: FC = () => {
 				isActive: true,
 			})
 
-			dispatch(setCurrentUser(data.user))
+			const { data: newExperience } = await getExperience({ accessToken: newUser.accessToken })
+
+			if (newExperience) {
+				dispatch(setExperience(newExperience))
+			}
+
+			dispatch(setCurrentUser(newUser.user))
+			dispatch(setAccessToken(newUser.accessToken))
 
 			navigation(Paths.profile)
 
 			resetForm()
 
-			console.log(data.user, '\n', data.accessToken)
+			console.log(newUser.user, '\n', newUser.accessToken)
 		} catch (error) {
 			setNotification({
 				title: 'Login failed',

@@ -1,13 +1,10 @@
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 
 import s from './Profile.module.scss'
 
-import { useAppDispatch, useAppSelector } from 'store/index'
+import { useAppSelector } from 'store/index'
 
-import { useGetExperienceMutation } from 'api/Experience/ExperienceApiSlice'
-
-import { selectAccessToken, selectCurrentUser, selectExperience } from 'features/CurrentUser/selectors'
-import { setExperience } from 'features/CurrentUser/reducer'
+import { selectCurrentUser, selectExperience } from 'features/CurrentUser/selectors'
 
 import { selectCurrentTheme } from 'features/Themes/selectors'
 
@@ -1851,33 +1848,10 @@ const data = [
 type ProfileProps = {}
 
 const Profile: FC<ProfileProps> = () => {
-	const dispatch = useAppDispatch()
-
 	const { primary, primarySemiBold, accent } = useAppSelector(selectCurrentTheme)
 
-	const accessToken = useAppSelector(selectAccessToken)
 	const currentUser = useAppSelector(selectCurrentUser)
 	const experience = useAppSelector(selectExperience)
-
-	const [getExperience] = useGetExperienceMutation()
-
-	useEffect(() => {
-		if (!accessToken) return
-
-		const fetchExperience = async () => {
-			try {
-				const { data } = await getExperience({ accessToken: accessToken })
-
-				if (data) {
-					dispatch(setExperience(data))
-				}
-			} catch (err) {
-				console.error('Error loading the experience: ', err)
-			}
-		}
-
-		fetchExperience()
-	}, [accessToken])
 
 	// Прогресс достижений пользователя
 	const achievementsProgress: Pick<TUserAchievement, 'achievementId' | 'completionDate'>[] = [

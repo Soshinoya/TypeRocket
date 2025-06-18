@@ -6,11 +6,12 @@ import { useAppDispatch } from 'store/index'
 
 import { I_Notification } from 'features/Notification/types'
 import { TUserCredentials } from 'types/User'
-import { setCurrentUser } from 'features/CurrentUser/reducer'
+import { setAccessToken, setCurrentUser, setExperience } from 'features/CurrentUser/reducer'
 
 import { setNotificationAction } from 'features/Notification/reducer'
 
 import { useRegisterMutation } from 'api/User/UserApiSlice'
+import { useGetExperienceMutation } from 'api/Experience/ExperienceApiSlice'
 
 import { Paths } from 'utils/paths'
 import { getErrorMessage } from 'utils/utils'
@@ -26,6 +27,8 @@ const Register: FC = () => {
 	const dispatch = useAppDispatch()
 
 	const [register] = useRegisterMutation()
+
+	const [getExperience] = useGetExperienceMutation()
 
 	const [userCredentials, setUserCredentials] = useState<TUserCredentials>({
 		username: '',
@@ -57,7 +60,7 @@ const Register: FC = () => {
 
 		try {
 			// Создание пользователя
-			const { data, error: creationError } = await register(userCredentials)
+			const { data: newUser, error: creationError } = await register(userCredentials)
 
 			if (creationError) {
 				throw new Error(getErrorMessage(creationError))
@@ -71,13 +74,20 @@ const Register: FC = () => {
 				isActive: true,
 			})
 
-			dispatch(setCurrentUser(data.user))
+			const { data: newExperience } = await getExperience({ accessToken: newUser.accessToken })
+
+			if (newExperience) {
+				dispatch(setExperience(newExperience))
+			}
+
+			dispatch(setCurrentUser(newUser.user))
+			dispatch(setAccessToken(newUser.accessToken))
 
 			navigation(Paths.profile)
 
 			resetForm()
 
-			console.log(data.user, '\n', data.accessToken)
+			console.log(newUser.user, '\n', newUser.accessToken)
 		} catch (error) {
 			setNotification({
 				title: 'Registration error',

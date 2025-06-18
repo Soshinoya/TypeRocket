@@ -3,6 +3,9 @@ import React, { FC, useEffect } from 'react'
 
 import { useAppDispatch, useAppSelector } from 'store/index'
 
+import { selectAccessToken, selectExperience } from 'features/CurrentUser/selectors'
+import { setExperience } from 'features/CurrentUser/reducer'
+import { useAddExperienceMutation } from 'api/Experience/ExperienceApiSlice'
 import { setNotificationAction } from 'features/Notification/reducer'
 
 import styles from './TypingResult.module.scss'
@@ -24,7 +27,7 @@ import {
 import useIsEscapePress from 'hooks/useIsEscapePress'
 
 import { getDate } from 'utils/utils'
-import { computeExperience } from 'utils/experience'
+import { computeExperience, increaseExperience } from 'utils/experience'
 
 type TypingResultProps = {
 	wpm: number
@@ -57,9 +60,15 @@ const TypingResult: FC<TypingResultProps> = ({
 	const wordOptions = useAppSelector(selectWordOptions)
 	const timeOptions = useAppSelector(selectTimeOptions)
 
+	const accessToken = useAppSelector(selectAccessToken)
+	const currentExperience = useAppSelector(selectExperience)
+
+	const [addExperience] = useAddExperienceMutation()
+
 	useIsEscapePress(setIsOpen)
 
 	useEffect(() => {
+		if (!accessToken || !currentExperience) return
 		if (isOpen) {
 			const earnedXP = computeExperience({
 				hasPunctuation,
@@ -72,7 +81,20 @@ const TypingResult: FC<TypingResultProps> = ({
 				acc,
 				consistency,
 				errorCount,
+				xpMultiplier: 25,
 			})
+
+			;(async () => {
+				const { level, progress } = increaseExperience(earnedXP, currentExperience.progress)
+
+				const { data } = await addExperience({
+					accessToken,
+					level: currentExperience.level + level,
+					progress,
+				})
+
+				if (data) dispatch(setExperience({ level: data.level, progress: data.progress }))
+			})()
 
 			dispatch(
 				setNotificationAction({
@@ -83,7 +105,7 @@ const TypingResult: FC<TypingResultProps> = ({
 				})
 			)
 		}
-	}, [isOpen])
+	}, [isOpen, accessToken])
 
 	return isOpen ? (
 		<Modal

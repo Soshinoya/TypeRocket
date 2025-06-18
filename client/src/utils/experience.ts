@@ -59,3 +59,18 @@ export const computeExperience = ({
 
 	return xp
 }
+
+export const increaseExperience = (earnedExperience: number, currentExperience: number) => {
+	const totalExperience = currentExperience + earnedExperience
+	let levelsCount = 0
+
+	// Проверяем, сколько уровней мы можем получить
+	if (totalExperience >= 1000) {
+		levelsCount = Math.floor(totalExperience / 1000)
+	}
+
+	// Оставшийся опыт после получения уровней
+	const progress = totalExperience % 1000
+
+	return { level: levelsCount, progress }
+}
