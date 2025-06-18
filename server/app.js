@@ -90,7 +90,11 @@ app.post(
 )
 
 // Увеличение опыта
-app.patch('/user/add_experience', async (req, res) => await addExperience(req, res, errorsHandler))
+app.patch(
+	'/user/add_experience',
+	async (req, res, next) => await authMiddleware.verifyAccessToken(req, res, next),
+	async (req, res) => await addExperience(req, res, errorsHandler)
+)
 
 // Получить данные календаря активности
 app.get('/user/get_activity/:userId/:from/:to', async (req, res) => await getActivity(req, res, errorsHandler))

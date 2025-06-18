@@ -17,7 +17,15 @@ export const ExperienceApiSlice = createApi({
 			}),
 			invalidatesTags: ['Experience'],
 		}),
+		addExperience: builder.mutation<TUserExperience, TUserExperience | { accessToken: string }>({
+			query: accessToken => ({
+				url: '/add_experience',
+				method: 'PATCH',
+				body: accessToken,
+			}),
+			invalidatesTags: ['Experience'],
+		}),
 	}),
 })
 
-export const { useGetExperienceMutation } = ExperienceApiSlice
+export const { useGetExperienceMutation, useAddExperienceMutation } = ExperienceApiSlice

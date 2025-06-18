@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 import { useAppSelector } from 'store/index'
 
-import { selectCurrentUser, selectExperience } from 'features/CurrentUser/selectors'
+import { selectCurrentUser } from 'features/CurrentUser/selectors'
 
 import { Paths } from 'utils/paths'
 
@@ -17,9 +17,6 @@ type HeaderProps = {}
 
 const Header: FC<HeaderProps> = () => {
 	const currentUser = useAppSelector(selectCurrentUser)
-	const experience = useAppSelector(selectExperience)
-
-	console.log(experience)
 
 	const isUserAuthenticated = !!currentUser
 
