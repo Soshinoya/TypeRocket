@@ -3,24 +3,28 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 
 import { T_RootState } from './types'
 
+import { UserApiSlice } from 'api/User/UserApiSlice'
+import currentUser from 'features/CurrentUser/reducer'
+
+import { ExperienceApiSlice } from 'api/Experience/ExperienceApiSlice'
+
 import TypingZone from 'features/TypingZone/reducer'
 import Notifications from 'features/Notification/reducer'
 import Themes from 'features/Themes/reducer'
-
-import { UserApiSlice } from 'features/api/User/UserApiSlice'
-import currentUser from 'features/CurrentUser/reducer'
 
 const reducer = combineReducers({
 	TypingZone,
 	currentUser,
 	[UserApiSlice.reducerPath]: UserApiSlice.reducer,
+	[ExperienceApiSlice.reducerPath]: ExperienceApiSlice.reducer,
 	Notifications,
 	Themes,
 })
 
 const store = configureStore({
 	reducer,
-	middleware: getDefaultMiddleware => getDefaultMiddleware().concat(UserApiSlice.middleware),
+	middleware: getDefaultMiddleware =>
+		getDefaultMiddleware().concat(UserApiSlice.middleware, ExperienceApiSlice.middleware),
 })
 
 export default store

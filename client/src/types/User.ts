@@ -21,10 +21,8 @@ export type TUserPreferences = {
 }
 
 export type TUserExperience = {
-	id: number
-	userId: TUser['id']
 	level: number
-	experience: number
+	progress: number
 }
 
 export type TUserAchievement = {

@@ -19,7 +19,8 @@
 			"data/*": ["src/data/*"],
 			"hooks/*": ["src/hooks/*"],
 			"assets/*": ["src/assets/*"],
-			"types/*": ["src/types/*"]
+			"types/*": ["src/types/*"],
+			"api/*": ["src/api/*"]
 		},
 
 		/* Bundler mode */

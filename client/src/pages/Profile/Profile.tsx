@@ -1,13 +1,18 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 
 import s from './Profile.module.scss'
 
-import { useAppSelector } from 'store/index'
+import { useAppDispatch, useAppSelector } from 'store/index'
+
+import { useGetExperienceMutation } from 'api/Experience/ExperienceApiSlice'
+
+import { selectAccessToken, selectCurrentUser, selectExperience } from 'features/CurrentUser/selectors'
+import { setExperience } from 'features/CurrentUser/reducer'
 
 import { selectCurrentTheme } from 'features/Themes/selectors'
 
 import { TAchievement } from 'types/Public'
-import { UserExperience, UserAchievement } from 'types/User'
+import { TUserAchievement } from 'types/User'
 
 import Experience from 'components/User/Experience/Experience'
 import Achievement from 'components/Achievement/Achievement'
@@ -1846,38 +1851,59 @@ const data = [
 type ProfileProps = {}
 
 const Profile: FC<ProfileProps> = () => {
+	const dispatch = useAppDispatch()
+
 	const { primary, primarySemiBold, accent } = useAppSelector(selectCurrentTheme)
 
-	const experienceInfo: UserExperience = {
-		level: 114,
-		experience: 721,
-	}
+	const accessToken = useAppSelector(selectAccessToken)
+	const currentUser = useAppSelector(selectCurrentUser)
+	const experience = useAppSelector(selectExperience)
+
+	const [getExperience] = useGetExperienceMutation()
+
+	useEffect(() => {
+		if (!accessToken) return
+
+		const fetchExperience = async () => {
+			try {
+				const { data } = await getExperience({ accessToken: accessToken })
+
+				if (data) {
+					dispatch(setExperience(data))
+				}
+			} catch (err) {
+				console.error('Error loading the experience: ', err)
+			}
+		}
+
+		fetchExperience()
+	}, [accessToken])
 
 	// Прогресс достижений пользователя
-	const achievementsProgress: UserAchievement[] = [
+	const achievementsProgress: Pick<TUserAchievement, 'achievementId' | 'completionDate'>[] = [
 		{
-			id: 1,
-			dateOfCompletion: 'Oct. 18 2017',
+			achievementId: 1,
+			completionDate: 'Oct. 18 2017',
 		},
 		{
-			id: 2,
-			dateOfCompletion: 'Oct. 18 2017',
+			achievementId: 2,
+			completionDate: 'Oct. 18 2017',
 		},
 		{
-			id: 3,
-			dateOfCompletion: 'Oct. 18 2017',
+			achievementId: 3,
+			completionDate: 'Oct. 18 2017',
 		},
 		{
-			id: 4,
-			dateOfCompletion: 'Oct. 18 2017',
+			achievementId: 4,
+			completionDate: 'Oct. 18 2017',
 		},
 		{
-			id: 5,
-			dateOfCompletion: 'Oct. 18 2017',
+			achievementId: 5,
+			completionDate: 'Oct. 18 2017',
 		},
 		{
-			id: 6,
-			dateOfCompletion: 'Oct. 18 2017',
+			achievementId: 6,
+			completionDate: 'Oct. 18 2017',
 		},
 	]
 
@@ -1957,8 +1983,8 @@ const Profile: FC<ProfileProps> = () => {
 		},
 	]
 
-	const getDateOfCompletion = (id: TAchievement['id']) => {
-		return achievementsProgress.find(achievement => achievement.id === id)?.dateOfCompletion
+	const getCompletionDate = (id: TAchievement['id']) => {
+		return achievementsProgress.find(achievement => achievement.achievementId === id)?.completionDate
 	}
 
 	return (
@@ -1974,7 +2000,7 @@ const Profile: FC<ProfileProps> = () => {
 					</div>
 				</div>
 				<div className={s['experience']}>
-					<Experience info={experienceInfo} />
+					<Experience info={experience || { level: 0, progress: 0 }} />
 				</div>
 			</div>
 			<div className={s['detailed-info']}>
@@ -2071,7 +2097,7 @@ const Profile: FC<ProfileProps> = () => {
 						<Achievement
 							key={newAchievement.id}
 							{...newAchievement}
-							dateOfCompletion={getDateOfCompletion(newAchievement.id)}
+							completionDate={getCompletionDate(newAchievement.id)}
 						/>
 					))}
 				</div>

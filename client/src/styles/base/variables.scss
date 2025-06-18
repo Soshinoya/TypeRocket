@@ -89,6 +89,76 @@
     --accent-600: #1e001e;
 }
 
+[data-theme="cosmic_glow"] {
+    --primary-100: #dddeff;
+    --rgb-primary-100: 221, 222, 255;
+    --primary: #8274ff;
+    --rgb-primary: 130, 116, 255;
+    --primary-600: #6535f6;
+    --rgb-primary-600: 101, 53, 246;
+    --primary-700: #251651;
+    --rgb-primary-700: 37, 22, 81;
+    --accent-100: #effefb;
+    --accent: #d6fff7;
+    --accent-600: #029f94;
+}
+
+[data-theme="spiced_latte"] {
+    --primary-100: #d1c2b7;
+    --rgb-primary-100: 209, 194, 183;
+    --primary: #a0806f;
+    --rgb-primary: 160, 128, 111;
+    --primary-600: #77574e;
+    --rgb-primary-600: 119, 87, 78;
+    --primary-700: #392e2b;
+    --rgb-primary-700: 57, 46, 43;
+    --accent-100: #ffdbd1;
+    --accent: #8f4c38;
+    --accent-600: #61372d;
+}
+
+[data-theme="velvet_dusk"] {
+    --primary-100: #d8d9df;
+    --rgb-primary-100: 216, 217, 223;
+    --primary: #8d8fa3;
+    --rgb-primary: 141, 143, 163;
+    --primary-600: #5b5d72;
+    --rgb-primary-600: 91, 93, 114;
+    --primary-700: #303036;
+    --rgb-primary-700: 48, 48, 54;
+    --accent-100: #dfe0ff;
+    --accent: #535a92;
+    --accent-600: #414567;
+}
+
+[data-theme="tokyo_twilight"] {
+    --primary-100: #e0e1ff;
+    --rgb-primary-100: 224, 225, 255;
+    --primary: #535a92;
+    --rgb-primary: 83, 90, 146;
+    --primary-600: #34377b;
+    --rgb-primary-600: 52, 55, 123;
+    --primary-700: #1a1b3d;
+    --rgb-primary-700: 26, 27, 61;
+    --accent-100: #f5e6ff;
+    --accent: #d16bff;
+    --accent-600: #9a3fc5;
+}
+
+[data-theme="golden_kyoto"] {
+    --primary-100: #eee2bc;
+    --rgb-primary-100: 238, 226, 188;
+    --primary: #665e40;
+    --rgb-primary: 102, 94, 64;
+    --primary-600: #514b3a;
+    --rgb-primary-600: 81, 75, 58;
+    --primary-700: #333027;
+    --rgb-primary-700: 51, 48, 39;
+    --accent-100: #fcf2c9;
+    --accent: #f8e287;
+    --accent-600: #6d5e0f;
+}
+
 [data-theme=""] {
     --primary-100: #;
     --rgb-primary-100: ;

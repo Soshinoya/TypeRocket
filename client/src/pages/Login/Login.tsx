@@ -10,9 +10,10 @@ import { I_Notification } from 'features/Notification/types'
 import { setNotificationAction } from 'features/Notification/reducer'
 import { setCurrentUser } from 'features/CurrentUser/reducer'
 
-import { useLoginMutation } from 'features/api/User/UserApiSlice'
+import { useLoginMutation } from 'api/User/UserApiSlice'
 
 import { Paths } from 'utils/paths'
+import { getErrorMessage } from 'utils/utils'
 
 import styles from './Login.module.scss'
 
@@ -42,15 +43,6 @@ const Login: FC = () => {
 
 	const onFormSubmit = async (event: React.FormEvent) => {
 		event.preventDefault()
-
-		const getErrorMessage = (error: any): string => {
-			console.error('Login failed: ', error)
-			if (error?.data?.error) return error.data.error
-			if (error?.data?.message) return error.data.message
-			if (error?.message) return error.message
-			if (error?.data) return error.data
-			return 'Unknown error occurred'
-		}
 
 		const resetForm = () => {
 			setUserCredentials({

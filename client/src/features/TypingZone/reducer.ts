@@ -17,7 +17,7 @@ const initialConfig: I_TypingZone = {
 	isPunctuation: false,
 	isNumbers: false,
 	playerMode: PlayerMode['single'],
-	mode: Mode['words'],
+	mode: Mode['time'],
 	wordOptions: [
 		{ count: 10, enabled: true },
 		{ count: 20, enabled: false },

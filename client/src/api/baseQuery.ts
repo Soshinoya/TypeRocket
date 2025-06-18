@@ -1,11 +1,10 @@
-import { BaseQueryFn, createApi, FetchArgs, fetchBaseQuery, FetchBaseQueryError } from '@reduxjs/toolkit/query/react'
+import { BaseQueryFn, FetchArgs, fetchBaseQuery, FetchBaseQueryError } from '@reduxjs/toolkit/query/react'
 import Cookies from 'universal-cookie'
 
 import { setAccessToken } from 'features/CurrentUser/reducer'
 
-import { TUserCredentials, type TUser } from 'types/User'
-
 import { Paths } from 'utils/paths'
+import { getErrorMessage } from 'utils/utils'
 
 const cookies = new Cookies()
 
@@ -15,12 +14,16 @@ const baseQuery = fetchBaseQuery({
 })
 
 // baseQueryWithReauth делает обычный запрос, если accessToken не подошел (статус 403), то делаем запрос на обновление access токена
-const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
+export const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
 	args,
 	api,
 	extraOptions
 ) => {
 	let result = await baseQuery(args, api, extraOptions)
+
+	if (result.error) {
+		getErrorMessage(result.error)
+	}
 
 	if (result.error?.status === 401 || result.error?.status === 403) {
 		// Отправляем запрос на обновление токена
@@ -52,37 +55,3 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
 	}
 	return result
 }
-
-export const UserApiSlice = createApi({
-	reducerPath: 'userApi',
-	baseQuery: baseQueryWithReauth,
-	tagTypes: ['User'],
-	endpoints: builder => ({
-		login: builder.mutation<{ user: TUser; accessToken: string }, Pick<TUser, 'email' | 'password'>>({
-			query: credentials => ({
-				url: '/login',
-				method: 'POST',
-				body: credentials,
-			}),
-			invalidatesTags: ['User'],
-		}),
-		register: builder.mutation<{ user: TUser; accessToken: string }, TUserCredentials | string>({
-			query: user => ({
-				url: '/register',
-				method: 'POST',
-				body: user,
-			}),
-			invalidatesTags: ['User'],
-		}),
-		deleteUser: builder.mutation<string, Pick<TUser, 'id'>>({
-			query: user => ({
-				url: '/delete_user',
-				method: 'DELETE',
-				body: user,
-			}),
-			invalidatesTags: ['User'],
-		}),
-	}),
-})
-
-export const { useLoginMutation, useRegisterMutation, useDeleteUserMutation } = UserApiSlice

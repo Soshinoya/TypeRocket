@@ -34,12 +34,30 @@ export const authMiddleware = {
 			errorsHandler(err, res)
 		}
 	},
+	verifyAccessToken: async (req, res, next) => {
+		try {
+			const accessToken = req.body.accessToken
+
+			if (!accessToken) {
+				return res.status(401).json({ error: 'ACCESS_TOKEN_MISSING' })
+			}
+
+			const decoded = jwt.verify(accessToken, process.env.ACCESS_SECRET)
+			req.body.userId = decoded.userId
+			next()
+		} catch (error) {
+			console.log('error: ', error)
+			if (error.name === 'TokenExpiredError') {
+				return res.status(403).json({ error: 'ACCESS_TOKEN_EXPIRED' })
+			}
+			res.status(401).json({ error: 'INVALID_ACCESS_TOKEN' })
+		}
+	},
 	verifyRefreshToken: async (req, res, next) => {
 		try {
 			const refreshToken = req.cookies.refreshToken
 
 			if (!refreshToken) {
-				console.log('!refreshToken')
 				return res.status(401).json({ error: 'REFRESH_TOKEN_MISSING' })
 			}
 

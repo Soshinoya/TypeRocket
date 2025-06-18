@@ -72,3 +72,12 @@ export const addToValidateTips = (
 		return newValidateTips
 	})
 }
+
+export const getErrorMessage = (error: any): string => {
+	console.error('Error: ', error)
+	if (error?.data?.error) return error.data.error
+	if (error?.data?.message) return error.data.message
+	if (error?.message) return error.message
+	if (error?.data) return error.data
+	return 'Unknown error occurred'
+}

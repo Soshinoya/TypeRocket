@@ -14,7 +14,7 @@ const refreshAccessToken = async (req, res, errorsHandler) => {
 			return res.status(404).json({ error: 'USER_NOT_FOUND' })
 		}
 
-		const newAccessToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '15m' })
+		const newAccessToken = jwt.sign({ userId: user.id }, process.env.ACCESS_SECRET, { expiresIn: '15m' })
 
 		res.json({ accessToken: newAccessToken })
 	} catch (err) {
@@ -33,7 +33,7 @@ const login = async (req, res, errorsHandler) => {
 			return res.status(400).json({ error: 'Incorrect password' })
 		}
 
-		const accessToken = jwt.sign({ userId: result.id }, process.env.JWT_SECRET, { expiresIn: '15m' })
+		const accessToken = jwt.sign({ userId: result.id }, process.env.ACCESS_SECRET, { expiresIn: '15m' })
 		const refreshToken = jwt.sign({ userId: result.id }, process.env.REFRESH_SECRET, { expiresIn: '7d' })
 
 		res.cookie('refreshToken', refreshToken, {
@@ -57,7 +57,7 @@ const register = async (req, res, errorsHandler) => {
 		const result = await userService.register(req.body)
 
 		// user.controller.js
-		const accessToken = jwt.sign({ userId: result.id }, process.env.JWT_SECRET, { expiresIn: '15m' })
+		const accessToken = jwt.sign({ userId: result.id }, process.env.ACCESS_SECRET, { expiresIn: '15m' })
 		const refreshToken = jwt.sign({ userId: result.id }, process.env.REFRESH_SECRET, { expiresIn: '7d' })
 
 		res.cookie('refreshToken', refreshToken, {

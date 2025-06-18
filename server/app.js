@@ -18,7 +18,7 @@ import {
 	getCompletedAchievements,
 } from './controllers/achievements.controller.js'
 
-import { addExperience } from './controllers/experience.controller.js'
+import { addExperience, getExperience } from './controllers/experience.controller.js'
 
 import { getActivity, setActivity } from './controllers/activity.controller.js'
 
@@ -81,6 +81,13 @@ app.post('/user/logout', (req, res) => {
 
 // Удаление пользователя (с учетом удаления зависящих полей в таблицах с результатами)
 app.delete('/user/delete_user', async (req, res) => await deleteUser(req, res, errorsHandler))
+
+// Получение опыта
+app.post(
+	'/user/get_experience',
+	async (req, res, next) => await authMiddleware.verifyAccessToken(req, res, next),
+	async (req, res) => await getExperience(req, res, errorsHandler)
+)
 
 // Увеличение опыта
 app.patch('/user/add_experience', async (req, res) => await addExperience(req, res, errorsHandler))

@@ -67,6 +67,61 @@ export const themes: SingleTheme[] = [
 		accent: '#c58aff',
 		accentSemiBold: '#1e001e',
 	},
+	{
+		id: 'cosmic_glow',
+		title: 'Cosmic Glow',
+		primaryLight: '#dddeff',
+		primary: '#8274ff',
+		primarySemiBold: '#6535f6',
+		primaryBold: '#251651',
+		accentLight: '#effefb',
+		accent: '#d6fff7',
+		accentSemiBold: '#029f94',
+	},
+	{
+		id: 'spiced_latte',
+		title: 'Spiced Latte',
+		primaryLight: '#D1C2B7',
+		primary: '#A0806F',
+		primarySemiBold: '#77574E',
+		primaryBold: '#392E2B',
+		accentLight: '#FFDBD1',
+		accent: '#8F4C38',
+		accentSemiBold: '#61372D',
+	},
+	{
+		id: 'velvet_dusk',
+		title: 'Velvet Dusk',
+		primaryLight: '#D8D9DF',
+		primary: '#8D8FA3',
+		primarySemiBold: '#5B5D72',
+		primaryBold: '#303036',
+		accentLight: '#DFE0FF',
+		accent: '#535A92',
+		accentSemiBold: '#414567',
+	},
+	{
+		id: 'tokyo_twilight',
+		title: 'Tokyo Twilight',
+		primaryLight: '#E0E1FF',
+		primary: '#535A92',
+		primarySemiBold: '#34377b',
+		primaryBold: '#1A1B3D',
+		accentLight: '#F5E6FF',
+		accent: '#D16BFF',
+		accentSemiBold: '#9A3FC5',
+	},
+	{
+		id: 'golden_kyoto',
+		title: 'Golden Kyoto',
+		primaryLight: '#EEE2BC',
+		primary: '#665E40',
+		primarySemiBold: '#514B3A',
+		primaryBold: '#333027',
+		accentLight: '#fcf2c9',
+		accent: '#F8E287',
+		accentSemiBold: '#6D5E0F',
+	},
 	// {
 	// 	id: '',
 	// 	title: '',
@@ -78,12 +133,13 @@ export const themes: SingleTheme[] = [
 	// 	accent: '#',
 	// 	accentSemiBold: '#',
 	// },
-].sort((a, b) => {
-	if (a.title.toLowerCase() < b.title.toLowerCase()) {
-		return -1
-	}
-	if (a.title.toLowerCase() > b.title.toLowerCase()) {
-		return 1
-	}
-	return 0
-})
+]
+// .sort((a, b) => {
+// 	if (a.title.toLowerCase() < b.title.toLowerCase()) {
+// 		return -1
+// 	}
+// 	if (a.title.toLowerCase() > b.title.toLowerCase()) {
+// 		return 1
+// 	}
+// 	return 0
+// })
