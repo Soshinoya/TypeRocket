@@ -1,4 +1,4 @@
-import { TAchievement, TResultMetrics, TTestNames } from './Public'
+import { TAchievement, TResultMetrics } from './Public'
 
 export type TUser = {
 	id: number
@@ -33,9 +33,8 @@ export type TUserAchievement = {
 }
 
 export type TUserBestResults = {
-	userId: TUser['id']
-	testNameId: TTestNames['id']
-	resultId: TResultMetrics['id']
+	testName: string
+	resultMetrics: TResultMetrics
 }
 
 export type TUserActivity = {

@@ -365,7 +365,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 			<TypingResult
 				wpm={wpm}
 				rawWpm={rawWpm}
-				acc={acc}
+				accuracy={acc}
 				consistency={consistency}
 				errorCount={errorCount}
 				time={timer}

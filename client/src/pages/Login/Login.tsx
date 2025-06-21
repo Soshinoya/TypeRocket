@@ -85,6 +85,8 @@ const Login: FC = () => {
 				dispatch(setActivity(newActivity))
 			}
 
+			// Загрузить лучшие результаты
+
 			dispatch(setCurrentUser(newUser.user))
 			dispatch(setAccessToken(newUser.accessToken))
 

@@ -1,13 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Activity } from 'react-activity-calendar'
 
-import { TUser, TUserExperience } from 'types/User'
+import { TUser, TUserBestResults, TUserExperience } from 'types/User'
 
 type TInitialStateType = {
 	accessToken: string
 	user: TUser | null
 	experience: TUserExperience | null
 	activity: Activity[] | null
+	bestResults: TUserBestResults[]
 }
 
 const getInitialState = (): TInitialStateType => {
@@ -27,6 +28,16 @@ const getInitialState = (): TInitialStateType => {
 		user: null,
 		experience: null,
 		activity: null,
+		bestResults: [
+			{ testName: 'test_10w', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
+			{ testName: 'test_20w', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
+			{ testName: 'test_40w', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
+			{ testName: 'test_80w', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
+			{ testName: 'test_15s', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
+			{ testName: 'test_30s', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
+			{ testName: 'test_60s', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
+			{ testName: 'test_120s', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
+		],
 	}
 }
 
@@ -75,8 +86,26 @@ const currentUserSlice = createSlice({
 
 			setStateInLocalStorage(state, 'activity', state.activity)
 		},
+		setBestResults(state: TInitialStateType, action: PayloadAction<TUserBestResults>) {
+			const updatedBestResults = state.bestResults.map(result => {
+				if (result.testName === action.payload.testName) {
+					return {
+						...result,
+						resultMetrics: { ...action.payload.resultMetrics },
+					}
+				}
+				return result
+			})
+
+			setStateInLocalStorage(state, 'bestResults', updatedBestResults)
+
+			return {
+				...state,
+				bestResults: updatedBestResults,
+			}
+		},
 	},
 })
 
-export const { setCurrentUser, setAccessToken, setExperience, setActivity } = currentUserSlice.actions
+export const { setCurrentUser, setAccessToken, setExperience, setActivity, setBestResults } = currentUserSlice.actions
 export default currentUserSlice.reducer

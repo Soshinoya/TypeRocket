@@ -126,6 +126,10 @@ app.get('/user/get_best_result', async (req, res) => await getBestResult(req, re
 app.get('/user/get_all_best_results', async (req, res) => await getAllBestResult(req, res, errorsHandler))
 
 // Добавление лучшего результата
-app.post('/user/set_best_result', async (req, res) => await setBestResult(req, res, errorsHandler))
+app.post(
+	'/user/set_best_result',
+	async (req, res, next) => await authMiddleware.verifyAccessToken(req, res, next),
+	async (req, res) => await setBestResult(req, res, errorsHandler)
+)
 
 export { app, pool, SERVER_PORT }

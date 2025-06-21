@@ -96,6 +96,45 @@ VALUES
     ('test_40w'),
     ('test_80w');
 
+CREATE OR REPLACE FUNCTION upsert_best_result(
+    p_user_id INT, 
+    p_test_name VARCHAR(20)
+RETURNS VOID AS $$
+DECLARE
+    v_test_name_id INT;
+    v_result_id INT;
+BEGIN
+    -- Получаем ID названия теста (если не существует - будет ошибка внешнего ключа)
+    SELECT id INTO v_test_name_id 
+    FROM test_names 
+    WHERE name = p_test_name;
+
+    -- Получаем последний ID из result_metrics
+    SELECT id INTO v_result_id 
+    FROM result_metrics 
+    ORDER BY id DESC 
+    LIMIT 1;
+
+    -- Пытаемся обновить запись
+    UPDATE best_results 
+    SET result_id = v_result_id
+    WHERE user_id = p_user_id 
+      AND test_name_id = v_test_name_id;
+
+    -- Если обновления не произошло, пробуем вставить
+    IF NOT FOUND THEN
+        INSERT INTO best_results (user_id, test_name_id, result_id)
+        VALUES (p_user_id, v_test_name_id, v_result_id);
+    END IF;
+EXCEPTION
+    WHEN unique_violation THEN -- Если запись появилась параллельно
+        UPDATE best_results 
+        SET result_id = v_result_id
+        WHERE user_id = p_user_id 
+          AND test_name_id = v_test_name_id;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE INDEX idx_user_activity_date ON user_activity (date);
 
 -- DROP SCHEMA public CASCADE;

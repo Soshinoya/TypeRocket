@@ -4,7 +4,7 @@ export type TypingTestParams = {
 	mode: 'words' | 'time'
 	count: number // number of words or seconds depending on mode
 	wpm: number // words per minute
-	acc: number // accuracy percentage 0-100
+	accuracy: number // accuracy percentage 0-100
 	consistency: number // consistency metric, 0-1 or 0-100
 	errorCount: number
 	xpMultiplier?: number // Optional multiplier to increase experience points
@@ -16,13 +16,13 @@ export const computeExperience = ({
 	mode,
 	count,
 	wpm,
-	acc,
+	accuracy,
 	consistency,
 	errorCount,
 	xpMultiplier = 2,
 }: TypingTestParams): number => {
 	// Normalize accuracy and consistency (assume consistency is 0-100)
-	const accuracyFactor = Math.max(0, Math.min(acc / 100, 1))
+	const accuracyFactor = Math.max(0, Math.min(accuracy / 100, 1))
 	const consistencyNorm = consistency > 1 ? consistency / 100 : consistency // convert to 0-1 if >1
 
 	// Base XP calculation:

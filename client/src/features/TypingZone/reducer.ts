@@ -19,7 +19,7 @@ const initialConfig: I_TypingZone = {
 	playerMode: PlayerMode['single'],
 	mode: Mode['time'],
 	wordOptions: [
-		{ count: 10, enabled: true },
+		{ count: 10, enabled: false },
 		{ count: 20, enabled: false },
 		{ count: 40, enabled: false },
 		{ count: 80, enabled: false },
@@ -102,6 +102,15 @@ export const playerModeReducer: T_Reducer<I_TypingZone, PlayerMode> = (state, ac
 
 export const modeReducer: T_Reducer<I_TypingZone, Mode> = (state, action) => {
 	state.mode = action.payload
+
+	state.timeOptions.map(option => (option.enabled = false))
+	state.wordOptions.map(option => (option.enabled = false))
+
+	if (action.payload === Mode['time']) {
+		state.timeOptions[0].enabled = true
+	} else {
+		state.wordOptions[0].enabled = true
+	}
 }
 
 const updateItems = (items: I_ModeOption[], action: I_Action): I_ModeOption[] => {
@@ -120,10 +129,12 @@ const updateItems = (items: I_ModeOption[], action: I_Action): I_ModeOption[] =>
 
 export const wordOptionsReducer: T_Reducer<I_TypingZone, I_ModeOption> = (state, action) => {
 	state.wordOptions = updateItems(state.wordOptions, action)
+	state.timeOptions.map(option => (option.enabled = false))
 }
 
 export const timeOptionsReducer: T_Reducer<I_TypingZone, I_ModeOption> = (state, action) => {
 	state.timeOptions = updateItems(state.timeOptions, action)
+	state.wordOptions.map(option => (option.enabled = false))
 }
 
 export const textReducer: T_Reducer<I_TypingZone, string[][]> = (state, action) => {

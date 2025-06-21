@@ -4,7 +4,7 @@ import s from './Profile.module.scss'
 
 import { useAppSelector } from 'store/index'
 
-import { selectActivity, selectCurrentUser, selectExperience } from 'features/CurrentUser/selectors'
+import { selectActivity, selectBestResults, selectCurrentUser, selectExperience } from 'features/CurrentUser/selectors'
 import { selectCurrentTheme } from 'features/Themes/selectors'
 
 import { TAchievement } from 'types/Public'
@@ -1852,6 +1852,7 @@ const Profile: FC<ProfileProps> = () => {
 	const currentUser = useAppSelector(selectCurrentUser)
 	const experience = useAppSelector(selectExperience)
 	const activity = useAppSelector(selectActivity)
+	const bestResults = useAppSelector(selectBestResults)
 
 	const [userFormattedCreationDate, setUserFormattedCreationDate] = useState('')
 
@@ -2042,37 +2043,53 @@ const Profile: FC<ProfileProps> = () => {
 			<div className={s['statistic__wrapper']}>
 				<div className={s['statistic']}>
 					<div className={s['statistic__item']}>
-						<h4 className={s['statistic__title']}>266</h4>
+						<h4 className={s['statistic__title']}>
+							{bestResults.find(({ testName }) => testName === 'test_10w')?.resultMetrics.wpm || '-'}
+						</h4>
+						<p className={s['statistic__subtitle']}>10 words</p>
+					</div>
+					<div className={s['statistic__item']}>
+						<h4 className={s['statistic__title']}>
+							{bestResults.find(({ testName }) => testName === 'test_20w')?.resultMetrics.wpm || '-'}
+						</h4>
 						<p className={s['statistic__subtitle']}>20 words</p>
 					</div>
 					<div className={s['statistic__item']}>
-						<h4 className={s['statistic__title']}>238</h4>
+						<h4 className={s['statistic__title']}>
+							{bestResults.find(({ testName }) => testName === 'test_40w')?.resultMetrics.wpm || '-'}
+						</h4>
 						<p className={s['statistic__subtitle']}>40 words</p>
 					</div>
 					<div className={s['statistic__item']}>
-						<h4 className={s['statistic__title']}>232</h4>
+						<h4 className={s['statistic__title']}>
+							{bestResults.find(({ testName }) => testName === 'test_80w')?.resultMetrics.wpm || '-'}
+						</h4>
 						<p className={s['statistic__subtitle']}>80 words</p>
-					</div>
-					<div className={s['statistic__item']}>
-						<h4 className={s['statistic__title']}>208</h4>
-						<p className={s['statistic__subtitle']}>160 words</p>
 					</div>
 				</div>
 				<div className={s['statistic']}>
 					<div className={s['statistic__item']}>
-						<h4 className={s['statistic__title']}>403</h4>
+						<h4 className={s['statistic__title']}>
+							{bestResults.find(({ testName }) => testName === 'test_15s')?.resultMetrics.wpm || '-'}
+						</h4>
 						<p className={s['statistic__subtitle']}>15 seconds</p>
 					</div>
 					<div className={s['statistic__item']}>
-						<h4 className={s['statistic__title']}>322</h4>
+						<h4 className={s['statistic__title']}>
+							{bestResults.find(({ testName }) => testName === 'test_30s')?.resultMetrics.wpm || '-'}
+						</h4>
 						<p className={s['statistic__subtitle']}>30 seconds</p>
 					</div>
 					<div className={s['statistic__item']}>
-						<h4 className={s['statistic__title']}>251</h4>
+						<h4 className={s['statistic__title']}>
+							{bestResults.find(({ testName }) => testName === 'test_60s')?.resultMetrics.wpm || '-'}
+						</h4>
 						<p className={s['statistic__subtitle']}>60 seconds</p>
 					</div>
 					<div className={s['statistic__item']}>
-						<h4 className={s['statistic__title']}>190</h4>
+						<h4 className={s['statistic__title']}>
+							{bestResults.find(({ testName }) => testName === 'test_120s')?.resultMetrics.wpm || '-'}
+						</h4>
 						<p className={s['statistic__subtitle']}>120 seconds</p>
 					</div>
 				</div>

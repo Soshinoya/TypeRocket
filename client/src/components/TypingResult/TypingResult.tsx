@@ -4,18 +4,17 @@ import React, { FC, useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from 'store/index'
 
 import { setNotificationAction } from 'features/Notification/reducer'
-import { selectAccessToken, selectExperience } from 'features/CurrentUser/selectors'
-import { setActivity, setExperience } from 'features/CurrentUser/reducer'
+import { selectAccessToken, selectBestResults, selectExperience } from 'features/CurrentUser/selectors'
+import { setActivity, setBestResults, setExperience } from 'features/CurrentUser/reducer'
 
 import { useAddExperienceMutation } from 'api/Experience/ExperienceApiSlice'
 import { useSetActivityMutation } from 'api/Activity/ActivityApiSlice'
+import { useSetBestResultsMutation } from 'api/BestResults/BestResultsApiSlice'
 
 import styles from './TypingResult.module.scss'
 
 import Modal from 'components/Modal/Modal'
-
 import ResultWpmChart from 'components/Chart/ResultWpmChart'
-
 import Ad from 'components/icons/Ad/Ad'
 
 import {
@@ -30,11 +29,12 @@ import useIsEscapePress from 'hooks/useIsEscapePress'
 
 import { getDate } from 'utils/utils'
 import { computeExperience, increaseExperience } from 'utils/experience'
+import { Mode } from 'features/TypingZone/types'
 
 type TypingResultProps = {
 	wpm: number
 	rawWpm: number
-	acc: number
+	accuracy: number
 	consistency: number
 	errorCount: number
 	time: number
@@ -46,7 +46,7 @@ type TypingResultProps = {
 const TypingResult: FC<TypingResultProps> = ({
 	wpm,
 	rawWpm,
-	acc,
+	accuracy,
 	consistency,
 	errorCount,
 	time,
@@ -62,6 +62,8 @@ const TypingResult: FC<TypingResultProps> = ({
 	const wordOptions = useAppSelector(selectWordOptions)
 	const timeOptions = useAppSelector(selectTimeOptions)
 
+	const bestResults = useAppSelector(selectBestResults)
+
 	const accessToken = useAppSelector(selectAccessToken)
 	const currentExperience = useAppSelector(selectExperience)
 
@@ -69,7 +71,20 @@ const TypingResult: FC<TypingResultProps> = ({
 
 	const [setActivityMutation] = useSetActivityMutation()
 
+	const [setBestResultsMutation] = useSetBestResultsMutation()
+
 	useIsEscapePress(setIsOpen)
+
+	const defineTestName = () => {
+		let testName = 'test_15s'
+
+		;[...wordOptions, ...timeOptions].forEach(({ count, enabled }) => {
+			if (!enabled) return
+			testName = `test_${count}${mode === Mode['words'] ? 'w' : 's'}`
+		})
+
+		return testName
+	}
 
 	useEffect(() => {
 		if (!accessToken || !currentExperience) return
@@ -82,7 +97,7 @@ const TypingResult: FC<TypingResultProps> = ({
 					[...wordOptions, ...timeOptions].find(({ enabled }) => enabled === true)?.count ||
 					wordOptions[0].count,
 				wpm,
-				acc,
+				accuracy,
 				consistency,
 				errorCount,
 				xpMultiplier: 25,
@@ -104,10 +119,23 @@ const TypingResult: FC<TypingResultProps> = ({
 			;(async () => {
 				const { data } = await setActivityMutation({ accessToken })
 
-				console.log(data)
-
 				if (data) dispatch(setActivity(data))
 			})()
+
+			// Добавляем лучший результат
+			const testName = defineTestName()
+			const currentBestResult = bestResults.find(result => result.testName === testName)
+			if (currentBestResult?.resultMetrics.wpm || 0 < wpm) {
+				;(async () => {
+					const newBestResult = {
+						accessToken,
+						testName,
+						resultMetrics: { wpm, rawWpm, accuracy, consistency },
+					}
+					await setBestResultsMutation(newBestResult)
+					dispatch(setBestResults(newBestResult))
+				})()
+			}
 
 			dispatch(
 				setNotificationAction({
@@ -147,7 +175,7 @@ const TypingResult: FC<TypingResultProps> = ({
 									<p className={styles['result-stats-item__desc']}>errors</p>
 								</li>
 								<li className={styles['result-stats-item']}>
-									<h3 className={styles['result-stats-item__title']}>{acc}%</h3>
+									<h3 className={styles['result-stats-item__title']}>{accuracy}%</h3>
 									<p className={styles['result-stats-item__desc']}>accuracy</p>
 								</li>
 								<li className={styles['result-stats-item']}>

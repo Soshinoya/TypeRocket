@@ -6,15 +6,18 @@ export type TAchievement = {
 }
 
 export type TResultMetrics = {
-	id: number
 	wpm: number
 	rawWpm: number
 	accuracy: number
 	consistency: number
-	date: string
 }
 
-export type TTestNames = {
-	id: number
-	name: string
-}
+// export type TTestName =
+// 	| 'test_15s'
+// 	| 'test_30s'
+// 	| 'test_60s'
+// 	| 'test_120s'
+// 	| 'test_10w'
+// 	| 'test_20w'
+// 	| 'test_40w'
+// 	| 'test_80w'

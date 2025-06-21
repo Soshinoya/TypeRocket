@@ -39,51 +39,25 @@ const resultsService = {
 		return results.rows
 	},
 	setBestResult: async (userId, testName, resultMetrics) => {
-		const { wpm, rawWpm, accuracy, consistency, date } = resultMetrics
+		const { wpm, rawWpm, accuracy, consistency } = resultMetrics
 
-		// 1. Удаляем старую запись (если есть)
-		const result1 = await pool.query(
+		// 1. Вставляем метрики
+		const result = await pool.query(
 			`
-            DELETE FROM result_metrics
-            WHERE id IN (
-                SELECT result_id 
-                FROM best_results 
-                WHERE user_id = $1 
-                AND test_name_id = (SELECT id FROM test_names WHERE name = '$2')
-            );
-            `,
-			[userId, testName]
-		)
-		console.log('result1: ', result1)
-
-		// 2. Вставляем новые метрики
-		const result2 = await pool.query(
-			`
-            INSERT INTO result_metrics (wpm, rawWpm, accuracy, consistency, date)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO result_metrics (wpm, rawWpm, accuracy, consistency)
+            VALUES ($1, $2, $3, $4)
             RETURNING id;
-            `,
-			[wpm, rawWpm, accuracy, consistency, date]
+        `,
+			[wpm, rawWpm, accuracy, consistency]
 		)
-		console.log('result2: ', result2)
+		const resultId = result.rows[0].id
 
-		// 3. Обновляем best_results
-		const result3 = await pool.query(
-			`
-            INSERT INTO best_results (user_id, test_name_id, result_id)
-            VALUES (
-                $1,
-                (SELECT id FROM test_names WHERE name = '$2'),
-                (SELECT id FROM result_metrics ORDER BY id DESC LIMIT 1)
-            )
-            ON CONFLICT (user_id, test_name_id)
-            DO UPDATE SET result_id = EXCLUDED.result_id;
-            `,
-			[userId, testName]
-		)
-		console.log('result3: ', result3)
+		// 2. Обновляем/вставляем лучший результат
+		await pool.query(`SELECT upsert_best_result($1, $2);`, [userId, testName])
 
-		return result3
+		console.log('setBestResult resultId: ', resultId)
+
+		return resultId
 	},
 }
 

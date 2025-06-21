@@ -4,3 +4,4 @@ export const selectAccessToken = (state: T_RootState) => state.currentUser.acces
 export const selectCurrentUser = (state: T_RootState) => state.currentUser.user
 export const selectExperience = (state: T_RootState) => state.currentUser.experience
 export const selectActivity = (state: T_RootState) => state.currentUser.activity
+export const selectBestResults = (state: T_RootState) => state.currentUser.bestResults
