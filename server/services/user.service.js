@@ -34,15 +34,15 @@ const userService = {
 		return false
 	},
 	register: async user => {
-		const { username, email, password, description } = user
+		const { username, email, password } = user
 
 		const result1 = await pool.query(
 			`
             INSERT INTO users (username, email, password, description)
-            VALUES ($1, $2, $3, $4)
+            VALUES ($1, $2, $3, 'Hey there! I am using TypeRocket')
             RETURNING *;
             `,
-			[username, email, password, description]
+			[username, email, password]
 		)
 
 		// Создаем строку в таблицах experience

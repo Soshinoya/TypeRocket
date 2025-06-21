@@ -3,10 +3,12 @@ import React, { FC, useEffect } from 'react'
 
 import { useAppDispatch, useAppSelector } from 'store/index'
 
-import { selectAccessToken, selectExperience } from 'features/CurrentUser/selectors'
-import { setExperience } from 'features/CurrentUser/reducer'
-import { useAddExperienceMutation } from 'api/Experience/ExperienceApiSlice'
 import { setNotificationAction } from 'features/Notification/reducer'
+import { selectAccessToken, selectExperience } from 'features/CurrentUser/selectors'
+import { setActivity, setExperience } from 'features/CurrentUser/reducer'
+
+import { useAddExperienceMutation } from 'api/Experience/ExperienceApiSlice'
+import { useSetActivityMutation } from 'api/Activity/ActivityApiSlice'
 
 import styles from './TypingResult.module.scss'
 
@@ -65,6 +67,8 @@ const TypingResult: FC<TypingResultProps> = ({
 
 	const [addExperience] = useAddExperienceMutation()
 
+	const [setActivityMutation] = useSetActivityMutation()
+
 	useIsEscapePress(setIsOpen)
 
 	useEffect(() => {
@@ -84,6 +88,7 @@ const TypingResult: FC<TypingResultProps> = ({
 				xpMultiplier: 25,
 			})
 
+			// Добавляем опыт
 			;(async () => {
 				const { level, progress } = increaseExperience(earnedXP, currentExperience.progress)
 
@@ -94,6 +99,14 @@ const TypingResult: FC<TypingResultProps> = ({
 				})
 
 				if (data) dispatch(setExperience({ level: data.level, progress: data.progress }))
+			})()
+			// Добавляем очко активности
+			;(async () => {
+				const { data } = await setActivityMutation({ accessToken })
+
+				console.log(data)
+
+				if (data) dispatch(setActivity(data))
 			})()
 
 			dispatch(

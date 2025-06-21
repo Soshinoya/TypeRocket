@@ -97,10 +97,18 @@ app.patch(
 )
 
 // Получить данные календаря активности
-app.get('/user/get_activity/:userId/:from/:to', async (req, res) => await getActivity(req, res, errorsHandler))
+app.post(
+	'/user/get_activity',
+	async (req, res, next) => await authMiddleware.verifyAccessToken(req, res, next),
+	async (req, res) => await getActivity(req, res, errorsHandler)
+)
 
 // Добавить данные календаря активности
-app.post('/user/set_activity', async (req, res) => await setActivity(req, res, errorsHandler))
+app.post(
+	'/user/set_activity',
+	async (req, res, next) => await authMiddleware.verifyAccessToken(req, res, next),
+	async (req, res) => await setActivity(req, res, errorsHandler)
+)
 
 app.get('/user/get_achievements', async (req, res) => await getAchievements(req, res, errorsHandler))
 

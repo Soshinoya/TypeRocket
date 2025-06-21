@@ -8,10 +8,11 @@ import { TUserCredentials } from 'types/User'
 
 import { I_Notification } from 'features/Notification/types'
 import { setNotificationAction } from 'features/Notification/reducer'
-import { setAccessToken, setCurrentUser, setExperience } from 'features/CurrentUser/reducer'
+import { setAccessToken, setCurrentUser, setExperience, setActivity } from 'features/CurrentUser/reducer'
 
 import { useLoginMutation } from 'api/User/UserApiSlice'
 import { useGetExperienceMutation } from 'api/Experience/ExperienceApiSlice'
+import { useGetActivityMutation } from 'api/Activity/ActivityApiSlice'
 
 import { Paths } from 'utils/paths'
 import { getErrorMessage } from 'utils/utils'
@@ -29,6 +30,8 @@ const Login: FC = () => {
 	const [authentication] = useLoginMutation()
 
 	const [getExperience] = useGetExperienceMutation()
+
+	const [getActivity] = useGetActivityMutation()
 
 	const [userCredentials, setUserCredentials] = useState<Omit<TUserCredentials, 'username' | 'repeatPassword'>>({
 		email: '',
@@ -74,6 +77,12 @@ const Login: FC = () => {
 
 			if (newExperience) {
 				dispatch(setExperience(newExperience))
+			}
+
+			const { data: newActivity } = await getActivity({ accessToken: newUser.accessToken })
+
+			if (newActivity) {
+				dispatch(setActivity(newActivity))
 			}
 
 			dispatch(setCurrentUser(newUser.user))

@@ -7,6 +7,7 @@ import { UserApiSlice } from 'api/User/UserApiSlice'
 import currentUser from 'features/CurrentUser/reducer'
 
 import { ExperienceApiSlice } from 'api/Experience/ExperienceApiSlice'
+import { ActivityApiSlice } from 'api/Activity/ActivityApiSlice'
 
 import TypingZone from 'features/TypingZone/reducer'
 import Notifications from 'features/Notification/reducer'
@@ -17,6 +18,7 @@ const reducer = combineReducers({
 	currentUser,
 	[UserApiSlice.reducerPath]: UserApiSlice.reducer,
 	[ExperienceApiSlice.reducerPath]: ExperienceApiSlice.reducer,
+	[ActivityApiSlice.reducerPath]: ActivityApiSlice.reducer,
 	Notifications,
 	Themes,
 })
@@ -24,7 +26,11 @@ const reducer = combineReducers({
 const store = configureStore({
 	reducer,
 	middleware: getDefaultMiddleware =>
-		getDefaultMiddleware().concat(UserApiSlice.middleware, ExperienceApiSlice.middleware),
+		getDefaultMiddleware().concat(
+			UserApiSlice.middleware,
+			ExperienceApiSlice.middleware,
+			ActivityApiSlice.middleware
+		),
 })
 
 export default store

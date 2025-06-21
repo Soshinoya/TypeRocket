@@ -6,12 +6,13 @@ import { useAppDispatch } from 'store/index'
 
 import { I_Notification } from 'features/Notification/types'
 import { TUserCredentials } from 'types/User'
-import { setAccessToken, setCurrentUser, setExperience } from 'features/CurrentUser/reducer'
+import { setAccessToken, setActivity, setCurrentUser, setExperience } from 'features/CurrentUser/reducer'
 
 import { setNotificationAction } from 'features/Notification/reducer'
 
 import { useRegisterMutation } from 'api/User/UserApiSlice'
 import { useGetExperienceMutation } from 'api/Experience/ExperienceApiSlice'
+import { useSetActivityMutation } from 'api/Activity/ActivityApiSlice'
 
 import { Paths } from 'utils/paths'
 import { getErrorMessage } from 'utils/utils'
@@ -29,6 +30,8 @@ const Register: FC = () => {
 	const [register] = useRegisterMutation()
 
 	const [getExperience] = useGetExperienceMutation()
+
+	const [setActivityMutation] = useSetActivityMutation()
 
 	const [userCredentials, setUserCredentials] = useState<TUserCredentials>({
 		username: '',
@@ -78,6 +81,12 @@ const Register: FC = () => {
 
 			if (newExperience) {
 				dispatch(setExperience(newExperience))
+			}
+
+			const { data: newActivity } = await setActivityMutation({ accessToken: newUser.accessToken })
+
+			if (newActivity) {
+				dispatch(setActivity(newActivity))
 			}
 
 			dispatch(setCurrentUser(newUser.user))

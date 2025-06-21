@@ -1,32 +1,41 @@
 import { pool } from '../app.js'
 
 const activityService = {
-	getActivity: async (userId, from, to) => {
-		const result = await pool.query(
-			`
-            SELECT activity_date, count, level
-            FROM user_activity
-            WHERE 
-                user_id = $1 AND
-                activity_date BETWEEN $2 AND $3;
-            `,
-			[userId, from, to]
+	getActivity: async userId => {
+		const year = new Date().getFullYear()
+
+		const { rows } = await pool.query(
+			`SELECT date::text, count 
+			FROM user_activity 
+			WHERE user_id = $1 
+			AND date >= $2 AND date <= $3`,
+			[userId, `${year}-01-01`, `${year}-12-31`]
 		)
-		console.log('result: ', result)
-		return result.rows[0]
+		return rows
 	},
 	setActivity: async userId => {
 		const result = await pool.query(
 			`
-            INSERT INTO user_activity (user_id, count)
-            VALUES ($1, 1)
-            ON CONFLICT (user_id, date) -- конфликт по PRIMARY KEY
-            DO UPDATE SET count = user_activity.count + 1;
-            `,
+        WITH 
+		updated AS (
+			UPDATE user_activity 
+			SET count = count + 1 
+			WHERE user_id = $1 AND date = CURRENT_DATE
+			RETURNING user_id, count, to_char(date, 'YYYY-MM-DD') AS date
+		),
+		inserted AS (
+			INSERT INTO user_activity (user_id, count, date)
+			SELECT $1, 1, CURRENT_DATE
+			WHERE NOT EXISTS (SELECT 1 FROM updated)
+			RETURNING user_id, count, to_char(date, 'YYYY-MM-DD') AS date
+		)
+		SELECT * FROM updated UNION ALL SELECT * FROM inserted;
+        `,
 			[userId]
 		)
-		console.log('result: ', result)
-		return result.rows[0]
+
+		console.log('setActivity result: ', result)
+		return result.rows[0] || null
 	},
 }
 

@@ -5,7 +5,7 @@ export type TUser = {
 	username: string
 	email: string
 	password: string
-	creationDate: string
+	creation_date: string
 	description: string
 }
 
@@ -42,4 +42,5 @@ export type TUserActivity = {
 	userId: TUser['id']
 	count: number
 	date: string
+	level: number
 }

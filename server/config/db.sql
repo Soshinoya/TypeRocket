@@ -3,9 +3,9 @@ CREATE TABLE
         id SERIAL PRIMARY KEY,
         username VARCHAR(30) UNIQUE NOT NULL,
         email VARCHAR(30) UNIQUE NOT NULL,
-        password VARCHAR(30) NOT NULL,
-        creationDate DATE NOT NULL DEFAULT CURRENT_DATE,
-        description TEXT DEFAULT 'Hey there! I am using TypeRocket'
+        password VARCHAR(100) NOT NULL,
+        creation_date DATE NOT NULL DEFAULT CURRENT_DATE,
+        description TEXT NOT NULL DEFAULT 'Hey there! I am using TypeRocket'
     );
 
 CREATE TABLE
@@ -73,16 +73,16 @@ PARTITION BY
 
 -- Создание партиций по годам
 CREATE TABLE
-    activity_2022 PARTITION OF user_activity FOR
+    activity_2025 PARTITION OF user_activity FOR
 VALUES
 FROM
-    ('2022-01-01') TO ('2023-01-01');
+    ('2025-01-01') TO ('2026-01-01');
 
 CREATE TABLE
-    activity_2023 PARTITION OF user_activity FOR
+    activity_2026 PARTITION OF user_activity FOR
 VALUES
 FROM
-    ('2023-01-01') TO ('2024-01-01');
+    ('2026-01-01') TO ('2027-01-01');
 
 INSERT INTO
     test_names (name)
