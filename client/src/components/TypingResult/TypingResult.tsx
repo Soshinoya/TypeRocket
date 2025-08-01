@@ -1,15 +1,33 @@
-import { nanoid } from '@reduxjs/toolkit'
 import React, { FC, useEffect } from 'react'
+import { nanoid } from '@reduxjs/toolkit'
 
 import { useAppDispatch, useAppSelector } from 'store/index'
 
 import { setNotificationAction } from 'features/Notification/reducer'
-import { selectAccessToken, selectBestResults, selectExperience } from 'features/CurrentUser/selectors'
-import { setActivity, setBestResults, setExperience } from 'features/CurrentUser/reducer'
+import {
+	selectAccessToken,
+	selectBestResults,
+	selectExperience,
+	selectAchievements,
+	selectUserAchievements,
+	selectMetrics,
+} from 'features/CurrentUser/selectors'
+import {
+	setActivity,
+	setBestResults,
+	setExperience,
+	setMetrics,
+	setUserAchievements,
+} from 'features/CurrentUser/reducer'
+
+import { TAchievement, TUserAchievement } from 'types/Public'
+import { Mode } from 'features/TypingZone/types'
 
 import { useAddExperienceMutation } from 'api/Experience/ExperienceApiSlice'
 import { useSetActivityMutation } from 'api/Activity/ActivityApiSlice'
 import { useSetBestResultsMutation } from 'api/BestResults/BestResultsApiSlice'
+import { useUpdateKeystrokesMutation } from 'api/UserMetrics/UserMetrics'
+import { useAddCompletedAchievementMutation } from 'api/Achievements/Achievements'
 
 import styles from './TypingResult.module.scss'
 
@@ -29,7 +47,6 @@ import useIsEscapePress from 'hooks/useIsEscapePress'
 
 import { getDate } from 'utils/utils'
 import { computeExperience, increaseExperience } from 'utils/experience'
-import { Mode } from 'features/TypingZone/types'
 
 type TypingResultProps = {
 	wpm: number
@@ -39,6 +56,7 @@ type TypingResultProps = {
 	errorCount: number
 	time: number
 	wpmPerTimeArr: { time: number; wpm: number; rawWpm: number }[]
+	keystrokes: number
 	isOpen: boolean
 	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -51,6 +69,7 @@ const TypingResult: FC<TypingResultProps> = ({
 	errorCount,
 	time,
 	wpmPerTimeArr,
+	keystrokes,
 	isOpen,
 	setIsOpen,
 }) => {
@@ -62,16 +81,26 @@ const TypingResult: FC<TypingResultProps> = ({
 	const wordOptions = useAppSelector(selectWordOptions)
 	const timeOptions = useAppSelector(selectTimeOptions)
 
+	const accessToken = useAppSelector(selectAccessToken)
+
 	const bestResults = useAppSelector(selectBestResults)
 
-	const accessToken = useAppSelector(selectAccessToken)
 	const currentExperience = useAppSelector(selectExperience)
 
-	const [addExperience] = useAddExperienceMutation()
+	const oldMetrics = useAppSelector(selectMetrics)
+
+	const achievements = useAppSelector(selectAchievements)
+	const userAchievements = useAppSelector(selectUserAchievements)
+
+	const [addExperienceMutation] = useAddExperienceMutation()
 
 	const [setActivityMutation] = useSetActivityMutation()
 
 	const [setBestResultsMutation] = useSetBestResultsMutation()
+
+	const [addKeystrokesMutation] = useUpdateKeystrokesMutation()
+
+	const [addCompletedAchievementMutation] = useAddCompletedAchievementMutation()
 
 	useIsEscapePress(setIsOpen)
 
@@ -86,16 +115,88 @@ const TypingResult: FC<TypingResultProps> = ({
 		return testName
 	}
 
+	const addExperience = async (earnedXP: number) => {
+		if (!currentExperience) return
+
+		const { level, progress } = increaseExperience(earnedXP, currentExperience.progress)
+
+		const { data } = await addExperienceMutation({
+			accessToken,
+			level: currentExperience.level + level,
+			progress,
+		})
+
+		if (data) dispatch(setExperience({ level: data.level, progress: data.progress }))
+	}
+
+	const addActivityPoint = async () => {
+		const { data } = await setActivityMutation({ accessToken })
+		if (data) dispatch(setActivity(data))
+	}
+
+	const addBestResult = async () => {
+		const testName = defineTestName()
+		const currentBestResult = bestResults.find(result => result.testName === testName)
+		if (currentBestResult?.resultMetrics.wpm || 0 < wpm) {
+			const newBestResult = {
+				accessToken,
+				testName,
+				resultMetrics: { wpm, rawWpm, accuracy, consistency },
+			}
+			await setBestResultsMutation(newBestResult)
+			dispatch(setBestResults(newBestResult))
+		}
+	}
+
+	const addKeystrokes = async () => {
+		const { data } = await addKeystrokesMutation({ accessToken, keystrokes })
+		if (data) dispatch(setMetrics(data || null))
+	}
+
+	const defineAchievements = (): TAchievement[] => {
+		if (!achievements || !oldMetrics) return []
+
+		const completedIds = userAchievements?.map(ua => ua.achievement_id) || []
+		const completedSet = new Set(completedIds)
+
+		return achievements.filter(achievement => {
+			if (completedSet.has(achievement.id)) return false
+
+			switch (achievement.type) {
+				case 'keystrokes':
+					return oldMetrics.keystrokes + keystrokes >= achievement.target
+				default:
+					return false
+			}
+		})
+	}
+
+	const addCompletedAchievement = async (achievement: TAchievement): Promise<TUserAchievement | null> => {
+		const { id, title, description } = achievement
+		const { data } = await addCompletedAchievementMutation({
+			accessToken,
+			achievement_id: id,
+		})
+
+		return data
+			? {
+					achievement_id: id,
+					completion_date: data.completion_date,
+					title,
+					description,
+			  }
+			: null
+	}
+
 	useEffect(() => {
-		if (!accessToken || !currentExperience) return
-		if (isOpen) {
+		if (!isOpen || !accessToken) return
+
+		const completeTest = async () => {
 			const earnedXP = computeExperience({
 				hasPunctuation,
 				hasNumbers,
 				mode,
-				count:
-					[...wordOptions, ...timeOptions].find(({ enabled }) => enabled === true)?.count ||
-					wordOptions[0].count,
+				count: [...wordOptions, ...timeOptions].find(({ enabled }) => enabled)?.count || wordOptions[0].count,
 				wpm,
 				accuracy,
 				consistency,
@@ -103,50 +204,62 @@ const TypingResult: FC<TypingResultProps> = ({
 				xpMultiplier: 25,
 			})
 
-			// Добавляем опыт
-			;(async () => {
-				const { level, progress } = increaseExperience(earnedXP, currentExperience.progress)
+			let experienceForAchievements = 0
 
-				const { data } = await addExperience({
-					accessToken,
-					level: currentExperience.level + level,
-					progress,
-				})
+			await addActivityPoint()
+			await addBestResult()
+			await addKeystrokes()
 
-				if (data) dispatch(setExperience({ level: data.level, progress: data.progress }))
-			})()
-			// Добавляем очко активности
-			;(async () => {
-				const { data } = await setActivityMutation({ accessToken })
-
-				if (data) dispatch(setActivity(data))
-			})()
-
-			// Добавляем лучший результат
-			const testName = defineTestName()
-			const currentBestResult = bestResults.find(result => result.testName === testName)
-			if (currentBestResult?.resultMetrics.wpm || 0 < wpm) {
-				;(async () => {
-					const newBestResult = {
-						accessToken,
-						testName,
-						resultMetrics: { wpm, rawWpm, accuracy, consistency },
-					}
-					await setBestResultsMutation(newBestResult)
-					dispatch(setBestResults(newBestResult))
-				})()
+			const newAchievements = defineAchievements()
+			if (!newAchievements.length) {
+				showCompletionNotification(earnedXP)
+				return
 			}
 
-			dispatch(
-				setNotificationAction({
-					id: nanoid(10),
-					title: 'Test completed',
-					subtitle: `You have gained ${earnedXP} experience points`,
-					status: 'success',
-				})
-			)
+			const newUserAchievements: TUserAchievement[] = []
+
+			for (const achievement of newAchievements) {
+				const completed = await addCompletedAchievement(achievement)
+
+				if (!completed) continue
+
+				newUserAchievements.push(completed)
+				experienceForAchievements += achievement.experience_gained
+				showAchievementNotification(achievement.experience_gained)
+			}
+
+			await addExperience(earnedXP + experienceForAchievements)
+
+			dispatch(setUserAchievements([...(userAchievements || []), ...newUserAchievements]))
+
+			showCompletionNotification(earnedXP)
 		}
+
+		completeTest()
 	}, [isOpen, accessToken])
+
+	// Вспомогательные функции для уведомлений
+	const showAchievementNotification = (xp: number) => {
+		dispatch(
+			setNotificationAction({
+				id: nanoid(10),
+				title: 'New Achievement',
+				subtitle: `You have gained ${xp} experience points`,
+				status: 'success',
+			})
+		)
+	}
+
+	const showCompletionNotification = (xp: number) => {
+		dispatch(
+			setNotificationAction({
+				id: nanoid(10),
+				title: 'Test completed',
+				subtitle: `You have gained ${xp} experience points`,
+				status: 'success',
+			})
+		)
+	}
 
 	return isOpen ? (
 		<Modal

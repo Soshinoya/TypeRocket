@@ -8,6 +8,7 @@ CREATE TABLE
         description TEXT NOT NULL DEFAULT 'Hey there! I am using TypeRocket'
     );
 
+-- Настройки пользователя
 CREATE TABLE
     user_preferences (
         id SERIAL PRIMARY KEY,
@@ -15,6 +16,7 @@ CREATE TABLE
         currentThemeId VARCHAR(30)
     );
 
+-- Опыт
 CREATE TABLE
     experience (
         id SERIAL PRIMARY KEY,
@@ -23,6 +25,7 @@ CREATE TABLE
         progress INT DEFAULT 0
     );
 
+-- Лучшие результаты
 CREATE TABLE
     result_metrics (
         id SERIAL PRIMARY KEY,
@@ -44,22 +47,35 @@ CREATE TABLE
         PRIMARY KEY (user_id, test_name_id)
     );
 
+-- Достижения
+CREATE TABLE
+    user_metrics (
+        id SERIAL PRIMARY KEY,
+        user_id INT REFERENCES users (id) ON DELETE CASCADE,
+        last_activity_date DATE NOT NULL DEFAULT CURRENT_DATE,
+        streak SMALLINT NOT NULL DEFAULT 0,
+        keystrokes INT NOT NULL DEFAULT 0
+    );
+
 CREATE TABLE
     achievements (
         id SERIAL PRIMARY KEY,
         title VARCHAR(100) NOT NULL,
         description TEXT,
+        type VARCHAR(50) NOT NULL,
+        target SMALLINT NOT NULL,
         experience_gained INT DEFAULT 0
     );
 
 CREATE TABLE
     user_achievements (
         id SERIAL PRIMARY KEY,
-        user_id INT UNIQUE REFERENCES users (id) ON DELETE CASCADE,
-        achievement_id INT UNIQUE REFERENCES achievements (id) ON DELETE CASCADE,
+        user_id INT REFERENCES users (id) ON DELETE CASCADE,
+        achievement_id INT REFERENCES achievements (id) ON DELETE CASCADE,
         completion_date DATE NOT NULL DEFAULT CURRENT_DATE
     );
 
+-- Активность
 CREATE TABLE
     user_activity (
         user_id INT NOT NULL,
@@ -96,10 +112,20 @@ VALUES
     ('test_40w'),
     ('test_80w');
 
+INSERT INTO
+    achievements (title, description, type, target, experience_gained)
+VALUES
+    ('First quick print', 'Type 80 keystrokes', 'keystrokes', 80, 200),
+    ('Great pace', 'Type 160 keystrokes', 'keystrokes', 160, 400),
+    ('Keyboard shortcut I', 'Perform 1,000 keystrokes', 'keystrokes', 1000, 1000),
+    ('Keyboard shortcut II', 'Perform 2,500 keystrokes', 'keystrokes', 2500, 2500),
+    ('Daily Sprinter', 'Practice typing 3 days in a row', 'streak', 3, 3000),
+    ('Steel endurance', 'Practice for 7 days in a row', 'streak', 7, 5000);
+
 CREATE OR REPLACE FUNCTION upsert_best_result(
     p_user_id INT, 
     p_test_name VARCHAR(20)
-RETURNS VOID AS $$
+) RETURNS VOID AS $$
 DECLARE
     v_test_name_id INT;
     v_result_id INT;

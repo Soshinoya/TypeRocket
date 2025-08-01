@@ -81,3 +81,22 @@ export const getErrorMessage = (error: any): string => {
 	if (error?.data) return error.data
 	return 'Unknown error occurred'
 }
+
+export const getDaysDiff = (dateStr1: string, dateStr2: string) => {
+	const msPerDay = 24 * 60 * 60 * 1000 // Миллисекунд в сутках
+
+	// Парсим даты и проверяем их валидность
+	const date1 = new Date(dateStr1)
+	const date2 = new Date(dateStr2)
+
+	if (isNaN(date1.getTime())) {
+		throw new Error(`Некорректная дата: ${dateStr1}`)
+	}
+	if (isNaN(date2.getTime())) {
+		throw new Error(`Некорректная дата: ${dateStr2}`)
+	}
+
+	// Вычисляем разницу в миллисекундах и переводим в дни
+	const timeDiff = date2.getTime() - date1.getTime()
+	return Math.round(timeDiff / msPerDay)
+}

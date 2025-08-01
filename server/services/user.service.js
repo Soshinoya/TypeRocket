@@ -54,6 +54,15 @@ const userService = {
 			[result1.rows[0].id]
 		)
 
+		// Создаем строку в таблицах user_metrics
+		const result3 = await pool.query(
+			`
+            INSERT INTO user_metrics (user_id)
+            VALUES ($1);
+            `,
+			[result1.rows[0].id]
+		)
+
 		// Добавить обработчик ошибки, если не получится создать строку в experience
 
 		return result1.rows[0]

@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Activity } from 'react-activity-calendar'
 
 import { TUser, TUserBestResults, TUserExperience } from 'types/User'
+import { TUserMetrics, TAchievement, TUserAchievement } from 'types/Public'
 
 type TInitialStateType = {
 	accessToken: string
@@ -9,6 +10,9 @@ type TInitialStateType = {
 	experience: TUserExperience | null
 	activity: Activity[] | null
 	bestResults: TUserBestResults[]
+	metrics: TUserMetrics | null
+	achievements: TAchievement[] | null
+	userAchievements: TUserAchievement[] | null
 }
 
 const getInitialState = (): TInitialStateType => {
@@ -38,6 +42,9 @@ const getInitialState = (): TInitialStateType => {
 			{ testName: 'test_60s', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
 			{ testName: 'test_120s', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
 		],
+		metrics: null,
+		achievements: null,
+		userAchievements: null,
 	}
 }
 
@@ -104,8 +111,29 @@ const currentUserSlice = createSlice({
 				bestResults: updatedBestResults,
 			}
 		},
+		setMetrics(state: TInitialStateType, action: PayloadAction<TUserMetrics | null>) {
+			state.metrics = action.payload
+			setStateInLocalStorage(state, 'metrics', action.payload)
+		},
+		setAchievements(state: TInitialStateType, action: PayloadAction<TAchievement[] | null>) {
+			state.achievements = action.payload
+			setStateInLocalStorage(state, 'achievements', action.payload)
+		},
+		setUserAchievements(state: TInitialStateType, action: PayloadAction<TUserAchievement[] | null>) {
+			state.userAchievements = action.payload
+			setStateInLocalStorage(state, 'userAchievements', action.payload)
+		},
 	},
 })
 
-export const { setCurrentUser, setAccessToken, setExperience, setActivity, setBestResults } = currentUserSlice.actions
+export const {
+	setCurrentUser,
+	setAccessToken,
+	setExperience,
+	setActivity,
+	setBestResults,
+	setMetrics,
+	setAchievements,
+	setUserAchievements,
+} = currentUserSlice.actions
 export default currentUserSlice.reducer

@@ -11,7 +11,7 @@ const getAchievements = async (req, res, errorsHandler) => {
 
 const getCompletedAchievements = async (req, res, errorsHandler) => {
 	try {
-		const { userId } = req.params
+		const { userId } = req.body
 		const result = await achievementService.getCompletedAchievements(userId)
 		res.json(result)
 	} catch (err) {
@@ -21,8 +21,8 @@ const getCompletedAchievements = async (req, res, errorsHandler) => {
 
 const addCompletedAchievement = async (req, res, errorsHandler) => {
 	try {
-		const { userId, achievementId } = req.body
-		const result = await achievementService.addCompletedAchievement(userId, achievementId)
+		const { userId, achievement_id } = req.body
+		const result = await achievementService.addCompletedAchievement(userId, achievement_id)
 		res.json(result)
 	} catch (err) {
 		errorsHandler(err, res)

@@ -12,6 +12,8 @@ import { refreshAccessToken, login, register, deleteUser } from './controllers/u
 
 import { getBestResult, getAllBestResult, setBestResult } from './controllers/results.controller.js'
 
+import { getMetrics, updateKeystrokes, updateStreak } from './controllers/userMetrics.controller.js'
+
 import {
 	addCompletedAchievement,
 	getAchievements,
@@ -96,6 +98,57 @@ app.patch(
 	async (req, res) => await addExperience(req, res, errorsHandler)
 )
 
+// Выборка лучшего результата
+app.get('/user/get_best_result', async (req, res) => await getBestResult(req, res, errorsHandler))
+
+// Выборка всех лучших результатов
+app.get('/user/get_all_best_results', async (req, res) => await getAllBestResult(req, res, errorsHandler))
+
+// Добавление лучшего результата
+app.post(
+	'/user/set_best_result',
+	async (req, res, next) => await authMiddleware.verifyAccessToken(req, res, next),
+	async (req, res) => await setBestResult(req, res, errorsHandler)
+)
+
+// Выборка всех достижений
+app.get('/user/get_achievements', async (req, res) => await getAchievements(req, res, errorsHandler))
+
+// Выборка полученных достижений
+app.post(
+	'/user/get_completed_achievements',
+	async (req, res, next) => await authMiddleware.verifyAccessToken(req, res, next),
+	async (req, res) => await getCompletedAchievements(req, res, errorsHandler)
+)
+
+// Добавление полученного достижения
+app.post(
+	'/user/add_completed_achievement',
+	async (req, res, next) => await authMiddleware.verifyAccessToken(req, res, next),
+	async (req, res) => await addCompletedAchievement(req, res, errorsHandler)
+)
+
+// Выборка метрик
+app.post(
+	'/user/get_metrics',
+	async (req, res, next) => await authMiddleware.verifyAccessToken(req, res, next),
+	async (req, res) => await getMetrics(req, res, errorsHandler)
+)
+
+// Обновление метрики ежедневного входа
+app.patch(
+	'/user/update_metrics_streak',
+	async (req, res, next) => await authMiddleware.verifyAccessToken(req, res, next),
+	async (req, res) => await updateStreak(req, res, errorsHandler)
+)
+
+// Обновление метрики нажатия клавиш
+app.patch(
+	'/user/update_metrics_keystrokes',
+	async (req, res, next) => await authMiddleware.verifyAccessToken(req, res, next),
+	async (req, res) => await updateKeystrokes(req, res, errorsHandler)
+)
+
 // Получить данные календаря активности
 app.post(
 	'/user/get_activity',
@@ -108,28 +161,6 @@ app.post(
 	'/user/set_activity',
 	async (req, res, next) => await authMiddleware.verifyAccessToken(req, res, next),
 	async (req, res) => await setActivity(req, res, errorsHandler)
-)
-
-app.get('/user/get_achievements', async (req, res) => await getAchievements(req, res, errorsHandler))
-
-app.get(
-	'/user/get_completed_achievements/:userId',
-	async (req, res) => await getCompletedAchievements(req, res, errorsHandler)
-)
-
-app.post('/user/add_completed_achievement', async (req, res) => await addCompletedAchievement(req, res, errorsHandler))
-
-// Выборка лучшего результата
-app.get('/user/get_best_result', async (req, res) => await getBestResult(req, res, errorsHandler))
-
-// Выборка всех лучших результатов
-app.get('/user/get_all_best_results', async (req, res) => await getAllBestResult(req, res, errorsHandler))
-
-// Добавление лучшего результата
-app.post(
-	'/user/set_best_result',
-	async (req, res, next) => await authMiddleware.verifyAccessToken(req, res, next),
-	async (req, res) => await setBestResult(req, res, errorsHandler)
 )
 
 export { app, pool, SERVER_PORT }

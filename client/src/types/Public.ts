@@ -2,7 +2,16 @@ export type TAchievement = {
 	id: number
 	title: string
 	description: string
-	experienceGained: number
+	type: string
+	target: number
+	experience_gained: number
+}
+
+export type TUserAchievement = {
+	achievement_id: number
+	completion_date: string
+	title: string
+	description: string
 }
 
 export type TResultMetrics = {
@@ -10,6 +19,12 @@ export type TResultMetrics = {
 	rawWpm: number
 	accuracy: number
 	consistency: number
+}
+
+export type TUserMetrics = {
+	last_activity_date: string
+	streak: number
+	keystrokes: number
 }
 
 // export type TTestName =

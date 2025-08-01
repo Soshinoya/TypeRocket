@@ -50,6 +50,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	const [t1, setT1] = useState(0)
 	const [timeBetweenKeyStrokes, setTimeBetweenKeyStrokes] = useState<number[]>([])
 
+	const [keystrokes, setKeystrokes] = useState(0)
 	const [currentEvent, setCurrentEvent] = useState<KeyboardEvent['key']>()
 	const [correctWords, setCorrectWords] = useState<{ index: number; word: string }[]>([])
 	const [typedWords, setTypedWords] = useState<{ index: number; word: string }[]>([])
@@ -65,6 +66,9 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	// Keydown handler
 	const handleKeyDown = (event: KeyboardEvent) => {
 		setCurrentEvent(event.key)
+
+		setKeystrokes(keystrokes + 1)
+
 		incorrectLetterAudio.pause()
 		incorrectLetterAudio.currentTime = 0
 		correctLetterAudio.pause()
@@ -302,6 +306,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		setTimeBetweenKeyStrokes([])
 		setT1(0)
 		setWpmPerTimeArr([])
+		setKeystrokes(0)
 		setCorrectWords([])
 		setTypedWords([])
 		document.querySelectorAll('.words [word-id]').forEach(elem => {
@@ -370,6 +375,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 				errorCount={errorCount}
 				time={timer}
 				wpmPerTimeArr={wpmPerTimeArr}
+				keystrokes={keystrokes}
 				isOpen={isResultOpen}
 				setIsOpen={setIsResultOpen}
 			/>

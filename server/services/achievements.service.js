@@ -4,7 +4,7 @@ const achievementService = {
 	// Выборка всех достижений
 	getAchievements: async () => {
 		const result = await pool.query(`SELECT * FROM achievements`)
-		console.log('result: ', result)
+		console.log('getAchievements result: ', result)
 		return result.rows
 	},
 
@@ -16,8 +16,7 @@ const achievementService = {
                 ua.achievement_id,
                 ua.completion_date,
                 a.title,
-                a.description,
-                a.experience_gained
+                a.description
             FROM user_achievements ua
             LEFT JOIN achievements a 
                 ON ua.achievement_id = a.id
@@ -25,7 +24,7 @@ const achievementService = {
             `,
 			[userId]
 		)
-		console.log('result: ', result)
+		console.log('getCompletedAchievements result: ', result)
 		return result.rows
 	},
 
@@ -35,12 +34,13 @@ const achievementService = {
 			`
             INSERT INTO
                 user_achievements (user_id, achievement_id)
-            VALUES ($1, $2);
+            VALUES ($1, $2)
+			RETURNING *;
             `,
 			[userId, achievementId]
 		)
-		console.log('result: ', result)
-		return result
+		console.log('addCompletedAchievement result: ', result)
+		return result.rows[0]
 	},
 }
 

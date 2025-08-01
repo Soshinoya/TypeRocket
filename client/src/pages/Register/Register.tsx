@@ -6,13 +6,22 @@ import { useAppDispatch } from 'store/index'
 
 import { I_Notification } from 'features/Notification/types'
 import { TUserCredentials } from 'types/User'
-import { setAccessToken, setActivity, setCurrentUser, setExperience } from 'features/CurrentUser/reducer'
+import {
+	setAccessToken,
+	setAchievements,
+	setActivity,
+	setCurrentUser,
+	setExperience,
+	setMetrics,
+} from 'features/CurrentUser/reducer'
 
 import { setNotificationAction } from 'features/Notification/reducer'
 
 import { useRegisterMutation } from 'api/User/UserApiSlice'
 import { useGetExperienceMutation } from 'api/Experience/ExperienceApiSlice'
 import { useSetActivityMutation } from 'api/Activity/ActivityApiSlice'
+import { useLazyGetAchievementsQuery } from 'api/Achievements/Achievements'
+import { useGetMetricsMutation } from 'api/UserMetrics/UserMetrics'
 
 import { Paths } from 'utils/paths'
 import { getErrorMessage } from 'utils/utils'
@@ -32,6 +41,10 @@ const Register: FC = () => {
 	const [getExperience] = useGetExperienceMutation()
 
 	const [setActivityMutation] = useSetActivityMutation()
+
+	const [getMetrics] = useGetMetricsMutation()
+
+	const [getAchievementsQuery] = useLazyGetAchievementsQuery()
 
 	const [userCredentials, setUserCredentials] = useState<TUserCredentials>({
 		username: '',
@@ -87,6 +100,18 @@ const Register: FC = () => {
 
 			if (newActivity) {
 				dispatch(setActivity(newActivity))
+			}
+
+			const { data: newMetrics } = await getMetrics({ accessToken: newUser.accessToken })
+
+			if (newMetrics) {
+				dispatch(setMetrics(newMetrics))
+			}
+
+			const { data: newAchievements } = await getAchievementsQuery()
+
+			if (newAchievements) {
+				dispatch(setAchievements(newAchievements))
 			}
 
 			dispatch(setCurrentUser(newUser.user))

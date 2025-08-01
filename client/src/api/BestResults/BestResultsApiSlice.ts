@@ -9,14 +9,6 @@ export const BestResultsApiSlice = createApi({
 	baseQuery: baseQueryWithReauth,
 	tagTypes: ['BestResults'],
 	endpoints: builder => ({
-		// getExperience: builder.mutation<TUserExperience, { accessToken: string }>({
-		// 	query: accessToken => ({
-		// 		url: '/get_experience',
-		// 		method: 'POST',
-		// 		body: accessToken,
-		// 	}),
-		// 	invalidatesTags: ['BestResults'],
-		// }),
 		setBestResults: builder.mutation<void, { accessToken: string } | TUserBestResults>({
 			query: params => ({
 				url: '/set_best_result',

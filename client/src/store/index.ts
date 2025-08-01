@@ -9,10 +9,12 @@ import currentUser from 'features/CurrentUser/reducer'
 import { ExperienceApiSlice } from 'api/Experience/ExperienceApiSlice'
 import { ActivityApiSlice } from 'api/Activity/ActivityApiSlice'
 import { BestResultsApiSlice } from 'api/BestResults/BestResultsApiSlice'
+import { AchievementsApiSlice } from 'api/Achievements/Achievements'
 
 import TypingZone from 'features/TypingZone/reducer'
 import Notifications from 'features/Notification/reducer'
 import Themes from 'features/Themes/reducer'
+import { UserMetricsApiSlice } from 'api/UserMetrics/UserMetrics'
 
 const reducer = combineReducers({
 	TypingZone,
@@ -21,6 +23,8 @@ const reducer = combineReducers({
 	[ExperienceApiSlice.reducerPath]: ExperienceApiSlice.reducer,
 	[ActivityApiSlice.reducerPath]: ActivityApiSlice.reducer,
 	[BestResultsApiSlice.reducerPath]: BestResultsApiSlice.reducer,
+	[UserMetricsApiSlice.reducerPath]: UserMetricsApiSlice.reducer,
+	[AchievementsApiSlice.reducerPath]: AchievementsApiSlice.reducer,
 	Notifications,
 	Themes,
 })
@@ -32,7 +36,9 @@ const store = configureStore({
 			UserApiSlice.middleware,
 			ExperienceApiSlice.middleware,
 			ActivityApiSlice.middleware,
-			BestResultsApiSlice.middleware
+			BestResultsApiSlice.middleware,
+			UserMetricsApiSlice.middleware,
+			AchievementsApiSlice.middleware
 		),
 })
 

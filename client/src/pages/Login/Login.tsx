@@ -8,11 +8,21 @@ import { TUserCredentials } from 'types/User'
 
 import { I_Notification } from 'features/Notification/types'
 import { setNotificationAction } from 'features/Notification/reducer'
-import { setAccessToken, setCurrentUser, setExperience, setActivity } from 'features/CurrentUser/reducer'
+import {
+	setAccessToken,
+	setCurrentUser,
+	setExperience,
+	setActivity,
+	setAchievements,
+	setUserAchievements,
+	setMetrics,
+} from 'features/CurrentUser/reducer'
 
 import { useLoginMutation } from 'api/User/UserApiSlice'
 import { useGetExperienceMutation } from 'api/Experience/ExperienceApiSlice'
 import { useGetActivityMutation } from 'api/Activity/ActivityApiSlice'
+import { useLazyGetAchievementsQuery, useGetCompletedAchievementsMutation } from 'api/Achievements/Achievements'
+import { useGetMetricsMutation } from 'api/UserMetrics/UserMetrics'
 
 import { Paths } from 'utils/paths'
 import { getErrorMessage } from 'utils/utils'
@@ -32,6 +42,12 @@ const Login: FC = () => {
 	const [getExperience] = useGetExperienceMutation()
 
 	const [getActivity] = useGetActivityMutation()
+
+	const [getMetrics] = useGetMetricsMutation()
+
+	const [getAchievements] = useLazyGetAchievementsQuery()
+
+	const [getUserAchievements] = useGetCompletedAchievementsMutation()
 
 	const [userCredentials, setUserCredentials] = useState<Omit<TUserCredentials, 'username' | 'repeatPassword'>>({
 		email: '',
@@ -83,6 +99,24 @@ const Login: FC = () => {
 
 			if (newActivity) {
 				dispatch(setActivity(newActivity))
+			}
+
+			const { data: newMetrics } = await getMetrics({ accessToken: newUser.accessToken })
+
+			if (newMetrics) {
+				dispatch(setMetrics(newMetrics))
+			}
+
+			const { data: newAchievements } = await getAchievements()
+
+			if (newAchievements) {
+				dispatch(setAchievements(newAchievements))
+			}
+
+			const { data: newUserAchievements } = await getUserAchievements({ accessToken: newUser.accessToken })
+
+			if (newUserAchievements) {
+				dispatch(setUserAchievements(newUserAchievements))
 			}
 
 			// Загрузить лучшие результаты
