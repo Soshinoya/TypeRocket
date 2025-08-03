@@ -43,3 +43,28 @@
         }
     }
 }
+
+@media (max-width: 480px) {
+    .register {
+        &__title,
+        &__subtitle {
+            text-align: center;
+        }
+
+        &__title {
+            font-size: 30px;
+        }
+
+        &__subtitle {
+            font-size: 14px;
+        }
+    }
+
+    .register-form {
+        &__text {
+            flex-direction: column;
+            text-align: center;
+            gap: 10px;
+        }
+    }
+}
