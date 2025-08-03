@@ -16,6 +16,8 @@ import { selectCurrentTheme } from 'features/Themes/selectors'
 
 import { TAchievement } from 'types/Public'
 
+import { limitText } from 'utils/utils'
+
 import Experience from 'components/User/Experience/Experience'
 import Achievement from 'components/Achievement/Achievement'
 import Progressbar from 'components/Progressbar/Progressbar'
@@ -52,6 +54,16 @@ const Profile: FC<ProfileProps> = () => {
 		return userAchievements.find(({ achievement_id }) => achievement_id === id) || null
 	}
 
+	const limitTextHandler = () => {
+		let text = limitText(currentUser?.username || 'TypeRocket User', 30)
+		if (window.matchMedia('(max-width: 920px)').matches) {
+			text = limitText(currentUser?.username || 'TypeRocket User', 10)
+		} else if (window.matchMedia('(max-width: 1060px)').matches) {
+			text = limitText(currentUser?.username || 'TypeRocket User', 20)
+		}
+		return text
+	}
+
 	return (
 		<div className={s['profile__wrapper']}>
 			<div className={s['header']}>
@@ -60,15 +72,13 @@ const Profile: FC<ProfileProps> = () => {
 						<UserIcon isStroke={true} color={primary} />
 					</div>
 					<div className={s['profile__inner']}>
-						<h2 className={s['profile__name']}>{currentUser?.username || 'TypeRocket User'}</h2>
+						<h2 className={s['profile__name']}>{limitTextHandler()}</h2>
 						{userFormattedCreationDate && (
 							<p className={s['profile__text']}>Joined {userFormattedCreationDate}</p>
 						)}
 					</div>
 				</div>
-				<div className={s['experience']}>
-					<Experience info={experience || { level: 0, progress: 0 }} />
-				</div>
+				<Experience info={experience || { level: 0, progress: 0 }} />
 			</div>
 			<div className={s['detailed-info']}>
 				<div className={s['bio']}>
@@ -162,7 +172,9 @@ const Profile: FC<ProfileProps> = () => {
 						<h2 className={s['achievements-header__title']}>Achievements</h2>
 						{userAchievements ? (
 							<div className={s['achievements-header__progress']}>
-								Completed {userAchievements.length}/{achievements.length}{' '}
+								<p>
+									Completed {userAchievements.length}/{achievements.length}{' '}
+								</p>
 								<span>{(achievements.length / userAchievements.length) * 10}%</span>
 								<Progressbar percentage={(userAchievements.length / achievements.length) * 100} />
 							</div>

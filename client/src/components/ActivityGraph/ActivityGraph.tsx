@@ -2,6 +2,8 @@ import React, { FC, useMemo } from 'react'
 import ActivityCalendar, { Activity, Props as ActivityCalendarProps } from 'react-activity-calendar'
 import { Tooltip } from 'react-tooltip'
 
+import s from './ActivityGraph.module.scss'
+
 type ActivityGraphProps = {
 	dataTooltipId: string
 	dataTooltipHTML?: string
@@ -60,7 +62,7 @@ const ActivityGraph: FC<ActivityGraphProps> = ({ dataTooltipId, dataTooltipHTML,
 	}, [config.data, year])
 
 	return (
-		<div>
+		<div className={s['activity-calendar__wrapper']}>
 			<ActivityCalendar
 				{...config}
 				data={data}

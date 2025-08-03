@@ -100,3 +100,11 @@ export const getDaysDiff = (dateStr1: string, dateStr2: string) => {
 	const timeDiff = date2.getTime() - date1.getTime()
 	return Math.round(timeDiff / msPerDay)
 }
+
+export const limitText = (text: string, maxLength: number, ending?: string) => {
+	if (text.length > maxLength) {
+		return `${text.slice(0, maxLength - 3)}${ending || '...'}`
+	}
+
+	return text
+}

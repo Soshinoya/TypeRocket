@@ -27,3 +27,31 @@
         height: 100px;
     }
 }
+
+@media (max-width: 768px) {
+    .experience {
+        &__diagram {
+            display: none;
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .experience {
+        &__level {
+            font-size: 24px;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .experience {
+        &__inner {
+            width: 100%;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+    }
+}

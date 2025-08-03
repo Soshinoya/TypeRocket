@@ -1,0 +1,22 @@
+.activity-calendar {
+    &__wrapper {
+        max-width: 100%;
+        overflow-x: scroll;
+    }
+}
+
+@media (max-width: 1500px) {
+    .activity-calendar {
+        &__wrapper {
+            width: 50%;
+        }
+    }
+}
+
+@media (max-width: 1024px) {
+    .activity-calendar {
+        &__wrapper {
+            width: 100%;
+        }
+    }
+}

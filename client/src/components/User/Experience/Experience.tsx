@@ -17,7 +17,9 @@ const Experience: FC<ExperienceProps> = ({ info: { level, progress } }) => {
 				<h2 className={s['experience__level']}>Level {level}</h2>
 				<p className={s['experience__text']}>{progress} / 1000</p>
 			</div>
-			<CircularProgress value={Math.floor((progress / 1000) * 100)} />
+			<div className={s['experience__diagram']}>
+				<CircularProgress value={Math.floor((progress / 1000) * 100)} />
+			</div>
 		</div>
 	)
 }
