@@ -43,7 +43,8 @@ const pool = new Pool({
 })
 
 const corsOptions = {
-	origin: 'http://localhost:5173',
+	// origin: 'http://localhost:5173',
+	origin: 'https://799f91kk-5173.euw.devtunnels.ms',
 	methods: ['GET', 'POST', 'PATCH', 'DELETE'],
 	credentials: true,
 	allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],

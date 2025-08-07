@@ -13,6 +13,25 @@
     gap: 50px;
 }
 
+.typing-zone-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 55dvw;
+    color: var(--accent);
+
+    &__settings {
+        width: 28px;
+        height: 28px;
+        cursor: pointer;
+    }
+
+    &__countdown {
+        display: block;
+        font-size: 17px;
+    }
+}
+
 .words {
     position: relative;
     width: 55dvw;
@@ -87,5 +106,26 @@
             border: 1px solid var(--primary);
             border-radius: 10px;
         }
+    }
+}
+
+@media (max-width: 800px) {
+    .typing-zone-header,
+    .words {
+        width: 80%;
+    }
+}
+
+@media (max-width: 600px) {
+    .typing-zone-header,
+    .words {
+        width: 90%;
+    }
+}
+
+@media (max-width: 480px) {
+    .typing-zone-header,
+    .words {
+        width: 100%;
     }
 }

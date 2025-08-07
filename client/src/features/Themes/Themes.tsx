@@ -76,6 +76,7 @@ const Themes: FC<ThemesProps> = ({ isOpen, setIsOpen }) => {
 		<Modal
 			isOpen={isOpen}
 			setIsOpen={setIsOpen}
+			style={{ padding: 0, height: 'auto' }}
 			children={
 				<ul ref={themesList}>
 					{allThemes.map(theme => (

@@ -4,6 +4,15 @@
 .header {
     display: flex;
     justify-content: space-between;
+
+    &__logo {
+        display: inline-block;
+
+        svg {
+            width: 100%;
+            height: auto;
+        }
+    }
 }
 
 .header-nav {
@@ -16,5 +25,19 @@
     &__link {
         @extend %body-default-action;
         color: var(--accent);
+    }
+}
+
+@media (max-width: 600px) {
+    .header {
+        gap: 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        &__logo svg {
+            width: 80%;
+        }
     }
 }

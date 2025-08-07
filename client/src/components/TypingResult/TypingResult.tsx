@@ -265,7 +265,11 @@ const TypingResult: FC<TypingResultProps> = ({
 		<Modal
 			isOpen={isOpen}
 			setIsOpen={setIsOpen}
-			style={{ width: 'auto', height: 'auto', padding: '30px' }}
+			style={{
+				width: window.matchMedia('(max-width: 1024px)').matches ? '90%' : 'auto',
+				height: 'auto',
+				padding: '30px',
+			}}
 			children={
 				<>
 					<div className={styles['result-header']}>

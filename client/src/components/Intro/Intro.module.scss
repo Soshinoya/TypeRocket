@@ -18,6 +18,10 @@
 }
 
 .logo {
+    svg {
+        width: 15dvw;
+    }
+
     &__wrapper {
         display: flex;
         flex-direction: column;
@@ -46,5 +50,30 @@
     }
     100% {
         transform: translateY(-100px);
+    }
+}
+
+@media (max-width: 768px) {
+    .logo {
+        svg {
+            width: 25dvw;
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .logo {
+        &__text {
+            font-size: 14px;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .logo {
+        svg {
+            width: 35dvw;
+            height: auto;
+        }
     }
 }

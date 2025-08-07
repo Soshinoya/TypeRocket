@@ -16,7 +16,7 @@
     transition: background-color 0.3s variables.$transitionTimingFunc;
 
     &:hover {
-        background-color: rgba(var(--primary), 0.6);
+        background-color: rgba(var(--rgb-primary), 0.6);
     }
 
     &--outline {
@@ -25,7 +25,14 @@
         color: var(--primary);
 
         &:hover {
-            background-color: rgba(var(--primary), 0.2);
+            background-color: rgba(var(--rgb-primary), 0.2);
         }
+    }
+}
+
+@media (max-width: 600px) {
+    .button {
+        font-size: 14px;
+        padding: 10px 15px;
     }
 }

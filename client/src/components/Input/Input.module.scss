@@ -77,3 +77,9 @@
     font-size: 14px;
     color: var(--error-color);
 }
+
+@media (max-width: 480px) {
+    .input {
+        font-size: 14px;
+    }
+}

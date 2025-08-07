@@ -22,7 +22,7 @@ const Header: FC<HeaderProps> = () => {
 
 	return (
 		<header className={styles['header']}>
-			<Link to={Paths.root} viewTransition>
+			<Link className={styles['header__logo']} to={Paths.root} viewTransition>
 				<Logo />
 			</Link>
 			<nav className={styles['header-nav']}>
@@ -34,6 +34,12 @@ const Header: FC<HeaderProps> = () => {
 							</Link>
 							<Link to={Paths.profile} className={styles['header-nav__link']} viewTransition>
 								<UserIcon style={{ width: '16px', height: '16px' }} />
+							</Link>
+						</>
+					) : window.matchMedia('(max-width: 480px)').matches ? (
+						<>
+							<Link to={Paths.login} className={styles['header-nav__link']} viewTransition>
+								<UserIcon style={{ width: '20px', height: '20px' }} />
 							</Link>
 						</>
 					) : (

@@ -42,7 +42,7 @@ const ConfigBar: FC<ConfigBarProps> = () => {
 
 	const [currentModeOptions, setCurrentModeOptions] = useState<I_ModeOption[]>(wordOptions)
 
-	const [isModalOpen, setIsModalOpen] = useState(false)
+	const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false)
 
 	useEffect(() => {
 		const wordsEl = document.querySelector('.words') as HTMLElement
@@ -59,7 +59,6 @@ const ConfigBar: FC<ConfigBarProps> = () => {
 
 	const modeClickHandler = (mode: Mode) => {
 		if (mode === currentMode) return
-
 		dispatch(setModeAction(mode))
 	}
 
@@ -80,10 +79,10 @@ const ConfigBar: FC<ConfigBarProps> = () => {
 		}
 	}
 
-	return (
+	return window.matchMedia('(min-width: 1025px)').matches ? (
 		<>
 			<div className={styles['config-bar']}>
-				<p className={styles['config-bar-item']} onClick={() => setIsModalOpen(true)}>
+				<p className={styles['config-bar-item']} onClick={() => setIsLanguageModalOpen(true)}>
 					{currentLanguage.name}
 				</p>
 				<div className={styles['separator']}></div>
@@ -140,8 +139,9 @@ const ConfigBar: FC<ConfigBarProps> = () => {
 				</div>
 			</div>
 			<Modal
-				isOpen={isModalOpen}
-				setIsOpen={setIsModalOpen}
+				isOpen={isLanguageModalOpen}
+				setIsOpen={setIsLanguageModalOpen}
+				style={{ padding: 0 }}
 				children={
 					<ul>
 						{Object.values(languages)
@@ -150,7 +150,7 @@ const ConfigBar: FC<ConfigBarProps> = () => {
 									id: language.id,
 									title: language.name,
 									onClick: () => {
-										setIsModalOpen(false)
+										setIsLanguageModalOpen(false)
 										dispatch(setLanguageAction(language))
 									},
 								}
@@ -164,6 +164,8 @@ const ConfigBar: FC<ConfigBarProps> = () => {
 				}
 			/>
 		</>
+	) : (
+		<></>
 	)
 }
 

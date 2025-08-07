@@ -6,18 +6,25 @@ import { Mode, T_Word, T_CurrentLetterRect, I_ModeOption } from './types'
 import { setTextAction, updateText } from './reducer'
 import { selectMode, selectText, selectTimeOptions } from './selectors'
 
+import useClickOutside from 'hooks/useClickOutside'
+
 import { calculateWPM, calculateRawWPM, calculateAcc, calculateConsistency } from 'utils/calculateStats'
 import { generateInitialTextArr, updateWords, closure } from './utils'
+
+import MobileConfigBar from 'features/MobileConfigBar/MobileConfigBar'
 
 import TypingResult from 'components/TypingResult/TypingResult'
 import BlinkingCursor from 'components/BlinkingCursor/BlinkingCursor'
 
 import RestartIcon from 'components/icons/RestartIcon/RestartIcon'
+import Settings from 'components/icons/Settings/Settings'
 
 import styles from './TypingZone.module.scss'
 
 import hitAudio from 'assets/audio/error1_1.wav'
 import clickAudio from 'assets/audio/click4_11.wav'
+import { setNotificationAction } from 'features/Notification/reducer'
+import { nanoid } from '@reduxjs/toolkit'
 
 const incorrectLetterAudio = new Audio(hitAudio)
 const correctLetterAudio = new Audio(clickAudio)
@@ -35,11 +42,15 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	// Local states
 	const wordsElRef = useRef<HTMLDivElement | null>(null)
 	const restartIconElRef = useRef<HTMLDivElement | null>(null)
+	const hiddenInputElRef = useRef<HTMLInputElement | null>(null)
 
 	const [wordsElWidth, setWordsElWidth] = useState(0)
 	// const [currentLetterRect, setCurrentLetterRect] = useState<T_CurrentLetterRect>({ top: '0px', left: '0px' })
 	const [currentLetterRect, setCurrentLetterRect] = useState<T_CurrentLetterRect>({ left: '0px' })
 	const [isResultOpen, setIsResultOpen] = useState(false)
+	const [isMobileConfigOpen, setIsMobileConfigOpen] = useState(false)
+	const [isMobileKeyboardOpen, setIsMobileKeyboardOpen] = useState(false)
+	const [mobileKeyboardLastValue, setMobileKeyboardLastValue] = useState('')
 	const [wpm, setWpm] = useState(0)
 	const [rawWpm, setRawWpm] = useState(0)
 	const [acc, setAcc] = useState(0)
@@ -63,9 +74,13 @@ const TypingZone: FC<TypingZoneProps> = () => {
 
 	const { changeGlobalIndex, updateLetterState } = closure(textArr, globalIndex, setGlobalIndex, setTextArr)
 
+	useClickOutside(wordsElRef, isClickOutsideMobileKeyboard => setIsMobileKeyboardOpen(!isClickOutsideMobileKeyboard))
+
 	// Keydown handler
-	const handleKeyDown = (event: KeyboardEvent) => {
-		setCurrentEvent(event.key)
+	const handleKeyDown = (event?: KeyboardEvent | string) => {
+		let key = typeof event === 'string' ? event : event?.key || ''
+
+		setCurrentEvent(key)
 
 		setKeystrokes(keystrokes + 1)
 
@@ -74,12 +89,12 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		correctLetterAudio.pause()
 		correctLetterAudio.currentTime = 0
 
-		if (event.key === 'Backspace') {
+		if (key === 'Backspace') {
 			changeGlobalIndex('decrement')
 			return
 		}
 
-		if (event.key.length === 1) {
+		if (key.length === 1) {
 			startTyping()
 
 			// Recording the time between keystrokes
@@ -92,7 +107,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 
 			const currentLetter = textArr[lineIndex]?.[wordIndex]?.letters?.[letterIndex]
 
-			if (currentLetter?.key === event.key) {
+			if (currentLetter?.key === key) {
 				updateLetterState('correct')
 				correctLetterAudio.play()
 
@@ -114,6 +129,35 @@ const TypingZone: FC<TypingZoneProps> = () => {
 				endTyping()
 			}
 		}
+	}
+
+	const hiddenInputListener = (e: Event) => {
+		if (!e) return
+		// @ts-ignore
+		const currentValue = e.target?.value
+
+		handleKeyDown(currentValue)
+
+		// if (currentValue.length > mobileKeyboardLastValue.length) {
+		// 	const newChars = currentValue.slice(mobileKeyboardLastValue.length)
+
+		// 	dispatch(
+		// 		setNotificationAction({
+		// 			id: nanoid(10),
+		// 			title: currentValue,
+		// 			subtitle: newChars,
+		// 			status: 'info',
+		// 		})
+		// 	)
+
+		// 	for (const char of newChars) {
+		// 		handleKeyDown(char)
+		// 	}
+		// }
+
+		// @ts-ignore
+		hiddenInputElRef.current.value = ''
+		setMobileKeyboardLastValue('')
 	}
 
 	useEffect(() => {
@@ -168,10 +212,35 @@ const TypingZone: FC<TypingZoneProps> = () => {
 
 	// Key event listener
 	useEffect(() => {
-		if (isResultOpen) return
-		document.addEventListener('keydown', handleKeyDown)
-		return () => document.removeEventListener('keydown', handleKeyDown)
-	}, [globalIndex, currentMode, isResultOpen, textArr])
+		if (isResultOpen || isMobileConfigOpen) return
+		if ('ontouchstart' in window) {
+			if (!hiddenInputElRef.current) return
+			hiddenInputElRef.current.addEventListener('input', hiddenInputListener)
+
+			hiddenInputElRef.current.addEventListener('keydown', e => {
+				setCurrentEvent(e.key)
+			})
+
+			hiddenInputElRef.current.addEventListener('paste', e => {
+				e.preventDefault()
+			})
+		} else {
+			document.addEventListener('keydown', handleKeyDown)
+		}
+		return () => {
+			if ('ontouchstart' in window) {
+				hiddenInputElRef.current?.removeEventListener('input', hiddenInputListener)
+				hiddenInputElRef.current?.removeEventListener('keydown', e => {
+					setCurrentEvent(e.key)
+				})
+				hiddenInputElRef.current?.removeEventListener('paste', e => {
+					e.preventDefault()
+				})
+			} else {
+				document.removeEventListener('keydown', handleKeyDown)
+			}
+		}
+	}, [globalIndex, currentMode, isResultOpen, isMobileConfigOpen, textArr])
 
 	// Starting the timer
 	useEffect(() => {
@@ -259,6 +328,15 @@ const TypingZone: FC<TypingZoneProps> = () => {
 		return () => document.removeEventListener('keydown', tabPressHandler)
 	}, [restartIconElRef])
 
+	useEffect(() => {
+		if (!hiddenInputElRef.current) return
+		if (isMobileKeyboardOpen) {
+			hiddenInputElRef.current.focus()
+		} else {
+			hiddenInputElRef.current.blur()
+		}
+	}, [isMobileKeyboardOpen])
+
 	const restartIconHandler = () => {
 		dispatch(setTextAction(updateText({ ...store.getState().TypingZone }, wordsElWidth)))
 		resetTyping()
@@ -266,7 +344,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 
 	// The beginning of the test
 	const startTyping = () => {
-		if (isResultOpen) return
+		if (isResultOpen || isMobileConfigOpen) return
 		setIsTimerActive(true)
 	}
 
@@ -318,7 +396,27 @@ const TypingZone: FC<TypingZoneProps> = () => {
 	return (
 		<>
 			<div className={styles['typing-zone']}>
-				<div className={`words ${styles['words']}`} ref={wordsElRef}>
+				{window.matchMedia('(max-width: 1024px)').matches && (
+					<div className={styles['typing-zone-header']}>
+						{currentMode === Mode.time && (
+							<p className={styles['typing-zone-header__countdown']}>
+								{(timeOptions.find(option => option.enabled)?.count || timeOptions[0].count) - timer}
+							</p>
+						)}
+						<div
+							className={styles['typing-zone-header__settings']}
+							onClick={() => setIsMobileConfigOpen(true)}
+						>
+							<Settings />
+						</div>
+					</div>
+				)}
+				<div
+					className={`words ${styles['words']}`}
+					ref={wordsElRef}
+					onClick={() => setIsMobileKeyboardOpen(true)}
+					onTouchStart={() => setIsMobileKeyboardOpen(true)}
+				>
 					{textArr.length > 0 ? (
 						<>
 							{[...textArr]
@@ -361,12 +459,31 @@ const TypingZone: FC<TypingZoneProps> = () => {
 				>
 					<RestartIcon style={{ width: '24px', height: '24px' }} />
 				</div>
-				{currentMode === Mode.time && (
+				{!window.matchMedia('(max-width: 1024px)').matches && currentMode === Mode.time && (
 					<p className={`${styles['countdown']} ${isTimerActive ? '' : styles['countdown--hide']}`}>
 						{(timeOptions.find(option => option.enabled)?.count || timeOptions[0].count) - timer}
 					</p>
 				)}
 			</div>
+			<input
+				type='text'
+				ref={hiddenInputElRef}
+				autoCapitalize='off'
+				autoComplete='off'
+				autoCorrect='off'
+				spellCheck='false'
+				aria-hidden='true'
+				tabIndex={-1}
+				style={{
+					opacity: 0,
+					position: 'absolute',
+					top: '-1000px',
+					left: '-1000px',
+					pointerEvents: 'none',
+					width: 0,
+					height: 0,
+				}}
+			/>
 			<TypingResult
 				wpm={wpm}
 				rawWpm={rawWpm}
@@ -379,6 +496,7 @@ const TypingZone: FC<TypingZoneProps> = () => {
 				isOpen={isResultOpen}
 				setIsOpen={setIsResultOpen}
 			/>
+			<MobileConfigBar isOpen={isMobileConfigOpen} setIsOpen={setIsMobileConfigOpen} />
 		</>
 	)
 }

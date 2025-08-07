@@ -12,7 +12,7 @@
     padding: 20px;
     border: 1px solid var(--primary-600);
     border-radius: 10px;
-    background-color: transparent;
+    background-color: var(--primary-700);
     overflow: hidden;
     z-index: 20;
 
@@ -121,6 +121,28 @@
             &__progressbar {
                 background-color: rgba(77, 28, 7, 0.2);
             }
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .notification {
+        min-width: unset;
+        width: calc(100dvw - 50px);
+    }
+}
+
+@media (max-width: 480px) {
+    .notification {
+        gap: 20px;
+
+        &__icon {
+            display: none;
+        }
+
+        &__cross svg {
+            width: 22px;
+            height: 22px;
         }
     }
 }

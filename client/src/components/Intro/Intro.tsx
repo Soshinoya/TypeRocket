@@ -11,7 +11,7 @@ const Intro: FC<IntroProps> = () => {
 		<div className={styles['intro']}>
 			<div className={styles['logo__wrapper']}>
 				<div className={styles['logo']}>
-					<Logo style={{ width: '15dvw' }} />
+					<Logo />
 				</div>
 				<p className={styles['logo__text']}>0.14.0</p>
 			</div>
