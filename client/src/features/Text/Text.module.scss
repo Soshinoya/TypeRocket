@@ -1,0 +1,101 @@
+@use "../../styles/base/typography.scss";
+@use "../../styles/base/variables.scss";
+
+.words {
+    position: relative;
+    width: 55dvw;
+    height: calc(
+        43px * 3 + 15px * 2
+    ); // Высота символа, умноженного на 3 (т.к. видно всего три строчки) + отступ между строчками
+    display: flex;
+    flex-wrap: wrap;
+    align-content: baseline;
+    user-select: none;
+    row-gap: 15px;
+    overflow: hidden;
+    transition: filter 0.3s variables.$transitionTimingFunc;
+
+    &__wrapper {
+        position: relative;
+    }
+
+    &--blur {
+        filter: blur(10px);
+    }
+}
+
+.words-blur-hint {
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    opacity: 0;
+    @extend %typing-word-regular;
+    color: var(--accent);
+    font-size: 22px;
+    pointer-events: none;
+    transition: opacity 0.3s variables.$transitionTimingFunc;
+
+    &--active {
+        opacity: 1;
+    }
+}
+
+.line {
+    display: flex;
+}
+
+.char {
+    @extend %typing-word-regular;
+    color: var(--primary-600);
+    text-transform: none;
+
+    &--correct {
+        color: var(--primary);
+    }
+
+    &--incorrect {
+        color: var(--error-color);
+    }
+}
+
+.char-space {
+    width: 10px;
+}
+
+.char-space.char--incorrect {
+    background-color: #f7768e;
+}
+
+@media (max-width: 800px) {
+    .words {
+        width: 100%;
+
+        &__wrapper {
+            width: 80%;
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .words {
+        height: calc(31px * 3 + 5px * 2);
+        row-gap: 5px;
+
+        &__wrapper {
+            width: 90%;
+        }
+    }
+
+    .char {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .words__wrapper {
+        width: 100%;
+    }
+}

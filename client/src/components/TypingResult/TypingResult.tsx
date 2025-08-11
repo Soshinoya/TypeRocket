@@ -21,7 +21,7 @@ import {
 } from 'features/CurrentUser/reducer'
 
 import { TAchievement, TUserAchievement } from 'types/Public'
-import { Mode } from 'features/TypingZone/types'
+import { Mode } from 'features/Text/types'
 
 import { useAddExperienceMutation } from 'api/Experience/ExperienceApiSlice'
 import { useSetActivityMutation } from 'api/Activity/ActivityApiSlice'
@@ -41,38 +41,29 @@ import {
 	selectMode,
 	selectWordOptions,
 	selectTimeOptions,
-} from 'features/TypingZone/selectors'
+	selectMistakes,
+} from 'features/Text/selectors'
 
 import useIsEscapePress from 'hooks/useIsEscapePress'
 
 import { getDate } from 'utils/utils'
 import { computeExperience, increaseExperience } from 'utils/experience'
+import {
+	selectAccuracy,
+	selectConsistency,
+	selectKeystrokes,
+	selectRawWpm,
+	selectWpm,
+	selectWpmPerTimeArr,
+} from 'features/Statistics/selectors'
 
 type TypingResultProps = {
-	wpm: number
-	rawWpm: number
-	accuracy: number
-	consistency: number
-	errorCount: number
 	time: number
-	wpmPerTimeArr: { time: number; wpm: number; rawWpm: number }[]
-	keystrokes: number
 	isOpen: boolean
 	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const TypingResult: FC<TypingResultProps> = ({
-	wpm,
-	rawWpm,
-	accuracy,
-	consistency,
-	errorCount,
-	time,
-	wpmPerTimeArr,
-	keystrokes,
-	isOpen,
-	setIsOpen,
-}) => {
+const TypingResult: FC<TypingResultProps> = ({ time, isOpen, setIsOpen }) => {
 	const dispatch = useAppDispatch()
 
 	const hasPunctuation = useAppSelector(selectIsPunctuation)
@@ -82,6 +73,15 @@ const TypingResult: FC<TypingResultProps> = ({
 	const timeOptions = useAppSelector(selectTimeOptions)
 
 	const accessToken = useAppSelector(selectAccessToken)
+
+	const mistakes = useAppSelector(selectMistakes)
+
+	const wpm = useAppSelector(selectWpm)
+	const rawWpm = useAppSelector(selectRawWpm)
+	const accuracy = useAppSelector(selectAccuracy)
+	const consistency = useAppSelector(selectConsistency)
+	const wpmPerTimeArr = useAppSelector(selectWpmPerTimeArr)
+	const keystrokes = useAppSelector(selectKeystrokes)
 
 	const bestResults = useAppSelector(selectBestResults)
 
@@ -200,7 +200,7 @@ const TypingResult: FC<TypingResultProps> = ({
 				wpm,
 				accuracy,
 				consistency,
-				errorCount,
+				mistakes,
 				xpMultiplier: 25,
 			})
 
@@ -288,7 +288,7 @@ const TypingResult: FC<TypingResultProps> = ({
 									<p className={styles['result-stats-item__desc']}>raw wpm</p>
 								</li>
 								<li className={styles['result-stats-item']}>
-									<h3 className={styles['result-stats-item__title']}>{errorCount}</h3>
+									<h3 className={styles['result-stats-item__title']}>{mistakes}</h3>
 									<p className={styles['result-stats-item__desc']}>errors</p>
 								</li>
 								<li className={styles['result-stats-item']}>

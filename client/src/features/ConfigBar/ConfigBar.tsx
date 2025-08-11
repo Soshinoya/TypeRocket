@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from 'react'
 
 import store, { useAppSelector, useAppDispatch } from 'store/index'
 
-import { languages, I_ModeOption, Mode } from 'features/TypingZone/types'
+import { languages, I_ModeOption, Mode } from 'features/Text/types'
 
 import {
 	setIsPunctuationAction,
@@ -11,9 +11,8 @@ import {
 	setWordOptionsAction,
 	setTimeOptionsAction,
 	setTextAction,
-	updateText,
 	setLanguageAction,
-} from 'features/TypingZone/reducer'
+} from 'features/Text/reducer'
 
 import {
 	selectLanguage,
@@ -22,7 +21,9 @@ import {
 	selectMode,
 	selectWordOptions,
 	selectTimeOptions,
-} from 'features/TypingZone/selectors'
+} from 'features/Text/selectors'
+
+import { updateText } from 'features/Text/utils'
 
 import Modal from 'components/Modal/Modal'
 
@@ -46,7 +47,7 @@ const ConfigBar: FC<ConfigBarProps> = () => {
 
 	useEffect(() => {
 		const wordsEl = document.querySelector('.words') as HTMLElement
-		dispatch(setTextAction(updateText({ ...store.getState().TypingZone }, wordsEl.offsetWidth)))
+		dispatch(setTextAction(updateText({ ...store.getState().Text }, wordsEl.offsetWidth)))
 	}, [currentLanguage, isPunctuation, isNumbers, currentMode, wordOptions, timeOptions])
 
 	useEffect(() => {

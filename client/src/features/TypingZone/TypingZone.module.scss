@@ -32,46 +32,6 @@
     }
 }
 
-.words {
-    position: relative;
-    width: 55dvw;
-    height: calc(
-        43px * 3 + 15px * 2
-    ); // Высота символа, умноженного на 3 (т.к. видно всего три строчки) + отступ между строчками
-    display: flex;
-    flex-wrap: wrap;
-    align-content: baseline;
-    user-select: none;
-    row-gap: 15px;
-    overflow: hidden;
-}
-
-.word {
-    display: inline-flex;
-}
-
-.letter {
-    @extend %typing-word-regular;
-    color: var(--primary-600);
-    text-transform: none;
-}
-
-.correct {
-    color: var(--primary);
-}
-
-.incorrect {
-    color: var(--error-color);
-}
-
-.space {
-    width: 10px;
-
-    &--incorrect {
-        background-color: #f7768e;
-    }
-}
-
 .countdown {
     position: absolute;
     top: 50%;
@@ -110,22 +70,19 @@
 }
 
 @media (max-width: 800px) {
-    .typing-zone-header,
-    .words {
+    .typing-zone-header {
         width: 80%;
     }
 }
 
 @media (max-width: 600px) {
-    .typing-zone-header,
-    .words {
+    .typing-zone-header {
         width: 90%;
     }
 }
 
 @media (max-width: 480px) {
-    .typing-zone-header,
-    .words {
+    .typing-zone-header {
         width: 100%;
     }
 }

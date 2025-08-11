@@ -12,12 +12,16 @@ import { BestResultsApiSlice } from 'api/BestResults/BestResultsApiSlice'
 import { AchievementsApiSlice } from 'api/Achievements/Achievements'
 
 import TypingZone from 'features/TypingZone/reducer'
+import Text from 'features/Text/reducer'
+import Statistics from 'features/Statistics/reducer'
 import Notifications from 'features/Notification/reducer'
 import Themes from 'features/Themes/reducer'
 import { UserMetricsApiSlice } from 'api/UserMetrics/UserMetrics'
 
 const reducer = combineReducers({
 	TypingZone,
+	Text,
+	Statistics,
 	currentUser,
 	[UserApiSlice.reducerPath]: UserApiSlice.reducer,
 	[ExperienceApiSlice.reducerPath]: ExperienceApiSlice.reducer,

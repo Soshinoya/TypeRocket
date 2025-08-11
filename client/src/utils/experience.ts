@@ -6,7 +6,7 @@ export type TypingTestParams = {
 	wpm: number // words per minute
 	accuracy: number // accuracy percentage 0-100
 	consistency: number // consistency metric, 0-1 or 0-100
-	errorCount: number
+	mistakes: number
 	xpMultiplier?: number // Optional multiplier to increase experience points
 }
 
@@ -18,7 +18,7 @@ export const computeExperience = ({
 	wpm,
 	accuracy,
 	consistency,
-	errorCount,
+	mistakes,
 	xpMultiplier = 2,
 }: TypingTestParams): number => {
 	// Normalize accuracy and consistency (assume consistency is 0-100)
@@ -44,7 +44,7 @@ export const computeExperience = ({
 	const speedMultiplier = Math.sqrt(wpm / 40)
 
 	// Penalize errors: error penalty reduces XP, but not below zero; each error reduces by 2.5% XP (capped)
-	const errorPenalty = Math.min(1, 0.025 * errorCount)
+	const errorPenalty = Math.min(1, 0.025 * mistakes)
 	const errorMultiplier = 1 - errorPenalty
 
 	// Bonus multipliers for punctuation and numbers presence

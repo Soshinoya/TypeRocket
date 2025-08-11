@@ -1,8 +1,8 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 
 import { useAppDispatch, useAppSelector } from 'store/index'
 
-import { I_ModeOption, languages, Mode } from 'features/TypingZone/types'
+import { I_ModeOption, languages, Mode } from 'features/Text/types'
 import {
 	setIsNumbersAction,
 	setIsPunctuationAction,
@@ -10,14 +10,15 @@ import {
 	setModeAction,
 	setTimeOptionsAction,
 	setWordOptionsAction,
-} from 'features/TypingZone/reducer'
+} from 'features/Text/reducer'
 import {
 	selectLanguage,
 	selectIsNumbers,
 	selectIsPunctuation,
 	selectMode,
 	selectWordOptions,
-} from 'features/TypingZone/selectors'
+	selectTimeOptions,
+} from 'features/Text/selectors'
 
 import Modal from 'components/Modal/Modal'
 
@@ -36,6 +37,7 @@ const MobileConfigBar: FC<MobileConfigBarProps> = ({ isOpen, setIsOpen }) => {
 	const isNumbers = useAppSelector(selectIsNumbers)
 	const currentMode = useAppSelector(selectMode)
 	const wordOptions = useAppSelector(selectWordOptions)
+	const timeOptions = useAppSelector(selectTimeOptions)
 
 	const [currentModeOptions, setCurrentModeOptions] = useState<I_ModeOption[]>(wordOptions)
 
@@ -62,6 +64,14 @@ const MobileConfigBar: FC<MobileConfigBarProps> = ({ isOpen, setIsOpen }) => {
 				break
 		}
 	}
+
+	useEffect(() => {
+		if (currentMode === Mode['words']) {
+			setCurrentModeOptions(wordOptions)
+		} else {
+			setCurrentModeOptions(timeOptions)
+		}
+	}, [currentMode, wordOptions, timeOptions])
 
 	return (
 		<>
