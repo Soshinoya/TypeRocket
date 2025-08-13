@@ -53,8 +53,6 @@ const Text: FC<TextProps> = ({}) => {
 
 	const [wordsElWidth, setWordsElWidth] = useState(0)
 
-	const isVirtualKeyboard = window.matchMedia('(max-width: 1024px)').matches
-
 	useClickOutside(wordsRef, isClickOutside => setIsTestOnFocus(isClickOutside))
 
 	const handleInput = (e: FormEvent<HTMLInputElement>) => {

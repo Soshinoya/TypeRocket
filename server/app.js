@@ -28,7 +28,8 @@ import { authMiddleware } from './middlewares/auth.middleware.js'
 
 const { Pool } = pkg
 
-dotEnv.config({ path: './config/.env' })
+// dotEnv.config({ path: './config/.env' })
+dotEnv.config({ path: './.env' })
 
 const SERVER_PORT = process.env.SERVER_PORT
 
@@ -39,12 +40,12 @@ const pool = new Pool({
 	host: process.env.DB_HOST,
 	database: process.env.DB_NAME,
 	password: process.env.DB_PASSWORD,
-	port: process.env.DB_PORT,
+	port: process.env.DB_PORT || 3000,
 })
 
 const corsOptions = {
-	origin: 'http://localhost:5173',
-	// origin: 'https://799f91kk-5173.euw.devtunnels.ms',
+	// origin: 'http://localhost:5173',
+	origin: 'https://typerocket.onrender.com',
 	methods: ['GET', 'POST', 'PATCH', 'DELETE'],
 	credentials: true,
 	allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
