@@ -159,36 +159,32 @@ const Text: FC<TextProps> = ({}) => {
 
 	return (
 		<>
-			<div className={styles['words__wrapper']}>
-				<div
-					ref={wordsRef}
-					onClick={() => {
-						setIsTestOnFocus(true)
-						if (!hiddenInputRef.current) return
-						hiddenInputRef.current.focus()
-					}}
-					className={`words ${styles['words']} ${isTestOnFocus ? '' : styles['words--blur']}`}
-				>
-					{preparedText.slice(currentLineIndex, currentLineIndex + 4).map((line, i) => (
-						<div ref={currentLineIndex === i ? activeLineRef : null} className={styles['line']} key={i}>
-							{line.map(({ char, state }, i) => (
-								<div
-									className={`${styles['char']} ${
-										state !== 'default' ? styles[`char--${state}`] : ''
-									} ${char === ' ' ? styles['char-space'] : ''}`}
-									key={i}
-								>
-									{char}
-								</div>
-							))}
-						</div>
-					))}
-				</div>
-				<div
-					className={`${styles['words-blur-hint']} ${isTestOnFocus ? '' : styles['words-blur-hint--active']}`}
-				>
-					Click here to focus
-				</div>
+			<div
+				ref={wordsRef}
+				onClick={() => {
+					setIsTestOnFocus(true)
+					if (!hiddenInputRef.current) return
+					hiddenInputRef.current.focus()
+				}}
+				className={`words ${styles['words']} ${isTestOnFocus ? '' : styles['words--blur']}`}
+			>
+				{preparedText.slice(currentLineIndex, currentLineIndex + 4).map((line, i) => (
+					<div ref={currentLineIndex === i ? activeLineRef : null} className={styles['line']} key={i}>
+						{line.map(({ char, state }, i) => (
+							<div
+								className={`${styles['char']} ${state !== 'default' ? styles[`char--${state}`] : ''} ${
+									char === ' ' ? styles['char-space'] : ''
+								}`}
+								key={i}
+							>
+								{char}
+							</div>
+						))}
+					</div>
+				))}
+			</div>
+			<div className={`${styles['words-blur-hint']} ${isTestOnFocus ? '' : styles['words-blur-hint--active']}`}>
+				Click here to focus
 			</div>
 			<input
 				ref={hiddenInputRef}

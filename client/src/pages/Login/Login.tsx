@@ -2,7 +2,7 @@ import { FC, useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { nanoid } from '@reduxjs/toolkit'
 
-import { useAppDispatch } from 'store/index'
+import { useAppDispatch, useAppSelector } from 'store/index'
 
 import { TUserCredentials } from 'types/User'
 
@@ -17,6 +17,7 @@ import {
 	setUserAchievements,
 	setMetrics,
 } from 'features/CurrentUser/reducer'
+import { selectCurrentUser } from 'features/CurrentUser/selectors'
 
 import { useLoginMutation } from 'api/User/UserApiSlice'
 import { useGetExperienceMutation } from 'api/Experience/ExperienceApiSlice'
@@ -36,6 +37,8 @@ const Login: FC = () => {
 	const dispatch = useAppDispatch()
 
 	const navigation = useNavigate()
+
+	const currentUser = useAppSelector(selectCurrentUser)
 
 	const [authentication] = useLoginMutation()
 
@@ -124,8 +127,6 @@ const Login: FC = () => {
 			dispatch(setCurrentUser(newUser.user))
 			dispatch(setAccessToken(newUser.accessToken))
 
-			navigation(Paths.profile)
-
 			resetForm()
 
 			console.log(newUser.user, '\n', newUser.accessToken)
@@ -140,6 +141,10 @@ const Login: FC = () => {
 			return null
 		}
 	}
+
+	useEffect(() => {
+		navigation(Paths.profile)
+	}, [currentUser])
 
 	useEffect(() => {
 		const { title, subtitle, status, isActive } = notification

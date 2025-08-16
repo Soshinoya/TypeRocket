@@ -2,7 +2,7 @@ import { FC, useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { nanoid } from '@reduxjs/toolkit'
 
-import { useAppDispatch } from 'store/index'
+import { useAppDispatch, useAppSelector } from 'store/index'
 
 import { I_Notification } from 'features/Notification/types'
 import { TUserCredentials } from 'types/User'
@@ -14,6 +14,7 @@ import {
 	setExperience,
 	setMetrics,
 } from 'features/CurrentUser/reducer'
+import { selectCurrentUser } from 'features/CurrentUser/selectors'
 
 import { setNotificationAction } from 'features/Notification/reducer'
 
@@ -35,6 +36,8 @@ const Register: FC = () => {
 	const navigation = useNavigate()
 
 	const dispatch = useAppDispatch()
+
+	const currentUser = useAppSelector(selectCurrentUser)
 
 	const [register] = useRegisterMutation()
 
@@ -117,8 +120,6 @@ const Register: FC = () => {
 			dispatch(setCurrentUser(newUser.user))
 			dispatch(setAccessToken(newUser.accessToken))
 
-			navigation(Paths.profile)
-
 			resetForm()
 
 			console.log(newUser.user, '\n', newUser.accessToken)
@@ -134,6 +135,10 @@ const Register: FC = () => {
 			return null
 		}
 	}
+
+	useEffect(() => {
+		navigation(Paths.profile)
+	}, [currentUser])
 
 	useEffect(() => {
 		const { title, subtitle, status, isActive } = notification

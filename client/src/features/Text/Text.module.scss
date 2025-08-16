@@ -74,7 +74,7 @@
         width: 100%;
 
         &__wrapper {
-            width: 80%;
+            width: 100%;
         }
     }
 }
@@ -83,19 +83,9 @@
     .words {
         height: calc(31px * 3 + 5px * 2);
         row-gap: 5px;
-
-        &__wrapper {
-            width: 90%;
-        }
     }
 
     .char {
         font-size: 24px;
-    }
-}
-
-@media (max-width: 480px) {
-    .words__wrapper {
-        width: 100%;
     }
 }

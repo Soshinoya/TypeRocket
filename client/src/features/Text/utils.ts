@@ -18,7 +18,7 @@ const incorrectLetterAudio = new Audio(hitAudio)
 const correctLetterAudio = new Audio(clickAudio)
 
 const textMeasure = window.matchMedia('(max-width: 600px)').matches
-	? new MeasureText('24px JetBrains Mono')
+	? new MeasureText('28px JetBrains Mono')
 	: new MeasureText('32px JetBrains Mono')
 
 export const updateItems = (items: I_ModeOption[], action: I_Action): I_ModeOption[] => {

@@ -13,6 +13,8 @@ type ResultWpmChartProps = {
 const ResultWpmChart: FC<ResultWpmChartProps> = ({ wpmPerTimeArr }) => {
 	const { primary, accentLight, accent } = useAppSelector(selectCurrentTheme)
 
+	const isMobile = window.matchMedia('(max-width: 1024px)').matches
+
 	return (
 		<Chart
 			verticalDataArrays={[
@@ -63,7 +65,7 @@ const ResultWpmChart: FC<ResultWpmChartProps> = ({ wpmPerTimeArr }) => {
 					},
 					y: {
 						title: {
-							display: true,
+							display: isMobile ? false : true,
 							text: 'Words per minute',
 							color: accent,
 							font: {

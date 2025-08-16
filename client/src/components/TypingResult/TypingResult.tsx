@@ -34,6 +34,7 @@ import styles from './TypingResult.module.scss'
 import Modal from 'components/Modal/Modal'
 import ResultWpmChart from 'components/Chart/ResultWpmChart'
 import Ad from 'components/icons/Ad/Ad'
+import Cross from 'components/icons/Cross/Cross'
 
 import {
 	selectIsPunctuation,
@@ -56,6 +57,8 @@ import {
 	selectWpm,
 	selectWpmPerTimeArr,
 } from 'features/Statistics/selectors'
+
+import { selectCurrentTheme } from 'features/Themes/selectors'
 
 type TypingResultProps = {
 	time: number
@@ -91,6 +94,10 @@ const TypingResult: FC<TypingResultProps> = ({ time, isOpen, setIsOpen }) => {
 
 	const achievements = useAppSelector(selectAchievements)
 	const userAchievements = useAppSelector(selectUserAchievements)
+
+	const currentTheme = useAppSelector(selectCurrentTheme)
+
+	const isMobile = window.matchMedia('(max-width: 1024px)').matches
 
 	const [addExperienceMutation] = useAddExperienceMutation()
 
@@ -274,7 +281,16 @@ const TypingResult: FC<TypingResultProps> = ({ time, isOpen, setIsOpen }) => {
 				<>
 					<div className={styles['result-header']}>
 						<h2 className={styles['result-header__title']}>Results</h2>
-						<p className={styles['result-header__date']}>{getDate(new Date())}</p>
+						{isMobile ? (
+							<div onClick={() => setIsOpen(false)}>
+								<Cross
+									style={{ width: '20px', height: '20px', cursor: 'pointer' }}
+									color={currentTheme.accent}
+								></Cross>
+							</div>
+						) : (
+							<p className={styles['result-header__date']}>{getDate(new Date())}</p>
+						)}
 					</div>
 					<div className={styles['result-body']}>
 						<div className={styles['result-stats']}>

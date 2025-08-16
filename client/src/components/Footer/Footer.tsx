@@ -1,8 +1,6 @@
 import { FC, ReactNode, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import { Paths } from 'utils/paths.ts'
-
 import styles from './Footer.module.scss'
 
 import Themes from 'features/Themes/Themes'
@@ -20,7 +18,7 @@ const Footer: FC<FooterProps> = ({ centerElement }) => {
 				<a href='t.me/evvxrtex' className={styles['footer__link']}>
 					Telegram
 				</a>
-				<a href='github.com' className={styles['footer__link']}>
+				<a href='https://github.com/Soshinoya/TypeRocket' className={styles['footer__link']}>
 					Github
 				</a>
 			</div>
@@ -29,7 +27,8 @@ const Footer: FC<FooterProps> = ({ centerElement }) => {
 				<p className={styles['footer__link']} onClick={() => setIsThemesModalOpen(true)}>
 					Themes
 				</p>
-				<Link to={`${Paths.settings}#version`} className={styles['footer__link']}>
+				{/* <Link to={`${Paths.settings}#version`} className={styles['footer__link']}> */}
+				<Link to='/' className={styles['footer__link']}>
 					Version
 				</Link>
 			</div>
