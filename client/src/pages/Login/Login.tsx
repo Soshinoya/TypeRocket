@@ -143,6 +143,7 @@ const Login: FC = () => {
 	}
 
 	useEffect(() => {
+		if (!currentUser) return
 		navigation(Paths.profile)
 	}, [currentUser])
 
