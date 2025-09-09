@@ -28,8 +28,8 @@ import { authMiddleware } from './middlewares/auth.middleware.js'
 
 const { Pool } = pkg
 
-dotEnv.config({ path: './config/.env' })
-// dotEnv.config({ path: './.env' })
+// dotEnv.config({ path: './config/.env' })
+dotEnv.config({ path: './.env' })
 
 const SERVER_PORT = process.env.SERVER_PORT
 
@@ -44,8 +44,8 @@ const pool = new Pool({
 })
 
 const corsOptions = {
-	origin: 'http://localhost:5173',
-	// origin: 'https://typerocket.onrender.com',
+	// origin: 'http://localhost:5173',
+	origin: 'https://typerocket.onrender.com',
 	methods: ['GET', 'POST', 'PATCH', 'DELETE'],
 	credentials: true,
 	allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
@@ -78,7 +78,6 @@ app.post(
 
 // Логаут
 app.post('/user/logout', (req, res) => {
-	res.clearCookie('token')
 	res.clearCookie('refreshToken')
 	res.status(200).json({ message: 'Logged out' })
 })

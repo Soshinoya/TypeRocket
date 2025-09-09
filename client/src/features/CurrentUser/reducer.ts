@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Activity } from 'react-activity-calendar'
-import Cookies from 'universal-cookie'
 
 import { TUser, TUserBestResults, TUserExperience } from 'types/User'
 import { TUserMetrics, TAchievement, TUserAchievement } from 'types/Public'
@@ -15,8 +14,6 @@ type TInitialStateType = {
 	achievements: TAchievement[] | null
 	userAchievements: TUserAchievement[] | null
 }
-
-const cookies = new Cookies()
 
 const initialState: TInitialStateType = {
 	accessToken: '',
@@ -132,12 +129,6 @@ const currentUserSlice = createSlice({
 		},
 		logout() {
 			localStorage.removeItem('currentUser')
-			cookies.remove('refreshToken', {
-				path: '/',
-				domain: window.location.hostname,
-				// secure: true, // если используете HTTPS
-				// sameSite: 'strict'
-			})
 			return initialState
 		},
 	},
