@@ -13,10 +13,15 @@ const getBestResult = async (req, res, errorsHandler) => {
 
 const getAllBestResult = async (req, res, errorsHandler) => {
 	try {
-		const { userId } = req.body
+		const { userId } = req.params
 
 		const result = await resultsService.getAllBestResults(userId)
-		res.json(result)
+		res.json(
+			result.map(({ name, wpm, rawWpm, accuracy, consistency, date }) => ({
+				testName: name,
+				resultMetrics: { wpm, rawWpm, accuracy, consistency, date },
+			}))
+		)
 	} catch (err) {
 		errorsHandler(err)
 	}

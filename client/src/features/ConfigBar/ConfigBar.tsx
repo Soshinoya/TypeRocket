@@ -83,6 +83,8 @@ const ConfigBar: FC<ConfigBarProps> = () => {
 	return window.matchMedia('(min-width: 1025px)').matches ? (
 		<>
 			<div className={styles['config-bar']}>
+				<p className={styles['config-bar-item']}>Mode</p>
+				<div className={styles['separator']}></div>
 				<p className={styles['config-bar-item']} onClick={() => setIsLanguageModalOpen(true)}>
 					{currentLanguage.name}
 				</p>

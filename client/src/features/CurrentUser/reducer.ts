@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Activity } from 'react-activity-calendar'
+import Cookies from 'universal-cookie'
 
 import { TUser, TUserBestResults, TUserExperience } from 'types/User'
 import { TUserMetrics, TAchievement, TUserAchievement } from 'types/Public'
@@ -15,7 +16,29 @@ type TInitialStateType = {
 	userAchievements: TUserAchievement[] | null
 }
 
-const getInitialState = (): TInitialStateType => {
+const cookies = new Cookies()
+
+const initialState: TInitialStateType = {
+	accessToken: '',
+	user: null,
+	experience: null,
+	activity: null,
+	bestResults: [
+		{ testName: 'test_10w', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
+		{ testName: 'test_20w', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
+		{ testName: 'test_40w', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
+		{ testName: 'test_80w', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
+		{ testName: 'test_15s', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
+		{ testName: 'test_30s', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
+		{ testName: 'test_60s', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
+		{ testName: 'test_120s', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
+	],
+	metrics: null,
+	achievements: null,
+	userAchievements: null,
+}
+
+const getStoredState = (): TInitialStateType | null => {
 	try {
 		const storedUser = localStorage.getItem('currentUser')
 		if (storedUser) {
@@ -26,36 +49,18 @@ const getInitialState = (): TInitialStateType => {
 		localStorage.removeItem('currentUser')
 	}
 
-	return {
-		accessToken: '',
-		user: null,
-		experience: null,
-		activity: null,
-		bestResults: [
-			{ testName: 'test_10w', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
-			{ testName: 'test_20w', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
-			{ testName: 'test_40w', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
-			{ testName: 'test_80w', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
-			{ testName: 'test_15s', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
-			{ testName: 'test_30s', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
-			{ testName: 'test_60s', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
-			{ testName: 'test_120s', resultMetrics: { wpm: 0, rawWpm: 0, accuracy: 0, consistency: 0 } },
-		],
-		metrics: null,
-		achievements: null,
-		userAchievements: null,
-	}
+	return null
 }
 
 const setStateInLocalStorage = (state: TInitialStateType, key: string, value: any) => {
 	localStorage.setItem('currentUser', JSON.stringify({ ...state, [key]: value }))
 }
 
-const initialState: TInitialStateType = getInitialState()
+const getInitialState = () => getStoredState() || initialState
 
 const currentUserSlice = createSlice({
 	name: 'currentUser',
-	initialState,
+	initialState: getInitialState(),
 	reducers: {
 		setAccessToken(state: TInitialStateType, action: PayloadAction<string>) {
 			state.accessToken = action.payload
@@ -92,6 +97,9 @@ const currentUserSlice = createSlice({
 
 			setStateInLocalStorage(state, 'activity', state.activity)
 		},
+		setAllBestResults(state: TInitialStateType, action: PayloadAction<TUserBestResults[]>) {
+			return { ...state, bestResults: action.payload }
+		},
 		setBestResults(state: TInitialStateType, action: PayloadAction<TUserBestResults>) {
 			const updatedBestResults = state.bestResults.map(result => {
 				if (result.testName === action.payload.testName) {
@@ -122,17 +130,29 @@ const currentUserSlice = createSlice({
 			state.userAchievements = action.payload
 			setStateInLocalStorage(state, 'userAchievements', action.payload)
 		},
+		logout() {
+			localStorage.removeItem('currentUser')
+			cookies.remove('refreshToken', {
+				path: '/',
+				domain: window.location.hostname,
+				// secure: true, // если используете HTTPS
+				// sameSite: 'strict'
+			})
+			return initialState
+		},
 	},
 })
 
 export const {
-	setCurrentUser,
 	setAccessToken,
+	setCurrentUser,
 	setExperience,
 	setActivity,
+	setAllBestResults,
 	setBestResults,
 	setMetrics,
 	setAchievements,
 	setUserAchievements,
+	logout,
 } = currentUserSlice.actions
 export default currentUserSlice.reducer

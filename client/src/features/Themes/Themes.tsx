@@ -27,6 +27,7 @@ const Themes: FC<ThemesProps> = ({ isOpen, setIsOpen }) => {
 	useIsEscapePress(setIsOpen)
 
 	useEffect(() => {
+		if (!isOpen) return
 		const themesNavHandler = (e: KeyboardEvent) => {
 			if (!themesList.current) return
 

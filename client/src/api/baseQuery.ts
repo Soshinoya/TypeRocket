@@ -9,8 +9,8 @@ import { getErrorMessage } from 'utils/utils'
 const cookies = new Cookies()
 
 const baseQuery = fetchBaseQuery({
-	// baseUrl: 'http://localhost:3000/user',
-	baseUrl: 'https://typerocketbackend.onrender.com/user',
+	baseUrl: 'http://localhost:3000/user',
+	// baseUrl: 'https://typerocketbackend.onrender.com/user',
 	credentials: 'include',
 })
 

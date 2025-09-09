@@ -28,8 +28,8 @@ import { authMiddleware } from './middlewares/auth.middleware.js'
 
 const { Pool } = pkg
 
-// dotEnv.config({ path: './config/.env' })
-dotEnv.config({ path: './.env' })
+dotEnv.config({ path: './config/.env' })
+// dotEnv.config({ path: './.env' })
 
 const SERVER_PORT = process.env.SERVER_PORT
 
@@ -44,8 +44,8 @@ const pool = new Pool({
 })
 
 const corsOptions = {
-	// origin: 'http://localhost:5173',
-	origin: 'https://typerocket.onrender.com',
+	origin: 'http://localhost:5173',
+	// origin: 'https://typerocket.onrender.com',
 	methods: ['GET', 'POST', 'PATCH', 'DELETE'],
 	credentials: true,
 	allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
@@ -104,7 +104,7 @@ app.patch(
 app.get('/user/get_best_result', async (req, res) => await getBestResult(req, res, errorsHandler))
 
 // Выборка всех лучших результатов
-app.get('/user/get_all_best_results', async (req, res) => await getAllBestResult(req, res, errorsHandler))
+app.get('/user/get_all_best_results/:userId', async (req, res) => await getAllBestResult(req, res, errorsHandler))
 
 // Добавление лучшего результата
 app.post(

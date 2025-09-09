@@ -19,11 +19,17 @@
     &__links {
         display: flex;
         align-items: center;
+        gap: 20px;
+    }
+
+    &__user {
+        display: flex;
+        align-items: center;
         gap: 10px;
     }
 
-    &__link {
-        @extend %body-default-action;
+    &__username {
+        @extend %body-default;
         color: var(--accent);
     }
 }

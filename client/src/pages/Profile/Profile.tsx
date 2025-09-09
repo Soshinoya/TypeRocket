@@ -175,7 +175,7 @@ const Profile: FC<ProfileProps> = () => {
 								<p>
 									Completed {userAchievements.length}/{achievements.length}{' '}
 								</p>
-								<span>{(achievements.length / userAchievements.length) * 10}%</span>
+								<span>{((userAchievements.length / achievements.length) * 100).toFixed(0)}%</span>
 								<Progressbar percentage={(userAchievements.length / achievements.length) * 100} />
 							</div>
 						) : (

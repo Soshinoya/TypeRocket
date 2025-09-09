@@ -52,13 +52,13 @@ body {
 }
 
 ::view-transition-old(root) {
-    animation-duration: 0.6s;
+    animation-duration: 0.7s;
     animation-timing-function: variables.$transitionTimingFunc;
     animation-name: move-out;
 }
 
 ::view-transition-new(root) {
-    animation-duration: 0.6s;
+    animation-duration: 0.7s;
     animation-timing-function: variables.$transitionTimingFunc;
     animation-name: move-in;
 }

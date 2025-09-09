@@ -81,6 +81,10 @@ const MobileConfigBar: FC<MobileConfigBarProps> = ({ isOpen, setIsOpen }) => {
 				children={
 					<div className={styles['mobile-config-bar']}>
 						<div className={styles['mobile-config-bar-item']}>
+							<h3 className={styles['mobile-config-bar-item__title']}>Choose your mode</h3>
+							<p className={styles['mobile-config-bar-item__value']}>Mode</p>
+						</div>
+						<div className={styles['mobile-config-bar-item']}>
 							<h3 className={styles['mobile-config-bar-item__title']}>Languages</h3>
 							<p
 								className={styles['mobile-config-bar-item__value']}

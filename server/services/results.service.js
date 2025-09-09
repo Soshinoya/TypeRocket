@@ -19,20 +19,20 @@ const resultsService = {
 	getAllBestResults: async userId => {
 		const results = await pool.query(
 			`
-            SELECT
-                t.name,
-                r.wpm,
-                r.rawWpm,
-                r.accuracy,
-                r.consistency,
-                r.date
-            FROM
-                best_results
-            JOIN test_names ON best_results.test_name_id = test_names.id
-            JOIN result_metrics ON best_results.result_id = result_metrics.id
-            WHERE
-                best_results.user_id = $1;
-            `,
+				SELECT
+					test_names.name,
+					result_metrics.wpm,
+					result_metrics.rawWpm,
+					result_metrics.accuracy,
+					result_metrics.consistency,
+					result_metrics.date
+				FROM
+					best_results
+				JOIN test_names ON best_results.test_name_id = test_names.id
+				JOIN result_metrics ON best_results.result_id = result_metrics.id
+				WHERE
+					best_results.user_id = $1;
+			`,
 			[userId]
 		)
 		console.log('results: ', results)

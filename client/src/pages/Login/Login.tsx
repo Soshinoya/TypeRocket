@@ -16,6 +16,7 @@ import {
 	setAchievements,
 	setUserAchievements,
 	setMetrics,
+	setAllBestResults,
 } from 'features/CurrentUser/reducer'
 import { selectCurrentUser } from 'features/CurrentUser/selectors'
 
@@ -32,6 +33,7 @@ import styles from './Login.module.scss'
 
 import Input from 'components/Input/Input'
 import Button from 'components/Button/Button'
+import { useLazyGetAllBestResultsQuery } from 'api/BestResults/BestResultsApiSlice'
 
 const Login: FC = () => {
 	const dispatch = useAppDispatch()
@@ -51,6 +53,8 @@ const Login: FC = () => {
 	const [getAchievements] = useLazyGetAchievementsQuery()
 
 	const [getUserAchievements] = useGetCompletedAchievementsMutation()
+
+	const [getAllBestResults] = useLazyGetAllBestResultsQuery()
 
 	const [userCredentials, setUserCredentials] = useState<Omit<TUserCredentials, 'username' | 'repeatPassword'>>({
 		email: '',
@@ -122,7 +126,11 @@ const Login: FC = () => {
 				dispatch(setUserAchievements(newUserAchievements))
 			}
 
-			// Загрузить лучшие результаты
+			const { data: newAllBestResults } = await getAllBestResults(newUser.user.id)
+
+			if (newAllBestResults) {
+				dispatch(setAllBestResults(newAllBestResults))
+			}
 
 			dispatch(setCurrentUser(newUser.user))
 			dispatch(setAccessToken(newUser.accessToken))

@@ -29,16 +29,14 @@ const Header: FC<HeaderProps> = () => {
 				<ul className={styles['header-nav__links']}>
 					{isUserAuthenticated ? (
 						<>
-							<Link to={Paths.root} className={styles['header-nav__link']} viewTransition>
-								Mode
-							</Link>
-							<Link to={Paths.profile} className={styles['header-nav__link']} viewTransition>
-								<UserIcon style={{ width: '16px', height: '16px' }} />
+							<Link to={Paths.profile} className={styles['header-nav__user']} viewTransition>
+								<UserIcon style={{ width: '20px', height: '20px' }} />
+								<p className={styles['header-nav__username']}>{currentUser.username}</p>
 							</Link>
 						</>
 					) : window.matchMedia('(max-width: 480px)').matches ? (
 						<>
-							<Link to={Paths.login} className={styles['header-nav__link']} viewTransition>
+							<Link to={Paths.login} viewTransition>
 								<UserIcon style={{ width: '20px', height: '20px' }} />
 							</Link>
 						</>
